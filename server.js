@@ -155,8 +155,6 @@ async function connectDB() {
     }
 }
 
-test2
-
 connectDB();
 
 
