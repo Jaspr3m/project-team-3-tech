@@ -1,22 +1,108 @@
 const express = require('express')
 const app = express()
-const { MongoClient, ObjectId } = require("mongodb");
+const xss = require('xss')
+const html = xss('<script>alert("xss");</script>');
+console.log(html);
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
+
+
+
 app.use(express.urlencoded({ extended: true }))
 
-require("dotenv").config(); 
+require("dotenv").config();
 
 app
- .use('/static', express.static('static'))
+    .use('/static', express.static('static'))
 
- .set('view engine', 'ejs')
- .set('views', 'views')
+    .set('view engine', 'ejs')
+    .set('views', 'view')
 
- .get('/songList', song)
+    .get('/songList', song)
+    .get('/', onhome)
+    .get('/about', onabout)
+    .get('/formulier', toonformulier)
+    .get('/users', showUsers)
 
- .get('/', onhome)
- .get('/about', onabout)
+    .listen(8000)
+    console.log("Server listening @ localhost:8000!")
 
- .listen(8000)
+app
+    .post('/form', verwerkformulier)
+
+function toonformulier(req, res) {
+    res.render('form.ejs')
+}
+// function verwerkformulier(req, res) {
+
+
+//     res.send('test')
+//     console.log(req.body)
+
+
+//     bcrypt.genSalt(saltRounds, function(err, salt) {
+//     bcrypt.hash(req.body.password, salt, function(err, hash) {
+//         db.collection('users').insertOne(hash)
+//     });
+// });
+
+// }
+
+async function verwerkformulier(req, res) {
+    const { name, sirname, password } = req.body
+
+    console.log('form data:', req.body);
+
+    if (!name || !sirname || !password) {
+        return res.status(400).send('Missing required fields: name, sirname, or password');
+    }
+
+    try {
+        // Hash the password using your hashData function
+        const hashedPassword = await hashData(password);
+
+        // Create a user document
+        const user = {
+            name,
+            surname: sirname, // Match the field name in your form
+            password: hashedPassword,
+        };
+
+        // Insert the user document into MongoDB
+        const result = await db.collection('users').insertOne(user);
+
+        // Send success response
+        res.send('User registered successfully!');
+        console.log('Inserted user:', result.insertedId);
+    } catch (error) {
+        console.error('Error processing form:', error);
+        res.status(500).send('Error registering user');
+    }
+}
+
+// Password hashing function
+async function hashData(data) {
+  try {
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedData = await bcrypt.hash(data, salt);
+    return hashedData;
+  } catch (error) {
+    console.error('Error hashing password:', error);
+    throw error; // Rethrow to be caught in the calling function
+  }
+}
+
+// Compare given and stored data (unchanged)
+async function compareData(plainTextData, hashedData) {
+  try {
+    const match = await bcrypt.compare(plainTextData, hashedData);
+    return match;
+  } catch (error) {
+    console.error('Error comparing data:', error);
+    throw error;
+  }
+}
+
 
 function onhome(req, res) {
     res.send('<h1>Hello World!</h1> <img src="/static/images/snoopy.jpg" alt="Poster" width="50%"/>')
@@ -27,17 +113,28 @@ function onabout(req, res) {
 }
 
 
-function song(req, res, ) {
+function song(req, res,) {
     let song = {
         title: 'FAMJAM400',
         description: 'You watched me grow up from a...'
     }
-    
-    res.render('detail.ejs', {data: song})
+
+    res.render('detail.ejs', { data: song })
 }
 
+async function showUsers(req, res) {
+    try {
+        // Find users with a 'voornaam' field (not null/undefined/empty)
+        const users = await db.collection('users').find({ voornaam: { $exists: true, $ne: '' } }).project({ _id: 1, voornaam: 1 }).toArray();
+        res.render('users.ejs', { users });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).send('Error fetching users');
+    }
+}
 
-
+// Database connectie
+const { MongoClient, ObjectId } = require("mongodb");
 
 // Mongo configuratie uit .env bestand 
 const uri = process.env.URI;
@@ -51,63 +148,16 @@ const collection = process.env.USER_COLLECTION;
 async function connectDB() {
     try {
         await client.connect()
-        console.log("Client connected to database");
+        console.log("Client has connected to TravelLink database!");
     }
     catch (error) {
         console.log(error);
     }
 }
 
-connectDB()
+test2
 
-
-app.get('/create-test-profile', async (req, res) => {
-    const userCollection = db.collection(collection);
-  
-    const newUser = {
-      name: "Ivy",
-      location: "Amsterdam",
-      tags: ["Hiking", "Coffee"],
-      languages: ["Dutch", "English"], 
-      bio: "Backpacking across Europe | Love local cafe’s, beach walks and other stuff!"
-    };
-  
-    const result = await userCollection.insertOne(newUser);
-    res.send("Testprofiel gemaakt met ID: " + result.insertedId);
-  });
-
-  app.get('/profile/:id', async (req, res) => {
-    const profile = await db.collection(collection).findOne({ _id: new ObjectId(req.params.id) });
-  
-    const editing = req.query.edit === 'true';
-  
-    res.render('profile', { profile: profile, editing: editing });
-  });
-
-  app.post('/profile/:id', async (req, res) => {
-    const updatedProfile = {
-      name: req.body.name,
-      location: req.body.location,
-      tags: req.body.tags,
-      languages: req.body.languages,
-      bio: req.body.bio
-    };
-  
-    await db.collection(collection).updateOne(
-      { _id: new ObjectId(req.params.id) },
-      { $set: updatedProfile }
-    );
-  
-    res.redirect("/profile/" + req.params.id);
-  });
-  
-
-
-
-
-
-
-
+connectDB();
 
 
 
