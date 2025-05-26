@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registreren</title>
+    <style>
+        .error-list {
+            color: red;
+            list-style-type: none;
+            padding: 0;
+        }
+        .error-list li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trvel link</h1>
+    <section>
+    <h2>Registreren</h2>
+    <form method="POST" action="/register">
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required>
+    
+        <label for="name">Naam:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="password">Wachtwoord:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Registreren</button>
+    </form>
+</section>
+
+    <% if (errors && errors.length > 0) { %>
+        <ul class="error-list">
+            <% errors.forEach(error => { %>
+                <li><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+</body>
+</html>
