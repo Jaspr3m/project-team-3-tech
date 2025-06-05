@@ -3,7 +3,7 @@ const app = express();
 const { MongoClient, ObjectId } = require("mongodb");
 app.use(express.urlencoded({ extended: true }));
 
-require("dotenv").config();
+require("dotenv").config(); 
 
 // Set view engine + views + static files
 app.use("/static", express.static("static"));
@@ -40,7 +40,6 @@ async function connectDB() {
     console.log(error);
   }
 }
-
 connectDB();
 
 app.get("/profile/:id", async (req, res) => {
