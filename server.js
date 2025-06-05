@@ -1,11 +1,22 @@
-const express = require('express');
-const app = express();
-const { MongoClient, ObjectId } = require('mongodb');
-const xss = require('xss');
+const express = require('express')
+const app = express()
+
+const { MongoClient, ObjectId } = require("mongodb");
+
+const xss = require('xss')
+const html = xss('<script>alert("xss");</script>');
+console.log(html);
 const bcrypt = require('bcryptjs');
-const saltRounds = 10;
-const { query, body, validationResult } = require('express-validator');
-require('dotenv').config();
+const saltRounds = 10
+const {query, body, validationResult } = require('express-validator') 
+
+
+
+
+app.use(express.urlencoded({ extended: true }))
+
+require("dotenv").config(); 
+
 const multer = require('multer');
 
 // Middleware
@@ -65,11 +76,13 @@ app
     .get('/register', showRegister)
     .get('/login', showLogin)
     .get('/loginHome', showLoginHome)
-    .get('/home', (req, res) => {
-        res.render('homepage.ejs');
-    });
- 
-    .get('/more-meets', (req, res) => {
+   
+
+
+    .listen(8000)
+
+app
+  .get('/more-meets', (req, res) => {
         res.render('more-meets');
     })
     .get('/create-test-profile', async (req, res) => {
@@ -205,33 +218,91 @@ function song(req, res) {
     let song = {
         title: 'FAMJAM400',
         description: 'You watched me grow up from a...'
+    }
+    
+    res.render('detail.ejs', {data: song})
+}
+
+
+
+// Mongo configuratie uit .env bestand 
+const uri = process.env.URI;
+
+// nieuwe MongoDB client 
+const client = new MongoClient(uri);
+const db = client.db(process.env.DB_NAME);
+const collection = process.env.USER_COLLECTION;
+
+
+async function connectDB() {
+    try {
+        await client.connect()
+        console.log("Client connected to database");
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+connectDB()
+
+
+app.get('/create-test-profile', async (req, res) => {
+    const userCollection = db.collection(collection);
+  
+    const newUser = {
+      name: "Ivy",
+      location: "Amsterdam",
+      tags: ["Hiking", "Coffee"],
+      languages: ["Dutch", "English"], 
+      bio: "Backpacking across Europe | Love local cafe’s, beach walks and other stuff!"
     };
-    res.render('detail.ejs', { data: song });
-}
+  
+    const result = await userCollection.insertOne(newUser);
+    res.send("Testprofiel gemaakt met ID: " + result.insertedId);
+  });
 
-function showRegister(req, res) {
-    res.render('register.ejs', { errors: [] });
-}
+  app.get('/profile/:id', async (req, res) => {
+    const profile = await db.collection(collection).findOne({ _id: new ObjectId(req.params.id) });
+  
+    const editing = req.query.edit === 'true';
+  
+    res.render('profile', { profile: profile, editing: editing });
+  });
 
-function showLogin(req, res) {
-    res.render('login.ejs', { errors: [] });
-}
+  app.post('/profile/:id', async (req, res) => {
+    const updatedProfile = {
+      name: req.body.name,
+      location: req.body.location,
+      tags: req.body.tags,
+      languages: req.body.languages,
+      bio: req.body.bio
+    };
+  
+    await db.collection(collection).updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: updatedProfile }
+    );
+  
+    res.redirect("/profile/" + req.params.id);
+  });
+  
 
-function showLoginHome(req, res) {
-    res.render('loginHome.ejs');
-}
 
-// Placeholder for verwerkformulier (implement or remove if not needed)
-function verwerkformulier(req, res) {
-    // TODO: Implement form processing logic
-    res.send('Formulier verwerking niet geïmplementeerd');
-}
 
-// XSS example (for testing, can be removed if not needed)
-const html = xss('<script>alert("xss");</script>');
-console.log('Sanitized HTML:', html);
 
-// Start server
-app.listen(8000, () => {
-    console.log('Server running on port 8000');
-});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
