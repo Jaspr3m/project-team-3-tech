@@ -4,7 +4,8 @@ const xss = require('xss')
 const html = xss('<script>alert("xss");</script>');
 console.log(html);
 const bcrypt = require('bcryptjs');
-const saltRounds = 10;
+const saltRounds = 10
+const {query, body, validationResult } = require('express-validator') 
 
 
 
@@ -21,67 +22,80 @@ app
     .get('/songList', song)
     .get('/', onhome)
     .get('/about', onabout)
-    .get('/formulier', toonformulier)
-    .get('/users', showUsers)
+    .get('/register', showRegister)
+    .get('/login', showLogin)
+    .get('/loginHome', showLoginHome)
+   
+
 
     .listen(8000)
-    console.log("Server listening @ localhost:8000!")
 
 app
-    .post('/form', verwerkformulier)
-    .get('/more-meets', (req, res) => {
+  .get('/more-meets', (req, res) => {
         res.render('more-meets');
       });
 
-function toonformulier(req, res) {
-    res.render('form.ejs')
-}
-// function verwerkformulier(req, res) {
 
+app
+    .post('/form', verwerkformulier)
 
-//     res.send('test')
-//     console.log(req.body)
-
-
-//     bcrypt.genSalt(saltRounds, function(err, salt) {
-//     bcrypt.hash(req.body.password, salt, function(err, hash) {
-//         db.collection('users').insertOne(hash)
-//     });
-// });
-
-// }
-
-async function verwerkformulier(req, res) {
-    const { name, sirname, password } = req.body
-
-    console.log('form data:', req.body);
-
-    if (!name || !sirname || !password) {
-        return res.status(400).send('Missing required fields: name, sirname, or password');
+    function showLoginHome(req, res) {
+        res.render('loginHome.ejs');
     }
 
-    try {
-        // Hash the password using your hashData function
-        const hashedPassword = await hashData(password);
+    //login scherm
+app.post('/register', 
+    async (req, res) => {
+    const result = validationResult(req);
+    console.log("result validation", result);
 
-        // Create a user document
-        const user = {
-            name,
-            surname: sirname, // Match the field name in your form
-            password: hashedPassword,
-        };
+    if (result.isEmpty()) {
+        const { email, name, password } = req.body;
+        console.log('form data:', req.body);
 
-        // Insert the user document into MongoDB
-        const result = await db.collection('users').insertOne(user);
+        if (!email || !name || !password) {
+            return res.status(400).render('register.ejs', {
+                errors: [{ msg: 'Vul alle verplichte velden in: e-mail, naam en wachtwoord' }]
+            });
+        }
 
-        // Send success response
-        res.send('User registered successfully!');
-        console.log('Inserted user:', result.insertedId);
-    } catch (error) {
-        console.error('Error processing form:', error);
-        res.status(500).send('Error registering user');
+        try {
+            const hashedPassword = await hashData(password);
+            const user = { email, name, password: hashedPassword };
+
+            if (!db) {
+                console.error('Database not initialized');
+                return res.status(500).render('register.ejs', {
+                    errors: [{ msg: 'Serverfout: database niet geïnitialiseerd' }]
+                });
+            }
+
+            const insertResult = await db.collection('users').insertOne(user);
+            console.log('Inserted user:', insertResult.insertedId);
+            return res.redirect('/login');
+        } catch (error) {
+            console.error('Error processing form:', error);
+            return res.status(500).render('register.ejs', {
+                errors: [{ msg: 'Fout bij het registreren: probeer het later opnieuw' }]
+            });
+        }
+    } else {
+        const errors = result.array();
+        console.log('Validation errors:', errors);
+        return res.render('register.ejs', { errors });
     }
+});
+
+function showRegister(req, res) {
+    res.render('register.ejs', { errors: [] });
 }
+
+
+
+
+
+
+
 
 // Password hashing function
 async function hashData(data) {
@@ -95,6 +109,7 @@ async function hashData(data) {
   }
 }
 
+
 // Compare given and stored data (unchanged)
 async function compareData(plainTextData, hashedData) {
   try {
@@ -107,13 +122,76 @@ async function compareData(plainTextData, hashedData) {
 }
 
 
+
+//login scherm
+function showLogin(req, res) {
+    res.render('login.ejs', { errors: [] });
+}
+
+app.post('/login', [
+    body('email').isEmail().withMessage('Voer een geldig e-mailadres'),
+    body('password').notEmpty().withMessage('Wachtwoord is verplicht')
+], async (req, res) => {
+    const result = validationResult(req);
+    console.log("login validation result", result);
+
+    if (!result.isEmpty()) {
+        // Validatiefouten, toon het inlogformulier met foutmeldingen
+        const errors = result.array();
+        console.log('Validation errors:', errors);
+        return res.render('login.ejs', { errors });
+    }
+
+    const { email, password } = req.body;
+    console.log('login form data:', req.body);
+
+    try {
+        // Zoek de gebruiker in de database
+        const user = await db.collection('users').findOne({ email });
+        if (!user) {
+            // Gebruiker niet gevonden
+            return res.render('login.ejs', {
+                errors: [{ msg: 'Ongeldig e-mailadres of wachtwoord' }]
+            });
+        }
+
+        // Vergelijk het ingevoerde wachtwoord met de opgeslagen hash
+        const isMatch = await compareData(password, user.password);
+        if (!isMatch) {
+            // Wachtwoord komt niet overeen
+            return res.render('login.ejs', {
+                errors: [{ msg: 'Ongeldig e-mailadres of wachtwoord' }]
+            });
+        }
+
+        // Succesvolle login, redirect naar een dashboard of stuur een succesmelding
+        // TODO: Voeg sessiebeheer toe als je de ingelogde status wilt bijhouden
+        return res.redirect('/dashboard'); // Of: res.send('Succesvol ingelogd!');
+    } catch (error) {
+        console.error('Error processing login:', error);
+        return res.status(500).render('login.ejs', {
+            errors: [{ msg: 'Fout bij het inloggen: probeer het later opnieuw' }]
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+//home screen// 
 function onhome(req, res) {
     res.send('<h1>Hello World!</h1> <img src="/static/images/snoopy.jpg" alt="Poster" width="50%"/>')
 }
 
 function onabout(req, res) {
     res.send(`<h1>About me!</h1> <img src="/static/images/postermockup.png" alt="Poster" width="50%"/>`)
-}
+} 
 
 
 function song(req, res,) {
@@ -125,18 +203,9 @@ function song(req, res,) {
     res.render('detail.ejs', { data: song })
 }
 
-async function showUsers(req, res) {
-    try {
-        // Find users with a 'voornaam' field (not null/undefined/empty)
-        const users = await db.collection('users').find({ voornaam: { $exists: true, $ne: '' } }).project({ _id: 1, voornaam: 1 }).toArray();
-        res.render('users.ejs', { users });
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        res.status(500).send('Error fetching users');
-    }
-}
 
-// Database connectie
+//mongo db
+
 const { MongoClient, ObjectId } = require("mongodb");
 
 // Mongo configuratie uit .env bestand 
@@ -151,14 +220,12 @@ const collection = process.env.USER_COLLECTION;
 async function connectDB() {
     try {
         await client.connect()
-        console.log("Client has connected to TravelLink database!");
+        console.log("Client connected to database");
     }
     catch (error) {
         console.log(error);
     }
 }
-
-test2
 
 connectDB();
 
