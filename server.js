@@ -39,25 +39,17 @@ app
     //login scherm
 app.post('/register', [
     body('email').isEmail().withMessage('E-mail is ongeldig'),
-    body('password').isLength({ min: 6 }).withMessage('Wachtwoord moet minimaal 6 tekens lang zijn'),
-    body('name').notEmpty().withMessage('Naam is verplicht')
-], processRegister);
+    body('name').notEmpty().withMessage('Naam is verplicht'),
+    body('password').isLength({ min: 6 }).withMessage('Wachtwoord moet minimaal 6 tekens lang zijn')
 
-function showRegister(req, res) {
-    res.render('register.ejs', { errors: [] });
-}
-
-
-async function processRegister(req, res) {
+], async (req, res) => {
     const result = validationResult(req);
     console.log("result validation", result);
 
     if (result.isEmpty()) {
-        // Validatie geslaagd, verwerk het formulier
         const { email, name, password } = req.body;
         console.log('form data:', req.body);
 
-        // Controleer of alle vereiste velden aanwezig zijn
         if (!email || !name || !password) {
             return res.status(400).render('register.ejs', {
                 errors: [{ msg: 'Vul alle verplichte velden in: e-mail, naam en wachtwoord' }]
@@ -65,29 +57,19 @@ async function processRegister(req, res) {
         }
 
         try {
-            // Hash het wachtwoord
             const hashedPassword = await hashData(password);
-            console.log('Hashed password:', hashedPassword); // Debug: log hash
+            const user = { email, name, password: hashedPassword };
 
-            // Maak een gebruikersdocument
-            const user = {
-                email,
-                name,
-                password: hashedPassword,
-            };
-
-            // Controleer of db correct is geïnitialiseerd
             if (!db) {
                 console.error('Database not initialized');
-                return res.status(500).send('Server error: database not initialized');
+                return res.status(500).render('register.ejs', {
+                    errors: [{ msg: 'Serverfout: database niet geïnitialiseerd' }]
+                });
             }
 
-            //  // Insert the user document into MongoDB
             const insertResult = await db.collection('users').insertOne(user);
-            console.log('Inserted user:', insertResult.insertedId); // Debug: log insert
-
-            // Redirect naar een succes- of inlogpagina
-            return res.redirect('/login'); // Of: res.send('User registered successfully!');
+            console.log('Inserted user:', insertResult.insertedId);
+            return res.redirect('/login');
         } catch (error) {
             console.error('Error processing form:', error);
             return res.status(500).render('register.ejs', {
@@ -95,12 +77,19 @@ async function processRegister(req, res) {
             });
         }
     } else {
-        // Foutmeldingen gevonden, stuur ze terug naar de registratiepagina
         const errors = result.array();
-        console.log('Validation errors:', errors); // Debug: log validatiefouten
+        console.log('Validation errors:', errors);
         return res.render('register.ejs', { errors });
     }
-} 
+});
+
+function showRegister(req, res) {
+    res.render('register.ejs', { errors: [] });
+}
+
+
+
+
 
 
 
@@ -182,6 +171,11 @@ app.post('/login', [
         });
     }
 });
+
+
+
+
+
 
 
 
