@@ -50,11 +50,19 @@
       <h2><%= profile.name %></h2>
       <p><strong>Location:</strong> <%= profile.location %></p>
 
-      <p><strong>Tags:</strong><br>
-        <% profile.tags.split(',').forEach(function(tag) { %>
-          <span class="box"><%= tag.trim() %></span>
-        <% }) %>
-      </p>
+ <p><strong>Tags:</strong><br>
+  <% if (Array.isArray(profile.tags)) { %>
+    <% profile.tags.forEach(function(tag) { %>
+      <span class="box"><%= tag.trim() %></span>
+    <% }) %>
+  <% } else if (typeof profile.tags === 'string') { %>
+    <% profile.tags.split(',').forEach(function(tag) { %>
+      <span class="box"><%= tag.trim() %></span>
+    <% }) %>
+  <% } else { %>
+    <span>No tags available</span>
+  <% } %>
+</p>
 
       <p class="bio"><%= profile.bio %></p>
 
