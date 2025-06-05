@@ -1,5 +1,8 @@
 const express = require('express')
 const app = express()
+
+const { MongoClient, ObjectId } = require("mongodb");
+
 const xss = require('xss')
 const html = xss('<script>alert("xss");</script>');
 console.log(html);
@@ -9,15 +12,20 @@ const {query, body, validationResult } = require('express-validator')
 
 
 
+
 app.use(express.urlencoded({ extended: true }))
 
-require("dotenv").config();
+require("dotenv").config(); 
+
+const multer = require('multer');
+
+
 
 app
-    .use('/static', express.static('static'))
+ .use('/static', express.static('static'))
 
-    .set('view engine', 'ejs')
-    .set('views', 'view')
+ .set('view engine', 'ejs')
+ .set('views', 'view')
 
     .get('/songList', song)
     .get('/', onhome)
@@ -97,17 +105,6 @@ function showRegister(req, res) {
 
 
 
-// Password hashing function
-async function hashData(data) {
-  try {
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hashedData = await bcrypt.hash(data, salt);
-    return hashedData;
-  } catch (error) {
-    console.error('Error hashing password:', error);
-    throw error; // Rethrow to be caught in the calling function
-  }
-}
 
 
 // Compare given and stored data (unchanged)
@@ -122,25 +119,8 @@ async function compareData(plainTextData, hashedData) {
 }
 
 
+ .listen(8000)
 
-//login scherm
-function showLogin(req, res) {
-    res.render('login.ejs', { errors: [] });
-}
-
-app.post('/login', [
-    body('email').isEmail().withMessage('Voer een geldig e-mailadres'),
-    body('password').notEmpty().withMessage('Wachtwoord is verplicht')
-], async (req, res) => {
-    const result = validationResult(req);
-    console.log("login validation result", result);
-
-    if (!result.isEmpty()) {
-        // Validatiefouten, toon het inlogformulier met foutmeldingen
-        const errors = result.array();
-        console.log('Validation errors:', errors);
-        return res.render('login.ejs', { errors });
-    }
 
     const { email, password } = req.body;
     console.log('login form data:', req.body);
@@ -194,19 +174,16 @@ function onabout(req, res) {
 } 
 
 
-function song(req, res,) {
+function song(req, res, ) {
     let song = {
         title: 'FAMJAM400',
         description: 'You watched me grow up from a...'
     }
-
-    res.render('detail.ejs', { data: song })
+    
+    res.render('detail.ejs', {data: song})
 }
 
 
-//mongo db
-
-const { MongoClient, ObjectId } = require("mongodb");
 
 // Mongo configuratie uit .env bestand 
 const uri = process.env.URI;
@@ -227,7 +204,53 @@ async function connectDB() {
     }
 }
 
-connectDB();
+connectDB()
+
+
+app.get('/create-test-profile', async (req, res) => {
+    const userCollection = db.collection(collection);
+  
+    const newUser = {
+      name: "Ivy",
+      location: "Amsterdam",
+      tags: ["Hiking", "Coffee"],
+      languages: ["Dutch", "English"], 
+      bio: "Backpacking across Europe | Love local cafe’s, beach walks and other stuff!"
+    };
+  
+    const result = await userCollection.insertOne(newUser);
+    res.send("Testprofiel gemaakt met ID: " + result.insertedId);
+  });
+
+  app.get('/profile/:id', async (req, res) => {
+    const profile = await db.collection(collection).findOne({ _id: new ObjectId(req.params.id) });
+  
+    const editing = req.query.edit === 'true';
+  
+    res.render('profile', { profile: profile, editing: editing });
+  });
+
+  app.post('/profile/:id', async (req, res) => {
+    const updatedProfile = {
+      name: req.body.name,
+      location: req.body.location,
+      tags: req.body.tags,
+      languages: req.body.languages,
+      bio: req.body.bio
+    };
+  
+    await db.collection(collection).updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: updatedProfile }
+    );
+  
+    res.redirect("/profile/" + req.params.id);
+  });
+  
+
+
+
+
 
 
 
