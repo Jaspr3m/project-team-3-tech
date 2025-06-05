@@ -21,7 +21,9 @@ app
     .get('/register', showRegister)
     .get('/login', showLogin)
     .get('/loginHome', showLoginHome)
- .get('/home', homepage)
+    .get('/more-meets', (req, res) => {
+      res.render('more-meets');
+    });
    
 
 
