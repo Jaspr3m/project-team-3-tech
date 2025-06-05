@@ -30,7 +30,14 @@ app
 
     .listen(8000)
 
-    //loginHome scherm
+app
+  .get('/more-meets', (req, res) => {
+        res.render('more-meets');
+      });
+
+
+app
+    .post('/form', verwerkformulier)
 
     function showLoginHome(req, res) {
         res.render('loginHome.ejs');
