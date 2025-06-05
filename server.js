@@ -5,6 +5,10 @@ app.use(express.urlencoded({ extended: true }))
 
 require("dotenv").config(); 
 
+const multer = require('multer');
+
+
+
 app
  .use('/static', express.static('static'))
 
@@ -101,10 +105,6 @@ app.get('/create-test-profile', async (req, res) => {
     res.redirect("/profile/" + req.params.id);
   });
   
-
-
-
-
 
 
 
