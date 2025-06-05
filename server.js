@@ -25,6 +25,7 @@ app
     .get('/registerAccount', showRegister)
     .get('/login', showLogin)
     .get('/loginHome', showLoginHome)
+    .get('/home', homepage)
    
 
 
