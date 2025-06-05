@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TravelLink</title>
+  <link rel="stylesheet" href="/static/css/stylehome.css" />
+</head>
+
+
+
+
+<body>
+  <header>
+    <a href="/">
+      <img src="/static/images/tllogo.png" alt="Travel Link logo">
+    </a>
+
+    <input type="text" placeholder="Beach walk, 'party', 'relaxing'">
+
+    <nav>
+      <button>Create Meet</button>
+      <button>Manage Meets</button>
+    </nav>
+
+    <section>
+      <a href="/notifications">
+        <img src="/static/images/alarm.svg" alt="Notifications">
+      </a>
+      <a href="/profile">
+        <img src="/static/images/profiel.svg" alt="Profile">
+      </a>
+    </section>
+  </header>
+  <main>
+    <body>
+      <h1>Filter Meets</h1>
+    
+      <form>
+        <label>
+          Location:
+          <select name="category">
+            <option value="">-- choose --</option>
+            <option value="party">Amsterdam</option>
+            <option value="study">Rotterdam</option>
+            <option value="walk">Den Haag</option>
+            <option value="walk">Utrecht</option>
+          </select>
+        </label>
+    
+        <label>
+          Category:
+          <select name="category">
+            <option value="">-- choose --</option>
+            <option value="party">Party</option>
+            <option value="study">Study</option>
+            <option value="walk">Walk</option>
+          </select>
+        </label>
+        <label>
+          Date:
+          <input type="date" name="date">
+        </label>
+        <button type="submit">Apply Filters</button>
+      </form>
+    
+      <a href="/">← Back to Home</a>
+    </body>
+  </main>
+</body>
+</html>

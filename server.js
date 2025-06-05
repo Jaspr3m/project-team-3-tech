@@ -29,6 +29,9 @@ app
 
 app
     .post('/form', verwerkformulier)
+    .get('/more-meets', (req, res) => {
+        res.render('more-meets');
+      });
 
 function toonformulier(req, res) {
     res.render('form.ejs')
