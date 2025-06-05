@@ -22,7 +22,7 @@ app
     .get('/songList', song)
     .get('/', onhome)
     .get('/about', onabout)
-    .get('/registerAccount', showRegister)
+    .get('/register', showRegister)
     .get('/login', showLogin)
     .get('/loginHome', showLoginHome)
    
@@ -37,12 +37,8 @@ app
     }
 
     //login scherm
-app.post('/register', [
-    body('email').isEmail().withMessage('E-mail is ongeldig'),
-    body('name').notEmpty().withMessage('Naam is verplicht'),
-    body('password').isLength({ min: 6 }).withMessage('Wachtwoord moet minimaal 6 tekens lang zijn')
-
-], async (req, res) => {
+app.post('/register', 
+    async (req, res) => {
     const result = validationResult(req);
     console.log("result validation", result);
 
