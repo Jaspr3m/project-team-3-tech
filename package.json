@@ -10,6 +10,7 @@
     "minify": "postcss static/style.css > output.css"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "bootstrap": "^5.3.6",
     "compression": "^1.8.0",
     "dotenv": "^16.5.0",
@@ -17,12 +18,8 @@
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "mongodb": "^6.16.0",
-
-    "multer": "^2.0.1"
-
- 
+    "multer": "^2.0.1",
     "xss": "^1.0.15"
-
   },
   "devDependencies": {
     "cssnano": "^7.0.7",

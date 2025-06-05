@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TravelLink</title>
   <link rel="stylesheet" href="/static/css/homepage.css" />
+   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
   <header>
@@ -27,6 +28,7 @@
         <img src="/static/images/profiel.svg" alt="Profile">
       </a>
     </section>
+    <%- include('partials/header') %>
   </header>
 
   <main>
@@ -52,5 +54,8 @@
       <img src="/static/images/map_placeholder.png" alt="Map showing nearby locations">
     </section>
   </main>
+  <footer>
+  <%- include('partials/footer') %>
+</footer>
 </body>
 </html>
