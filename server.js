@@ -5,24 +5,174 @@ app.use(express.urlencoded({ extended: true }));
 
 require("dotenv").config();
 
-// Set view engine + views + static files
-app.use("/static", express.static("static"));
-app.set("view engine", "ejs");
-app.set("views", "views");
-app.listen(3000);
-console.log("Server listening @ localhost:3000!");
+const multer = require('multer');
 
-// Reveal rootpage with onhome() function
-app.get("/", async (req, res) => {
-  // Find first 3 meets from the 'meets' collection
-  const meets = await db
-    .collection("meets")
-    .find({})
-    .sort({ createdAt: -1 })
-    .limit(3)
-    .toArray();
-  res.render("homepage.ejs", { meets });
+
+
+app
+ .use('/static', express.static('static'))
+
+ .set('view engine', 'ejs')
+ .set('views', 'view')
+
+    .get('/songList', song)
+    .get('/', onhome)
+    .get('/about', onabout)
+    .get('/register', showRegister)
+    .get('/login', showLogin)
+    .get('/loginHome', showLoginHome)
+ .get('/home', homepage)
+   
+
+
+    .listen(8000)
+
+app
+  .get('/more-meets', (req, res) => {
+        res.render('more-meets');
+      });
+
+
+app
+    .post('/form', verwerkformulier)
+
+    function showLoginHome(req, res) {
+        res.render('loginHome.ejs');
+    }
+
+    //login scherm
+app.post('/register', 
+    async (req, res) => {
+    const result = validationResult(req);
+    console.log("result validation", result);
+
+    if (result.isEmpty()) {
+        const { email, name, password } = req.body;
+        console.log('form data:', req.body);
+
+        if (!email || !name || !password) {
+            return res.status(400).render('register.ejs', {
+                errors: [{ msg: 'Vul alle verplichte velden in: e-mail, naam en wachtwoord' }]
+            });
+        }
+
+        try {
+            const hashedPassword = await hashData(password);
+            const user = { email, name, password: hashedPassword };
+
+            if (!db) {
+                console.error('Database not initialized');
+                return res.status(500).render('register.ejs', {
+                    errors: [{ msg: 'Serverfout: database niet geïnitialiseerd' }]
+                });
+            }
+
+            const insertResult = await db.collection('users').insertOne(user);
+            console.log('Inserted user:', insertResult.insertedId);
+            return res.redirect('/login');
+        } catch (error) {
+            console.error('Error processing form:', error);
+            return res.status(500).render('register.ejs', {
+                errors: [{ msg: 'Fout bij het registreren: probeer het later opnieuw' }]
+            });
+        }
+    } else {
+        const errors = result.array();
+        console.log('Validation errors:', errors);
+        return res.render('register.ejs', { errors });
+    }
 });
+
+function showRegister(req, res) {
+    res.render('register.ejs', { errors: [] });
+}
+
+
+
+
+
+
+
+
+
+
+// Compare given and stored data (unchanged)
+async function compareData(plainTextData, hashedData) {
+  try {
+    const match = await bcrypt.compare(plainTextData, hashedData);
+    return match;
+  } catch (error) {
+    console.error('Error comparing data:', error);
+    throw error;
+  }
+}
+
+
+ .listen(8000)
+
+
+    const { email, password } = req.body;
+    console.log('login form data:', req.body);
+
+    try {
+        // Zoek de gebruiker in de database
+        const user = await db.collection('users').findOne({ email });
+        if (!user) {
+            // Gebruiker niet gevonden
+            return res.render('login.ejs', {
+                errors: [{ msg: 'Ongeldig e-mailadres of wachtwoord' }]
+            });
+        }
+
+        // Vergelijk het ingevoerde wachtwoord met de opgeslagen hash
+        const isMatch = await compareData(password, user.password);
+        if (!isMatch) {
+            // Wachtwoord komt niet overeen
+            return res.render('login.ejs', {
+                errors: [{ msg: 'Ongeldig e-mailadres of wachtwoord' }]
+            });
+        }
+
+        // Succesvolle login, redirect naar een dashboard of stuur een succesmelding
+        // TODO: Voeg sessiebeheer toe als je de ingelogde status wilt bijhouden
+        return res.redirect('/dashboard'); // Of: res.send('Succesvol ingelogd!');
+    } catch (error) {
+        console.error('Error processing login:', error);
+        return res.status(500).render('login.ejs', {
+            errors: [{ msg: 'Fout bij het inloggen: probeer het later opnieuw' }]
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+//home screen// 
+function onhome(req, res) {
+    res.send('<h1>Hello World!</h1> <img src="/static/images/snoopy.jpg" alt="Poster" width="50%"/>')
+}
+
+function onabout(req, res) {
+    res.send(`<h1>About me!</h1> <img src="/static/images/postermockup.png" alt="Poster" width="50%"/>`)
+} 
+
+
+function song(req, res, ) {
+    let song = {
+        title: 'FAMJAM400',
+        description: 'You watched me grow up from a...'
+    }
+    
+    res.render('detail.ejs', {data: song})
+}
+
+
 
 // Mongo configuratie uit .env bestand
 const uri = process.env.URI;
