@@ -16,7 +16,7 @@ require("dotenv").config();
 app
     .use('/static', express.static('static'))
 
-    .set('view engine', 'ejs')
+    .set('view engine', 'ejs') 
     .set('views', 'view')
 
     .get('/songList', song)
