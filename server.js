@@ -123,7 +123,7 @@ app
         try {
             await db.collection(collection).updateOne(
                 { _id: new ObjectId(req.params.id) },
-                { $set: updatedProfile }
+                { $set: updatedProfile } 
             );
             res.redirect('/profile/' + req.params.id);
         } catch (error) {
@@ -225,13 +225,8 @@ function song(req, res) {
 
 
 
-// Mongo configuratie uit .env bestand 
-const uri = process.env.URI;
 
-// nieuwe MongoDB client 
-const client = new MongoClient(uri);
-const db = client.db(process.env.DB_NAME);
-const collection = process.env.USER_COLLECTION;
+
 
 
 async function connectDB() {
@@ -288,6 +283,17 @@ app.get('/create-test-profile', async (req, res) => {
   });
   
 
+function showRegister(req, res) {
+    res.render('register.ejs', { errors: [] });
+}
+
+function showLogin(req, res) {
+    res.render('login.ejs', { errors: [] });
+}
+
+function showLoginHome(req, res) {
+    res.render('loginHome.ejs', { errors: [] });
+}
 
 
 
