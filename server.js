@@ -33,6 +33,7 @@ app
     .get('/register', showRegister)
     .get('/login', showLogin)
     .get('/loginHome', showLoginHome)
+ .get('/home', homepage)
    
 
 
