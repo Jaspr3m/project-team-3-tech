@@ -72,17 +72,7 @@ async function compareData(plainTextData, hashedData) {
 }
 
 // Routes
-app
-    .get('/songList', song)
-    .get('/', onhome)
-    .get('/about', onabout)
-    .get('/register', showRegister)
-    .get('/login', showLogin)
-    .get('/loginHome', showLoginHome)
-   
 
-
-    .listen(8000)
 
 app
   .get('/more-meets', (req, res) => {
@@ -225,7 +215,6 @@ function song(req, res) {
     
     res.render('detail.ejs', {data: song})
 }
-
 
 async function connectDB() {
   try {
