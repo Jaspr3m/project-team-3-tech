@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registreren</title>
+    <link rel="stylesheet" href="/static/css/register.css">
+    
+</head>
+<body>
+  <section>
+        <h1>Travel Link</h1>
+        <h2>Let's Get Started</h2>
+        <form method="POST" action="/register">
+            <label for="email">E-mail:</label>
+            <input type="email" class="email" name="email" required>
+            <div class="feedback emailFeedback"></div>
+            
+            <label for="name">Name:</label>
+            <input type="text" class="name" name="name" required>
+            
+            <label for="password">Password:</label>
+            <div class="password-container">
+                <input type="password" class="password" name="password" required>
+                <button type="button" class="showPassword" aria-label="Toggle password visibility">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <title>Show password</title>
+                        <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M1 12C1 12 5 20 12 20C19 20 23 12 23 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <circle cx="12" cy="12" r="3" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+            <div class="feedback passwordFeedback"></div>
+            
+            <button type="submit">Register</button>
+        </form>
+
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <ul class="error-list">
+                <% errors.forEach(error => { %>
+                    <li><%= error.msg %></li>
+                <% }) %>
+            </ul>
+        <% } %>
+    </section>
+    
+    <script src="/static/script/register.js"></script>
+</body>
+</html>
