@@ -1,0 +1,107 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f5f5f5;
+    color: #111;
+    line-height: 1.5;
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  section a img {
+    width: 3rem;
+    height: 3rem;
+    transition: transform 0.2s ease;
+    margin: 0.1em;
+  }
+  
+  section a:hover img {
+    transform: scale(1.1);
+  }
+  
+  main section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  em {
+    font-style: italic;
+    font-weight: 700;
+  }
+  
+  ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 0 1rem 1rem;
+  }
+  
+  li {
+    background: linear-gradient(135deg, #82deea 0%, #53b8d7 100%);
+    padding: 1rem;
+    border-radius: 8px;
+    width: 150px;
+    text-align: center;
+    flex: 0 0 auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    animation: fadeInSlideUp 0.7s ease forwards;
+  }
+  
+  li:hover {
+    background: #5fc0d7;
+    transform: translateY(-3px);
+    cursor: pointer;
+  }
+  
+  li img {
+    width: 80%;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+  }
+  
+  li h3 {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #222;
+    margin-bottom: 0.25rem;
+  }
+  
+  li p {
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.7);
+    margin-bottom: 0.5rem;
+  }
+  
+  li time {
+    font-weight: bold;
+    color: #111;
+  }
+  
+  ul a {
+    display: block;
+    text-align: center;
+    background-color: #ff5a5f;
+    color: white;
+    padding: 1rem;
+    margin: 1rem auto;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    width: 90%;
+    height: 50%;
+    transition: transform 0.2s ease;
+  }
+  
+  ul a:hover {
+    transform: scale(1.05);
+  }
+  
+  section img[src*="map"] {
+    display: block;
+    margin: auto;
+    width: 50%;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+  }
+  
