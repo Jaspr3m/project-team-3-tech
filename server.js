@@ -7,8 +7,6 @@ require("dotenv").config();
 
 const app = express();
 
-const saltRounds = 10
-
 // URL-encoded body parser
 app.use(express.urlencoded({ extended: true }));
 // Static files (css, afbeeldingen, etc.)
@@ -23,6 +21,14 @@ app.use(express.urlencoded({ extended: true }))
 require("dotenv").config(); 
 
 const multer = require('multer');
+
+// Middleware
+app
+    .use(express.urlencoded({ extended: true }))
+    .use('/static', express.static('static'))
+    .set('view engine', 'ejs')
+    .set('view', 'view');
+
 
 
 // MongoDB configuration
@@ -190,7 +196,7 @@ app
             });
         }
     })
-  
+    .post('/form', verwerkformulier);
 
 // Route handlers
 function onhome(req, res) {
@@ -251,7 +257,8 @@ app.get('/more-meets', (req, res) => {
   res.render('more-meets');
 });
 
-
+// Verwerk formulier
+app.post('/form', verwerkformulier);
 
 // --- REGISTRATIE & LOGIN -------------------------------------------------
 
@@ -427,9 +434,7 @@ app.post('/profile/:id', async (req, res) => {
       { $set: updatedProfile }
     );
     res.redirect("/profile/" + req.params.id);
-  } catch {
-
-  }
+  });
   
 
 function showRegister(req, res) {
@@ -443,6 +448,21 @@ function showLogin(req, res) {
 function showLoginHome(req, res) {
     res.render('loginHome.ejs', { errors: [] });
 }
-})
 
-app.listen(8000)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
