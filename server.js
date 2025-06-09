@@ -401,20 +401,62 @@ app.get("/meet/:id", async (req, res) => {
   }
 });
 
-// All users overview
-app.get("/users", async (req, res) => {
+// Join a meet
+app.post("/meet/:id/join", async (req, res) => {
+  const userId = getCurrentUserId(req);
   try {
-    // Example: only show users with a 'voornaam' property
-    const users = await db
-      .collection("users")
-      .find({ voornaam: { $exists: true } })
-      .toArray();
-    res.render("users", { users });
+    await db
+      .collection("meets")
+      .updateOne(
+        { _id: new ObjectId(req.params.id) },
+        { $addToSet: { members: userId } }
+      );
+    res.redirect("/meet/" + req.params.id);
   } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).send("Fout bij het ophalen van users");
+    console.error("Error joining meet:", error);
+    res.status(500).send("Fout bij het joinen van meet");
   }
 });
+
+// Leave a meet
+app.post("/meet/:id/cancel", async (req, res) => {
+  const userId = getCurrentUserId(req);
+  try {
+    await db
+      .collection("meets")
+      .updateOne(
+        { _id: new ObjectId(req.params.id) },
+        { $pull: { members: userId } }
+      );
+    res.redirect("/meet/" + req.params.id);
+  } catch (error) {
+    console.error("Error leaving meet:", error);
+    res.status(500).send("Fout bij het verlaten van meet");
+  }
+});
+
+// Single meet overview (update to show join/cancel button)
+app.get("/meet/:id", async (req, res) => {
+  try {
+    const meet = await db
+      .collection("meets")
+      .findOne({ _id: new ObjectId(req.params.id) });
+    if (!meet) return res.status(404).send("Meet not found");
+    const userId = getCurrentUserId(req);
+    const isMember =
+      Array.isArray(meet.members) && meet.members.includes(userId);
+    res.render("meet-overview", { meet, isMember, userId });
+  } catch (error) {
+    console.error("Error fetching meet:", error);
+    res.status(500).send("Fout bij het ophalen van meet");
+  }
+});
+
+// Simulate a logged-in user (replace with real session logic later)
+function getCurrentUserId(req) {
+  // For demo purposes, return a hardcoded user ID
+  return "demoUserId";
+}
 
 app.listen(3000);
 console.log("Server listening @ localhost:3000!");

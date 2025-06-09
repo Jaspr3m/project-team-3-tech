@@ -71,59 +71,46 @@
   </head>
   <body>
     <header><%- include('partials/header') %></header>
-    <form
-      class="meet-grid"
-      action="/user/create-meet"
-      method="POST"
-      enctype="multipart/form-data"
-    >
-      <% if (typeof error !== 'undefined' && error) { %>
-      <div
-        style="
-          color: red;
-          grid-column: 1 / -1;
-          margin-bottom: 1em;
-          font-weight: bold;
-        "
-      >
-        <%= error %>
-      </div>
-      <% } %>
-      <div>
-        <label for="meetingName">Meeting Name *</label>
-        <input type="text" id="meetingName" name="meetingName" required />
-      </div>
-      <div>
-        <label for="location">Location *</label>
-        <input type="text" id="location" name="location" required />
-      </div>
-      <div>
-        <label for="description">Short Description *</label>
-        <textarea id="description" name="description" required></textarea>
-      </div>
-      <div>
-        <label for="maxPeople">Max Amount of People</label>
-        <input type="number" id="maxPeople" name="maxPeople" min="1" />
-      </div>
-      <div style="grid-column: 1 / -1">
-        <label for="image">Cover Image *</label>
-        <input type="file" id="image" name="image" accept="image/*" required />
-      </div>
-      <div class="meet-actions">
-        <button type="submit" class="create-btn">Create</button>
-        <a
-          href="/profile"
-          class="cancel-btn"
-          style="
-            text-decoration: none;
-            display: inline-block;
-            padding: 10px 18px;
-            border-radius: 8px;
-          "
-          >Cancel</a
+    <main>
+      <div class="meet-grid">
+        <% if (typeof error !== 'undefined' && error) { %>
+        <div style="color: red; margin-bottom: 1rem; font-weight: bold">
+          <%= error %>
+        </div>
+        <% } %>
+        <form
+          method="POST"
+          action="/user/create-meet"
+          enctype="multipart/form-data"
         >
+          <label for="meetingName">Meet Name:</label>
+          <input type="text" id="meetingName" name="meetingName" required />
+          <label for="location">Location:</label>
+          <input type="text" id="location" name="location" required />
+          <label for="description">Description:</label>
+          <textarea id="description" name="description" required></textarea>
+          <label for="maxPeople">Max People:</label>
+          <input
+            type="number"
+            id="maxPeople"
+            name="maxPeople"
+            min="1"
+            required
+          />
+          <label for="image">Cover Image:</label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            required
+          />
+          <div class="meet-actions">
+            <button type="submit" class="create-btn">Create Meet</button>
+          </div>
+        </form>
       </div>
-    </form>
+    </main>
     <footer><%- include('partials/footer') %></footer>
   </body>
 </html>

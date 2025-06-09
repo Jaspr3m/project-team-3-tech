@@ -37,11 +37,8 @@
       <section>
         <h2>Find a meet near <em>you!</em></h2>
         <div class="meet-row">
-          <% meets.forEach(meet => { %>
-          <div
-            class="meet-card"
-            onclick="window.location.href='/meet/<%= meet._id %>'"
-          >
+          <% const userId = 'demoUserId'; %> <% meets.forEach(meet => { %>
+          <div class="meet-card" data-meet-id="<%= meet._id %>">
             <img
               src="<%= meet.image || '/static/images/map_placeholder.png' %>"
               alt="Meet Image"
@@ -51,6 +48,31 @@
               <p><%= meet.location %></p>
               <p><%= meet.description %></p>
               <p>Max: <%= meet.maxPeople %></p>
+            </div>
+            <a href="/meet/<%= meet._id %>">View</a>
+            <div class="meet-actions">
+              <% const isMember = Array.isArray(meet.members) &&
+              meet.members.includes(userId); %> <% if (!isMember) { %>
+              <form
+                method="POST"
+                action="/meet/<%= meet._id %>/join"
+                class="join-leave-form"
+                data-action="join"
+              >
+                <input type="hidden" name="userId" value="<%= userId %>" />
+                <button type="submit">Join Meet</button>
+              </form>
+              <% } else { %>
+              <form
+                method="POST"
+                action="/meet/<%= meet._id %>/cancel"
+                class="join-leave-form"
+                data-action="leave"
+              >
+                <input type="hidden" name="userId" value="<%= userId %>" />
+                <button type="submit" class="cancel-btn">Leave Meet</button>
+              </form>
+              <% } %>
             </div>
           </div>
           <% }) %>
@@ -111,6 +133,24 @@
         font-weight: bold;
         cursor: pointer;
       }
+      .meet-actions {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+        width: 100%;
+      }
+      .meet-actions form {
+        flex: 1;
+      }
+      .cancel-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
       @media (max-width: 700px) {
         .meet-row {
           flex-direction: column;
@@ -123,5 +163,32 @@
         }
       }
     </style>
+    <script>
+      // Intercept join/leave form submissions to update the button immediately
+      document.querySelectorAll(".join-leave-form").forEach((form) => {
+        form.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const card = form.closest(".meet-card");
+          const meetId = card.getAttribute("data-meet-id");
+          const action = form.getAttribute("data-action");
+          const url = form.action;
+          const formData = new FormData(form);
+          await fetch(url, { method: "POST", body: formData });
+          // Update the button in the DOM
+          if (action === "join") {
+            form.outerHTML = `<form method='POST' action='/meet/${meetId}/cancel' class='join-leave-form' data-action='leave'><input type='hidden' name='userId' value='demoUserId' /><button type='submit' class='cancel-btn'>Leave Meet</button></form>`;
+          } else {
+            form.outerHTML = `<form method='POST' action='/meet/${meetId}/join' class='join-leave-form' data-action='join'><input type='hidden' name='userId' value='demoUserId' /><button type='submit'>Join Meet</button></form>`;
+          }
+          // Re-attach event listeners to the new form
+          document.querySelectorAll(".join-leave-form").forEach((f) => {
+            if (!f.hasAttribute("data-listener")) {
+              f.setAttribute("data-listener", "true");
+              f.addEventListener("submit", arguments.callee);
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>
