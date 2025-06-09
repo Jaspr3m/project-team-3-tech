@@ -21,6 +21,11 @@ router.get("/create-meet", (req, res) => {
 
 // POST: Handle meet creation
 router.post("/create-meet", upload.single("image"), async (req, res) => {
+  if (!req.file) {
+    return res.render("create-meet", {
+      error: "You must upload a cover image to create a meet.",
+    });
+  }
   // Save the meet to the database
   const db =
     req.app.locals.db ||
@@ -32,7 +37,8 @@ router.post("/create-meet", upload.single("image"), async (req, res) => {
     location: req.body.location,
     description: req.body.description,
     maxPeople: req.body.maxPeople,
-    image: req.file ? "/static/images/" + req.file.filename : null,
+    image: "/static/images/" + req.file.filename,
+    members: [], // Add members array for join/leave feature
   };
   const dbInstance = await db;
   await dbInstance.collection("meets").insertOne(meet);

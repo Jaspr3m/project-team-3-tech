@@ -84,6 +84,18 @@
         </form>
         <% } %>
       </div>
+      <div style="margin-top: 2rem">
+        <h3>Members:</h3>
+        <% if (meet.members && meet.members.length > 0) { %>
+        <ul style="list-style: none; padding: 0">
+          <% meet.members.forEach(function(member) { %>
+          <li><%= member %></li>
+          <% }) %>
+        </ul>
+        <% } else { %>
+        <p>No one has joined this meet yet.</p>
+        <% } %>
+      </div>
     </div>
     <footer><%- include('partials/footer') %></footer>
     <script>

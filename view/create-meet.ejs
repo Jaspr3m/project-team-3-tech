@@ -77,13 +77,25 @@
       method="POST"
       enctype="multipart/form-data"
     >
+      <% if (typeof error !== 'undefined' && error) { %>
+      <div
+        style="
+          color: red;
+          grid-column: 1 / -1;
+          margin-bottom: 1em;
+          font-weight: bold;
+        "
+      >
+        <%= error %>
+      </div>
+      <% } %>
       <div>
         <label for="meetingName">Meeting Name *</label>
         <input type="text" id="meetingName" name="meetingName" required />
       </div>
       <div>
-        <label for="location">Location</label>
-        <input type="text" id="location" name="location" />
+        <label for="location">Location *</label>
+        <input type="text" id="location" name="location" required />
       </div>
       <div>
         <label for="description">Short Description *</label>
@@ -94,8 +106,8 @@
         <input type="number" id="maxPeople" name="maxPeople" min="1" />
       </div>
       <div style="grid-column: 1 / -1">
-        <label for="image">Picture</label>
-        <input type="file" id="image" name="image" accept="image/*" />
+        <label for="image">Cover Image *</label>
+        <input type="file" id="image" name="image" accept="image/*" required />
       </div>
       <div class="meet-actions">
         <button type="submit" class="create-btn">Create</button>
