@@ -459,7 +459,20 @@ function getCurrentUserId(req) {
 }
 
 app.listen(3000);
-console.log("Server listening @ localhost:3000!");
+console.log("Server listening @ http://localhost:3000!");
+console.log(`\nImportant routes:\n
+Homepage:           http://localhost:3000/
+More meets:         http://localhost:3000/more-meets
+Register:           http://localhost:3000/register
+Login:              http://localhost:3000/login
+Login Home:         http://localhost:3000/loginHome
+Dashboard:          http://localhost:3000/dashboard
+Create Test Profile:http://localhost:3000/create-test-profile
+Profile:            http://localhost:3000/profile/:id
+All Meets:          http://localhost:3000/meets
+Create Meet:        http://localhost:3000/user/create-meet
+Meet Overview:      http://localhost:3000/meet/:id
+`);
 
 /*
 http://localhost:3000/
