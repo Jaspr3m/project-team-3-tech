@@ -418,7 +418,21 @@ app.get("/users", async (req, res) => {
 
 app.listen(3000);
 console.log("Server listening @ localhost:3000!");
-console.log(`\nimportant routes\nlocalhost:3000/ || homepage\nlocalhost:3000/more-meets\nlocalhost:3000/register\nlocalhost:3000/login\nlocalhost:3000/loginHome\nlocalhost:3000/dashboard\nlocalhost:3000/create-test-profile\nlocalhost:3000/profile/:id\nlocalhost:3000/meets\nlocalhost:3000/meet/:id\nlocalhost:3000/user/create-meet\n`);
+console.log(`
+
+  localhost:3000/
+  localhost:3000/more-meets
+  localhost:3000/register
+  localhost:3000/login
+  localhost:3000/loginHome
+  localhost:3000/dashboard
+  localhost:3000/create-test-profile
+  localhost:3000/profile/:id
+  localhost:3000/meets
+  localhost:3000/meet/:id
+  localhost:3000/user/create-meet
+  
+`);
 
 /*
 http://localhost:3000/
