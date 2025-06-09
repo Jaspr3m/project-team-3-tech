@@ -63,12 +63,18 @@
       <p><strong>Location:</strong> <%= meet.location %></p>
       <p><strong>Description:</strong> <%= meet.description %></p>
       <p><strong>Max People:</strong> <%= meet.maxPeople %></p>
-      <div class="meet-actions">
+      <div
+        class="meet-actions"
+        id="join-leave-form-container"
+        data-meet-id="<%= meet._id %>"
+      >
         <% if (!isMember) { %>
         <form
           method="POST"
           action="/meet/<%= meet._id %>/join"
           style="display: inline"
+          class="join-leave-form"
+          data-action="join"
         >
           <input type="hidden" name="userId" value="<%= userId || '' %>" />
           <button type="submit">Join Meet</button>
@@ -78,9 +84,11 @@
           method="POST"
           action="/meet/<%= meet._id %>/cancel"
           style="display: inline"
+          class="join-leave-form"
+          data-action="leave"
         >
           <input type="hidden" name="userId" value="<%= userId || '' %>" />
-          <button type="submit" class="cancel-btn">Cancel</button>
+          <button type="submit" class="cancel-btn">Leave Meet</button>
         </form>
         <% } %>
       </div>
@@ -89,7 +97,7 @@
         <% if (meet.members && meet.members.length > 0) { %>
         <ul style="list-style: none; padding: 0">
           <% meet.members.forEach(function(member) { %>
-          <li><%= member %></li>
+          <li><%= member.name %></li>
           <% }) %>
         </ul>
         <% } else { %>
@@ -99,16 +107,32 @@
     </div>
     <footer><%- include('partials/footer') %></footer>
     <script>
-      document.querySelectorAll('form[action$="/join"]').forEach((form) => {
-        form.addEventListener("submit", function (e) {
-          setTimeout(() => alert("You joined the meet!"), 100);
+      // Attach event listeners to join/leave forms
+      function attachJoinLeaveListeners() {
+        document.querySelectorAll(".join-leave-form").forEach((form) => {
+          if (!form.hasAttribute("data-listener")) {
+            form.setAttribute("data-listener", "true");
+            form.addEventListener("submit", async function (e) {
+              e.preventDefault();
+              const action = form.getAttribute("data-action");
+              const url = form.action;
+              const formData = new FormData(form);
+              await fetch(url, { method: "POST", body: formData });
+              if (action === "join") {
+                alert("You joined the meet!");
+                // Instantly swap to leave button
+                form.outerHTML = `<form method='POST' action='/meet/<%= meet._id %>/cancel' class='join-leave-form' data-action='leave'><input type='hidden' name='userId' value='<%= userId || '' %>' /><button type='submit' class='cancel-btn'>Leave Meet</button></form>`;
+              } else {
+                alert("You left the meet.");
+                // Instantly swap to join button
+                form.outerHTML = `<form method='POST' action='/meet/<%= meet._id %>/join' class='join-leave-form' data-action='join'><input type='hidden' name='userId' value='<%= userId || '' %>' /><button type='submit'>Join Meet</button></form>`;
+              }
+              attachJoinLeaveListeners();
+            });
+          }
         });
-      });
-      document.querySelectorAll('form[action$="/cancel"]').forEach((form) => {
-        form.addEventListener("submit", function (e) {
-          setTimeout(() => alert("You left the meet."), 100);
-        });
-      });
+      }
+      attachJoinLeaveListeners();
     </script>
   </body>
 </html>

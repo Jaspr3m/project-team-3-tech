@@ -377,9 +377,13 @@ app.use("/user", userRoutes);
 
 // All meets overview
 app.get("/meets", async (req, res) => {
+  const user = getCurrentUser(req);
   try {
-    const meets = await db.collection("meets").find({}).toArray();
-    res.render("meets", { meets });
+    const meets = await db
+      .collection("meets")
+      .find({ "members.id": user.id })
+      .toArray();
+    res.render("meets", { meets, user });
   } catch (error) {
     console.error("Error fetching meets:", error);
     res.status(500).send("Fout bij het ophalen van meets");
@@ -393,23 +397,37 @@ app.get("/meet/:id", async (req, res) => {
       .collection("meets")
       .findOne({ _id: new ObjectId(req.params.id) });
     if (!meet) return res.status(404).send("Meet not found");
-    // For now, isMember and userId are placeholders
-    res.render("meet-overview", { meet, isMember: false, userId: null });
+    const user = getCurrentUser(req);
+    // Check if user is a member by id
+    const isMember =
+      Array.isArray(meet.members) && meet.members.some((m) => m.id === user.id);
+    res.render("meet-overview", {
+      meet,
+      isMember,
+      userId: user.id,
+      userName: user.name,
+    });
   } catch (error) {
     console.error("Error fetching meet:", error);
     res.status(500).send("Fout bij het ophalen van meet");
   }
 });
 
+// Simulate a logged-in user (replace with real session logic later)
+function getCurrentUser(req) {
+  // For demo purposes, return a hardcoded user object
+  return { id: "demoUserId", name: "Demo User" };
+}
+
 // Join a meet
 app.post("/meet/:id/join", async (req, res) => {
-  const userId = getCurrentUserId(req);
+  const user = getCurrentUser(req);
   try {
     await db
       .collection("meets")
       .updateOne(
         { _id: new ObjectId(req.params.id) },
-        { $addToSet: { members: userId } }
+        { $addToSet: { members: { id: user.id, name: user.name } } }
       );
     res.redirect("/meet/" + req.params.id);
   } catch (error) {
@@ -420,13 +438,13 @@ app.post("/meet/:id/join", async (req, res) => {
 
 // Leave a meet
 app.post("/meet/:id/cancel", async (req, res) => {
-  const userId = getCurrentUserId(req);
+  const user = getCurrentUser(req);
   try {
     await db
       .collection("meets")
       .updateOne(
         { _id: new ObjectId(req.params.id) },
-        { $pull: { members: userId } }
+        { $pull: { members: { id: user.id } } }
       );
     res.redirect("/meet/" + req.params.id);
   } catch (error) {
@@ -434,29 +452,6 @@ app.post("/meet/:id/cancel", async (req, res) => {
     res.status(500).send("Fout bij het verlaten van meet");
   }
 });
-
-// Single meet overview (update to show join/cancel button)
-app.get("/meet/:id", async (req, res) => {
-  try {
-    const meet = await db
-      .collection("meets")
-      .findOne({ _id: new ObjectId(req.params.id) });
-    if (!meet) return res.status(404).send("Meet not found");
-    const userId = getCurrentUserId(req);
-    const isMember =
-      Array.isArray(meet.members) && meet.members.includes(userId);
-    res.render("meet-overview", { meet, isMember, userId });
-  } catch (error) {
-    console.error("Error fetching meet:", error);
-    res.status(500).send("Fout bij het ophalen van meet");
-  }
-});
-
-// Simulate a logged-in user (replace with real session logic later)
-function getCurrentUserId(req) {
-  // For demo purposes, return a hardcoded user ID
-  return "demoUserId";
-}
 
 app.listen(3000);
 console.log("Server listening @ http://localhost:3000!");

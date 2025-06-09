@@ -179,98 +179,67 @@
   </head>
   <body>
     <header><%- include('partials/header') %></header>
-    <div class="container">
-      <div class="sidebar">
-        <!-- Sidebar content (optional) -->
-      </div>
-      <div class="main">
-        <main>
-          <h1>Manage Meets</h1>
-          <div class="meet-row">
-            <% const userId = 'demoUserId'; %> <% meets.forEach(meet => { %>
-            <div class="meet-card" data-meet-id="<%= meet._id %>">
-              <div class="meet-img">
-                <img
-                  src="<%= meet.image || '/static/images/map_placeholder.png' %>"
-                  alt="Meet Image"
-                />
-              </div>
-              <div class="meet-info">
-                <h3><%= meet.meetingName %></h3>
-                <p><%= meet.location %></p>
-                <p><%= meet.description %></p>
-                <p>Max: <%= meet.maxPeople %></p>
-              </div>
-              <a href="/meet/<%= meet._id %>">View</a>
-              <div class="meet-actions">
-                <% const isMember = Array.isArray(meet.members) &&
-                meet.members.includes(userId); %> <% if (!isMember) { %>
-                <form
-                  method="POST"
-                  action="/meet/<%= meet._id %>/join"
-                  class="join-leave-form"
-                  data-action="join"
-                >
-                  <input type="hidden" name="userId" value="<%= userId %>" />
-                  <button type="submit">Join Meet</button>
-                </form>
-                <% } else { %>
-                <form
-                  method="POST"
-                  action="/meet/<%= meet._id %>/cancel"
-                  class="join-leave-form"
-                  data-action="leave"
-                >
-                  <input type="hidden" name="userId" value="<%= userId %>" />
-                  <button type="submit" class="cancel-btn">Leave Meet</button>
-                </form>
-                <% } %>
-              </div>
-            </div>
-            <% }) %>
+    <main style="max-width: 900px; margin: 0 auto; padding: 2rem 1rem">
+      <h1 style="margin-bottom: 2rem">Meets You've Joined</h1>
+      <% if (meets.length === 0) { %>
+      <p style="font-size: 1.2rem; color: #888; text-align: center">
+        You haven't joined any meets yet.
+      </p>
+      <% } %>
+      <div
+        class="meet-list"
+        style="display: flex; flex-direction: column; gap: 2rem"
+      >
+        <% meets.forEach(meet => { %>
+        <div
+          class="meet-card"
+          style="
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+            padding: 1.5rem;
+          "
+        >
+          <img
+            src="<%= meet.image || '/static/images/map_placeholder.png' %>"
+            alt="Meet Image"
+            style="
+              width: 120px;
+              height: 120px;
+              object-fit: cover;
+              border-radius: 10px;
+              margin-right: 2rem;
+            "
+          />
+          <div class="meet-info" style="flex: 1">
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.3rem">
+              <%= meet.meetingName %>
+            </h3>
+            <p style="margin: 0 0 0.3rem 0; color: #666">
+              <strong>Location:</strong> <%= meet.location %>
+            </p>
+            <p style="margin: 0 0 0.3rem 0; color: #666">
+              <strong>Description:</strong> <%= meet.description %>
+            </p>
+            <p style="margin: 0 0 0.3rem 0; color: #666">
+              <strong>Max People:</strong> <%= meet.maxPeople %>
+            </p>
+            <a
+              href="/meet/<%= meet._id %>"
+              style="
+                color: #007bff;
+                text-decoration: underline;
+                font-weight: bold;
+              "
+              >View</a
+            >
           </div>
-        </main>
-        <script>
-          function updateJoinLeaveButton(card, isMember) {
-            const meetId = card.getAttribute("data-meet-id");
-            let formHtml;
-            if (isMember) {
-              formHtml = `<form method='POST' action='/meet/${meetId}/cancel' class='join-leave-form' data-action='leave'><input type='hidden' name='userId' value='demoUserId' /><button type='submit' class='cancel-btn'>Leave Meet</button></form>`;
-            } else {
-              formHtml = `<form method='POST' action='/meet/${meetId}/join' class='join-leave-form' data-action='join'><input type='hidden' name='userId' value='demoUserId' /><button type='submit'>Join Meet</button></form>`;
-            }
-            card.querySelector(".meet-actions").innerHTML = formHtml;
-            attachJoinLeaveListeners(card);
-          }
-          function attachJoinLeaveListeners(scope) {
-            (scope
-              ? scope.querySelectorAll(".join-leave-form")
-              : document.querySelectorAll(".join-leave-form")
-            ).forEach((form) => {
-              if (!form.hasAttribute("data-listener")) {
-                form.setAttribute("data-listener", "true");
-                form.addEventListener("submit", async function (e) {
-                  e.preventDefault();
-                  const card = form.closest(".meet-card");
-                  const meetId = card.getAttribute("data-meet-id");
-                  const action = form.getAttribute("data-action");
-                  const url = form.action;
-                  const formData = new FormData(form);
-                  await fetch(url, { method: "POST", body: formData });
-                  if (action === "join") {
-                    alert("You joined the meet!");
-                    updateJoinLeaveButton(card, true);
-                  } else {
-                    alert("You left the meet.");
-                    updateJoinLeaveButton(card, false);
-                  }
-                });
-              }
-            });
-          }
-          attachJoinLeaveListeners();
-        </script>
+        </div>
+        <% }) %>
       </div>
-    </div>
+    </main>
+    <footer><%- include('partials/footer') %></footer>
   </body>
 </html>
