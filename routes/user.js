@@ -33,12 +33,14 @@ router.post("/create-meet", upload.single("image"), async (req, res) => {
       .MongoClient.connect(process.env.URI)
       .then((client) => client.db(process.env.DB_NAME));
   const meet = {
-    meetingName: req.body.meetingName,
-    location: req.body.location,
-    description: req.body.description,
+    title: req.body.title,
     maxPeople: req.body.maxPeople,
+    duration: req.body.duration,
+    date: req.body.date,
+    time: req.body.time,
+    address: req.body.address,
     image: "/static/images/" + req.file.filename,
-    members: [], // Add members array for join/leave feature
+    members: [],
   };
   const dbInstance = await db;
   await dbInstance.collection("meets").insertOne(meet);
