@@ -55,6 +55,8 @@
       .meet-img img {
         width: 100%;
         height: 100%;
+        max-width: 220px;
+        max-height: 220px;
         object-fit: cover;
         border-radius: 8px 0 0 8px;
       }
@@ -101,37 +103,145 @@
           border-radius: 8px 8px 0 0;
         }
       }
+      .meet-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        width: 100%;
+        max-width: 800px;
+      }
+      .meet-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        overflow: hidden;
+        width: calc(50% - 0.5rem);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .meet-card .meet-img {
+        width: 100%;
+        height: 150px;
+        border-radius: 8px 8px 0 0;
+      }
+      .meet-card .meet-info {
+        padding: 1rem;
+        flex: 1;
+      }
+      .meet-card h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2rem;
+      }
+      .meet-card p {
+        margin: 0 0 0.3rem 0;
+        font-size: 0.9rem;
+        color: #666;
+      }
+      .meet-card a {
+        margin-top: 0.5rem;
+        color: #007bff;
+        text-decoration: underline;
+        font-weight: bold;
+        cursor: pointer;
+        display: inline-block;
+      }
+      .meet-actions {
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #eee;
+      }
+      .meet-actions button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+      .meet-actions .cancel-btn {
+        background: #dc3545;
+        color: #fff;
+      }
+      .meet-actions form {
+        margin: 0;
+        flex: 1;
+      }
+      .join-leave-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .join-leave-form button {
+        flex: 1;
+      }
     </style>
   </head>
   <body>
     <header><%- include('partials/header') %></header>
-    <div class="container">
-      <div class="sidebar">
-        <!-- Sidebar content (optional) -->
-      </div>
-      <div class="main">
-        <h1>Manage Meets</h1>
-        <% if (meets.length === 0) { %>
-        <p>No meets found.</p>
-        <% } else { %> <% meets.forEach(function(meet) { %>
-        <div class="meet-item">
-          <div class="meet-img">
-            <% if (meet.image) { %>
-            <img src="<%= meet.image %>" alt="Meet Image" />
-            <% } else { %>
-            <span>IMG</span>
-            <% } %>
-          </div>
-          <div class="meet-info">
-            <h3><%= meet.meetingName %></h3>
-            <p><strong>Location:</strong> <%= meet.location %></p>
-            <p><strong>Description:</strong> <%= meet.description %></p>
-            <p><strong>Max:</strong> <%= meet.maxPeople %></p>
-            <a href="/meet/<%= meet._id %>">View</a>
+    <main style="max-width: 900px; margin: 0 auto; padding: 2rem 1rem">
+      <h1 style="margin-bottom: 2rem">Meets You've Joined</h1>
+      <% if (meets.length === 0) { %>
+      <p style="font-size: 1.2rem; color: #888; text-align: center">
+        You haven't joined any meets yet.
+      </p>
+      <% } %>
+      <div
+        class="meet-list"
+        style="display: flex; flex-direction: column; gap: 2rem"
+      >
+        <% meets.forEach(meet => { %>
+        <div
+          class="meet-card"
+          style="
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+            padding: 1.5rem;
+          "
+        >
+          <img
+            src="<%= meet.image || '/static/images/map_placeholder.png' %>"
+            alt="Meet Image"
+            style="
+              width: 120px;
+              height: 120px;
+              object-fit: cover;
+              border-radius: 10px;
+              margin-right: 2rem;
+            "
+          />
+          <div class="meet-info" style="flex: 1">
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.3rem">
+              <%= meet.meetingName %>
+            </h3>
+            <p style="margin: 0 0 0.3rem 0; color: #666">
+              <strong>Location:</strong> <%= meet.location %>
+            </p>
+            <p style="margin: 0 0 0.3rem 0; color: #666">
+              <strong>Description:</strong> <%= meet.description %>
+            </p>
+            <p style="margin: 0 0 0.3rem 0; color: #666">
+              <strong>Max People:</strong> <%= meet.maxPeople %>
+            </p>
+            <a
+              href="/meet/<%= meet._id %>"
+              style="
+                color: #007bff;
+                text-decoration: underline;
+                font-weight: bold;
+              "
+              >View</a
+            >
           </div>
         </div>
-        <% }); %> <% } %>
+        <% }) %>
       </div>
-    </div>
+    </main>
+    <footer><%- include('partials/footer') %></footer>
   </body>
 </html>

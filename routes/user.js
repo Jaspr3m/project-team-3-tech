@@ -21,6 +21,11 @@ router.get("/create-meet", (req, res) => {
 
 // POST: Handle meet creation
 router.post("/create-meet", upload.single("image"), async (req, res) => {
+  if (!req.file) {
+    return res.render("create-meet", {
+      error: "You must upload a cover image to create a meet.",
+    });
+  }
   // Save the meet to the database
   const db =
     req.app.locals.db ||
@@ -28,11 +33,14 @@ router.post("/create-meet", upload.single("image"), async (req, res) => {
       .MongoClient.connect(process.env.URI)
       .then((client) => client.db(process.env.DB_NAME));
   const meet = {
-    meetingName: req.body.meetingName,
-    location: req.body.location,
-    description: req.body.description,
+    title: req.body.title,
     maxPeople: req.body.maxPeople,
-    image: req.file ? "/static/images/" + req.file.filename : null,
+    duration: req.body.duration,
+    date: req.body.date,
+    time: req.body.time,
+    address: req.body.address,
+    image: "/static/images/" + req.file.filename,
+    members: [],
   };
   const dbInstance = await db;
   await dbInstance.collection("meets").insertOne(meet);

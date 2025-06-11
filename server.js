@@ -377,9 +377,13 @@ app.use("/user", userRoutes);
 
 // All meets overview
 app.get("/meets", async (req, res) => {
+  const user = getCurrentUser(req);
   try {
-    const meets = await db.collection("meets").find({}).toArray();
-    res.render("meets", { meets });
+    const meets = await db
+      .collection("meets")
+      .find({ "members.id": user.id })
+      .toArray();
+    res.render("meets", { meets, user });
   } catch (error) {
     console.error("Error fetching meets:", error);
     res.status(500).send("Fout bij het ophalen van meets");
@@ -393,45 +397,76 @@ app.get("/meet/:id", async (req, res) => {
       .collection("meets")
       .findOne({ _id: new ObjectId(req.params.id) });
     if (!meet) return res.status(404).send("Meet not found");
-    // For now, isMember and userId are placeholders
-    res.render("meet-overview", { meet, isMember: false, userId: null });
+    const user = getCurrentUser(req);
+    // Check if user is a member by id
+    const isMember =
+      Array.isArray(meet.members) && meet.members.some((m) => m.id === user.id);
+    res.render("meet-overview", {
+      meet,
+      isMember,
+      userId: user.id,
+      userName: user.name,
+    });
   } catch (error) {
     console.error("Error fetching meet:", error);
     res.status(500).send("Fout bij het ophalen van meet");
   }
 });
 
-// All users overview
-app.get("/users", async (req, res) => {
+// Simulate a logged-in user (replace with real session logic later)
+function getCurrentUser(req) {
+  // For demo purposes, return a hardcoded user object
+  return { id: "demoUserId", name: "Demo User" };
+}
+
+// Join a meet
+app.post("/meet/:id/join", async (req, res) => {
+  const user = getCurrentUser(req);
   try {
-    // Example: only show users with a 'voornaam' property
-    const users = await db
-      .collection("users")
-      .find({ voornaam: { $exists: true } })
-      .toArray();
-    res.render("users", { users });
+    await db
+      .collection("meets")
+      .updateOne(
+        { _id: new ObjectId(req.params.id) },
+        { $addToSet: { members: { id: user.id, name: user.name } } }
+      );
+    res.redirect("/meet/" + req.params.id);
   } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).send("Fout bij het ophalen van users");
+    console.error("Error joining meet:", error);
+    res.status(500).send("Fout bij het joinen van meet");
+  }
+});
+
+// Leave a meet
+app.post("/meet/:id/cancel", async (req, res) => {
+  const user = getCurrentUser(req);
+  try {
+    await db
+      .collection("meets")
+      .updateOne(
+        { _id: new ObjectId(req.params.id) },
+        { $pull: { members: { id: user.id } } }
+      );
+    res.redirect("/meet/" + req.params.id);
+  } catch (error) {
+    console.error("Error leaving meet:", error);
+    res.status(500).send("Fout bij het verlaten van meet");
   }
 });
 
 app.listen(3000);
-console.log("Server listening @ localhost:3000!");
-console.log(`
-
-  localhost:3000/
-  localhost:3000/more-meets
-  localhost:3000/register
-  localhost:3000/login
-  localhost:3000/loginHome
-  localhost:3000/dashboard
-  localhost:3000/create-test-profile
-  localhost:3000/profile/:id
-  localhost:3000/meets
-  localhost:3000/meet/:id
-  localhost:3000/user/create-meet
-
+console.log("Server listening @ http://localhost:3000!");
+console.log(`\nImportant routes:\n
+Homepage:           http://localhost:3000/
+More meets:         http://localhost:3000/more-meets
+Register:           http://localhost:3000/register
+Login:              http://localhost:3000/login
+Login Home:         http://localhost:3000/loginHome
+Dashboard:          http://localhost:3000/dashboard
+Create Test Profile:http://localhost:3000/create-test-profile
+Profile:            http://localhost:3000/profile/:id
+All Meets:          http://localhost:3000/meets
+Create Meet:        http://localhost:3000/user/create-meet
+Meet Overview:      http://localhost:3000/meet/:id
 `);
 
 /*

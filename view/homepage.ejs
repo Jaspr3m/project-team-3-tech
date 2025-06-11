@@ -38,19 +38,107 @@
         <h2>Find a meet near <em>you!</em></h2>
         <div class="meet-row">
           <% meets.forEach(meet => { %>
-          <div
-            class="meet-card"
-            onclick="window.location.href='/meet/<%= meet._id %>'"
-          >
+          <div class="meet-card" data-meet-id="<%= meet._id %>">
             <img
               src="<%= meet.image || '/static/images/map_placeholder.png' %>"
               alt="Meet Image"
+              style="
+                max-width: 220px;
+                max-height: 120px;
+                object-fit: cover;
+                border-radius: 8px;
+                margin-bottom: 0.5rem;
+              "
             />
-            <div class="meet-info">
-              <h3><%= meet.meetingName %></h3>
-              <p><%= meet.location %></p>
-              <p><%= meet.description %></p>
-              <p>Max: <%= meet.maxPeople %></p>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                font-size: 0.98rem;
+                color: #444;
+                margin-bottom: 0.3rem;
+              "
+            >
+              <span><strong>Date:</strong> <%= meet.date || '-' %></span>
+              <span><strong>Time:</strong> <%= meet.time || '-' %></span>
+            </div>
+            <div style="margin-bottom: 0.3rem; color: #666">
+              <strong>Location:</strong> <%= meet.address || meet.location ||
+              '-' %>
+            </div>
+            <div
+              class="meet-actions"
+              style="
+                display: flex;
+                gap: 0.5rem;
+                width: 100%;
+                margin-top: 0.5rem;
+              "
+            >
+              <a
+                href="/meet/<%= meet._id %>"
+                class="view-btn"
+                style="
+                  background: #007bff;
+                  color: #fff;
+                  padding: 0.4rem 1rem;
+                  border-radius: 5px;
+                  text-decoration: none;
+                  font-weight: bold;
+                "
+                >View</a
+              >
+              <% const userId = 'demoUserId'; %> <% const isMember =
+              Array.isArray(meet.members) && meet.members.some(m => m.id ===
+              userId); %> <% if (!isMember) { %>
+              <form
+                method="POST"
+                action="/meet/<%= meet._id %>/join"
+                class="join-leave-form"
+                data-action="join"
+                style="display: inline"
+              >
+                <input type="hidden" name="userId" value="<%= userId %>" />
+                <button
+                  type="submit"
+                  style="
+                    background: #28a745;
+                    color: #fff;
+                    border: none;
+                    border-radius: 5px;
+                    padding: 0.4rem 1rem;
+                    font-weight: bold;
+                  "
+                >
+                  Join Meet
+                </button>
+              </form>
+              <% } else { %>
+              <form
+                method="POST"
+                action="/meet/<%= meet._id %>/cancel"
+                class="join-leave-form"
+                data-action="leave"
+                style="display: inline"
+              >
+                <input type="hidden" name="userId" value="<%= userId %>" />
+                <button
+                  type="submit"
+                  class="cancel-btn"
+                  style="
+                    background: #dc3545;
+                    color: #fff;
+                    border: none;
+                    border-radius: 5px;
+                    padding: 0.4rem 1rem;
+                    font-weight: bold;
+                  "
+                >
+                  Leave Meet
+                </button>
+              </form>
+              <% } %>
             </div>
           </div>
           <% }) %>
@@ -111,6 +199,24 @@
         font-weight: bold;
         cursor: pointer;
       }
+      .meet-actions {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+        width: 100%;
+      }
+      .meet-actions form {
+        flex: 1;
+      }
+      .cancel-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
       @media (max-width: 700px) {
         .meet-row {
           flex-direction: column;
@@ -123,5 +229,50 @@
         }
       }
     </style>
+    <script>
+      // Helper to update the join/leave button and re-attach event listeners
+      function updateJoinLeaveButton(card, isMember) {
+        const meetId = card.getAttribute("data-meet-id");
+        let formHtml;
+        if (isMember) {
+          formHtml = `<form method='POST' action='/meet/${meetId}/cancel' class='join-leave-form' data-action='leave'><input type='hidden' name='userId' value='demoUserId' /><button type='submit' class='cancel-btn'>Leave Meet</button></form>`;
+        } else {
+          formHtml = `<form method='POST' action='/meet/${meetId}/join' class='join-leave-form' data-action='join'><input type='hidden' name='userId' value='demoUserId' /><button type='submit'>Join Meet</button></form>`;
+        }
+        card.querySelector(".meet-actions").innerHTML = formHtml;
+        attachJoinLeaveListeners(card);
+      }
+
+      // Attach event listeners to join/leave forms
+      function attachJoinLeaveListeners(scope) {
+        (scope
+          ? scope.querySelectorAll(".join-leave-form")
+          : document.querySelectorAll(".join-leave-form")
+        ).forEach((form) => {
+          if (!form.hasAttribute("data-listener")) {
+            form.setAttribute("data-listener", "true");
+            form.addEventListener("submit", async function (e) {
+              e.preventDefault();
+              const card = form.closest(".meet-card");
+              const meetId = card.getAttribute("data-meet-id");
+              const action = form.getAttribute("data-action");
+              const url = form.action;
+              const formData = new FormData(form);
+              await fetch(url, { method: "POST", body: formData });
+              if (action === "join") {
+                alert("You joined the meet!");
+                updateJoinLeaveButton(card, true);
+              } else {
+                alert("You left the meet.");
+                updateJoinLeaveButton(card, false);
+              }
+            });
+          }
+        });
+      }
+
+      // Initial attach for all join/leave forms
+      attachJoinLeaveListeners();
+    </script>
   </body>
 </html>
