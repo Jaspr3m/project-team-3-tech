@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meet Overview</title>
+    <link rel="stylesheet" href="/static/header.css" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <style>
+      .meet-overview {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 2rem;
+        text-align: center;
+      }
+      .meet-overview img {
+        width: 180px;
+        height: 180px;
+        max-width: 220px;
+        max-height: 220px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+      }
+      .meet-overview h1 {
+        margin-bottom: 0.5rem;
+      }
+      .meet-overview p {
+        margin: 0.5rem 0;
+      }
+      .meet-actions {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+      }
+      .meet-actions button {
+        padding: 0.7rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        background: #53b8d7;
+        color: #fff;
+        transition: background 0.2s;
+      }
+      .meet-actions .cancel-btn {
+        background: #e0e0e0;
+        color: #222;
+      }
+    </style>
+  </head>
+  <body>
+    <header><%- include('partials/header') %></header>
+    <div class="meet-overview">
+      <img
+        src="<%= meet.image || '/static/images/map_placeholder.png' %>"
+        alt="Meet Image"
+      />
+      <h1><%= meet.meetingName %></h1>
+      <p><strong>Location:</strong> <%= meet.location %></p>
+      <p><strong>Description:</strong> <%= meet.description %></p>
+      <p><strong>Max People:</strong> <%= meet.maxPeople %></p>
+      <div
+        class="meet-actions"
+        id="join-leave-form-container"
+        data-meet-id="<%= meet._id %>"
+      >
+        <% if (!isMember) { %>
+        <form
+          method="POST"
+          action="/meet/<%= meet._id %>/join"
+          style="display: inline"
+          class="join-leave-form"
+          data-action="join"
+        >
+          <input type="hidden" name="userId" value="<%= userId || '' %>" />
+          <button type="submit">Join Meet</button>
+        </form>
+        <% } else { %>
+        <form
+          method="POST"
+          action="/meet/<%= meet._id %>/cancel"
+          style="display: inline"
+          class="join-leave-form"
+          data-action="leave"
+        >
+          <input type="hidden" name="userId" value="<%= userId || '' %>" />
+          <button type="submit" class="cancel-btn">Leave Meet</button>
+        </form>
+        <% } %>
+      </div>
+      <div style="margin-top: 2rem">
+        <h3>Members:</h3>
+        <% if (meet.members && meet.members.length > 0) { %>
+        <ul style="list-style: none; padding: 0">
+          <% meet.members.forEach(function(member) { %>
+          <li><%= member.name %></li>
+          <% }) %>
+        </ul>
+        <% } else { %>
+        <p>No one has joined this meet yet.</p>
+        <% } %>
+      </div>
+    </div>
+    <footer><%- include('partials/footer') %></footer>
+    <script>
+      // Attach event listeners to join/leave forms
+      function attachJoinLeaveListeners() {
+        document.querySelectorAll(".join-leave-form").forEach((form) => {
+          if (!form.hasAttribute("data-listener")) {
+            form.setAttribute("data-listener", "true");
+            form.addEventListener("submit", async function (e) {
+              e.preventDefault();
+              const action = form.getAttribute("data-action");
+              const url = form.action;
+              const formData = new FormData(form);
+              await fetch(url, { method: "POST", body: formData });
+              if (action === "join") {
+                alert("You joined the meet!");
+                // Instantly swap to leave button
+                form.outerHTML = `<form method='POST' action='/meet/<%= meet._id %>/cancel' class='join-leave-form' data-action='leave'><input type='hidden' name='userId' value='<%= userId || '' %>' /><button type='submit' class='cancel-btn'>Leave Meet</button></form>`;
+              } else {
+                alert("You left the meet.");
+                // Instantly swap to join button
+                form.outerHTML = `<form method='POST' action='/meet/<%= meet._id %>/join' class='join-leave-form' data-action='join'><input type='hidden' name='userId' value='<%= userId || '' %>' /><button type='submit'>Join Meet</button></form>`;
+              }
+              attachJoinLeaveListeners();
+            });
+          }
+        });
+      }
+      attachJoinLeaveListeners();
+    </script>
+  </body>
+</html>
