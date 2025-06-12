@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <%- include('partials/header') %>
+  </header>
+  <div class="profile-container">
+
+    <h1>Profile Page</h1>
+    <img src="/static/images/profileivy.jpeg" alt="Profile">
+
+<% if (editing) { %>
+      <form action="/profile/<%= profile._id %>" method="POST">
+        <p>Name:</p>
+        <input type="text" 
+        name="name" 
+        value="<%= profile.name %>">
+
+        <p>Location:</p>
+        <input 
+        type="text" 
+        name="location" 
+        value="<%= profile.location %>">
+
+        <p>Tags (met komma's):</p>
+        <input 
+        type="text" 
+        name="tags" 
+        value="<%= profile.tags %>">
+
+        <p>Languages (met komma's):</p>
+        <input 
+        type="text" 
+        name="languages" 
+        value="<%= profile.languages %>">
+
+        <p>Bio:</p>
+        <textarea name="bio"><%= profile.bio %></textarea>
+
+        <button type="submit">Save</button>
+      </form>
+      
+    <% } else { %>
+      <h2><%= profile.name %></h2>
+      <p><strong>Location:</strong> <%= profile.location %></p>
+
+      <p><strong>Tags:</strong><br>
+        <% profile.tags.split(',').forEach(function(tag) { %>
+          <span class="box"><%= tag.trim() %></span>
+        <% }) %>
+      </p>
+
+      <p class="bio"><%= profile.bio %></p>
+
+      <p><strong>Languages:</strong><br>
+        <% profile.languages.split(',').forEach(function(lang) { %>
+          <span class="box"><%= lang.trim() %></span>
+        <% }) %>
+      </p>
+
+      <a href="/profile/<%= profile._id %>?edit=true">✏️ Edit</a>
+    <% } %>
+
+  </div>
+  
+<footer>
+  <%- include('partials/footer') %>
+</footer>
+</body>
+</html>
