@@ -37,19 +37,6 @@ function requireLogin(req, res, next) {
   next();
 }
 
-// Multer for profile photos
-const storage = multer.diskStorage({
-  destination: (_, __, cb) => cb(null, 'static/uploads/'),
-  filename: (_, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-const upload = multer({
-  storage,
-  limits: { fileSize: 2*1024*1024 },
-  fileFilter: (_, file, cb) =>
-    file.mimetype.startsWith('image/')
-      ? cb(null, true)
-      : cb(new Error('Only images allowed'))
-});
 
 // ─── AUTH: register & login ─────────────────────────────────────────────
 app.get('/register', (req, res) => res.render('register', { errors: [] }));
@@ -67,16 +54,42 @@ app.post('/register', async (req, res) => {
 app.get('/login', (req, res) => res.render('login', { errors: [] }));
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
+  // Missing fields
   if (!email || !password) {
-    return res.render('login', { errors: [{ msg: 'Vul zowel e-mail als wachtwoord in' }] });
+    return res.render('login', {
+      errors: [{ msg: 'Fill in your e-mail and password' }],
+      formData: { email }
+    });
   }
-  const user = await db.collection(USERS).findOne({ email });
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.render('login', { errors: [{ msg: 'Onjuist e-mail of wachtwoord' }] });
+
+  try {
+    const user = await db.collection('users').findOne({ email });
+    if (!user) {
+      return res.render('login', {
+        errors: [{ msg: 'Invalid e-mail or password' }],
+        formData: { email }
+      });
+    }
+
+    const isMatch = await compareData(password, user.password);
+    if (!isMatch) {
+      return res.render('login', {
+        errors: [{ msg: 'Invalid e-mail or password' }],
+        formData: { email }
+      });
+    }
+
+    return res.redirect('/home');
+  } catch (error) {
+    console.error('Error processing login:', error);
+    return res.status(500).render('login', {
+      errors: [{ msg: 'Server error, please try again later.' }],
+      formData: { email }
+    });
   }
-  req.session.userId = user._id.toString();
-  res.redirect('/homepage');
 });
+
 
 // ─── HOMEPAGE (dummy data) ───────────────────────────────────────────────
 app.get('/homepage', requireLogin, (req, res) => {
@@ -91,33 +104,47 @@ app.get('/homepage', requireLogin, (req, res) => {
 });
 
 // ─── TEST PROFILE CREATION ───────────────────────────────────────────────
-app.get('/create-test-profile', async (req, res) => {
-  const newUser = {
-    name: 'Ivy',
-    location: 'Amsterdam',
-    tags: ['Hiking','Coffee'],
-    languages: ['Dutch','English'],
-    bio: 'Backpacking across Europe…'
-  };
-  const result = await db.collection(USERS).insertOne(newUser);
-  res.send(`Test profiel gemaakt met ID: ${result.insertedId}`);
+// multer voor foto uploaden en  stuff
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+   
+    cb(null, path.join(__dirname, 'uploads'));
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
 });
 
-// ─── PROFILE: view, edit & upload ────────────────────────────────────────
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 2 * 1024 * 1024 },  // 2 MB
+  fileFilter: (_, file, cb) =>
+    file.mimetype.startsWith('image/')
+      ? cb(null, true)
+      : cb(new Error('Alleen afbeeldingen toegestaan'))
+});
+
+
+// Toon profiel (met ?edit=true voor bewerken)
 app.get('/profile/:id', requireLogin, async (req, res) => {
   const profile = await db.collection(USERS)
     .findOne({ _id: new ObjectId(req.params.id) });
   if (!profile) return res.status(404).send('Profile not found');
-  const editing = req.query.edit === 'true';
   res.render('profile', {
     profile,
-    editing,
-    userId: req.session.userId,
+    editing:    req.query.edit === 'true',
+    userId:     req.session.userId,
     activePage: 'profile'
   });
 });
 
-app.post('/profile/:id',
+// Verwerk update + foto‐upload
+app.post(
+  '/profile/:id',
   requireLogin,
   upload.single('photo'),
   async (req, res) => {
@@ -140,6 +167,19 @@ app.post('/profile/:id',
     res.redirect('/profile/' + id);
   }
 );
+// (alleen voor testen, daarna kun je dit weghalen)
+app.get('/create-test-profile', async (req, res) => {
+  const newUser = {
+    name: 'Testgebruiker',
+    location: 'Amsterdam',
+    tags: ['Test','Demo'],
+    languages: ['Nederlands','English'],
+    bio: 'Dit is een testprofiel',
+  };
+  const result = await db.collection(USERS).insertOne(newUser);
+  res.send(`Testprofiel aangemaakt met ID: ${result.insertedId}`);
+});
+
 
 // ─── MORE‐MEETS (example) ────────────────────────────────────────────────
 app.get('/more-meets', requireLogin, (req, res) => {
