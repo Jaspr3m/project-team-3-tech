@@ -7,7 +7,8 @@
   "type": "commonjs",
   "main": "server.js",
   "scripts": {
-    "minify": "postcss static/style.css > output.css"
+    "minify": "postcss static/style.css > output.css",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -19,6 +20,10 @@
     "express-validator": "^7.2.1",
     "mongodb": "^6.16.0",
     "multer": "^2.0.1",
+<<<<<<< HEAD
+=======
+    "nodemon": "^3.1.10",
+>>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
     "xss": "^1.0.15"
   },
   "devDependencies": {
