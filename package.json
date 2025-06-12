@@ -17,13 +17,16 @@
     "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
     "mongodb": "^6.16.0",
     "multer": "^2.0.1",
 <<<<<<< HEAD
 =======
+
     "nodemon": "^3.1.10",
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
+
+>>>>>>> e06ddfb99f17ab0869505a8226210d241c37a585
     "xss": "^1.0.15"
   },
   "devDependencies": {
