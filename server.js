@@ -133,6 +133,9 @@ app.post('/login', async (req, res) => {
 });
 
 
+app.get('/loginHome', (req, res) => {
+  res.render('loginHome.ejs');
+});
 // ─── HOMEPAGE ────────────────────────────────────────────────────────────
 
 // Redirect root to /home
