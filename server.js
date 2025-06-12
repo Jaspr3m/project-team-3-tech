@@ -1,14 +1,9 @@
 const express = require("express");
 const path = require("path");
 const { MongoClient, ObjectId } = require("mongodb");
-<<<<<<< HEAD
-const bcrypt = require('bcryptjs');
-const { body, validationResult } = require('express-validator');
-=======
 const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 const { validationResult } = require("express-validator");
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
 require("dotenv").config();
 
 const app = express();
@@ -27,7 +22,7 @@ app.use(express.urlencoded({ extended: true }))
 
 require("dotenv").config();
 
-const app = express();
+// const app = express();
 
 // URL-encoded body parser
 app.use(express.urlencoded({ extended: true }));
@@ -60,15 +55,9 @@ const collection = process.env.USER_COLLECTION;
 async function connectDB() {
   try {
     await client.connect();
-<<<<<<< HEAD
-    console.log('Client connected to database');
-  } catch (error) {
-    console.error('Error connecting to database:', error);
-=======
     console.log("Client connected to database");
   } catch (error) {
     console.error("Error connecting to database:", error);
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
   }
 }
 connectDB();
@@ -80,11 +69,7 @@ async function hashData(data) {
     const hashedData = await bcrypt.hash(data, salt);
     return hashedData;
   } catch (error) {
-<<<<<<< HEAD
-    console.error('Error hashing data:', error);
-=======
     console.error("Error hashing data:", error);
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
     throw error;
   }
 }
@@ -95,11 +80,7 @@ async function compareData(plainTextData, hashedData) {
     const match = await bcrypt.compare(plainTextData, hashedData);
     return match;
   } catch (error) {
-<<<<<<< HEAD
-    console.error('Error comparing data:', error);
-=======
     console.error("Error comparing data:", error);
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
     throw error;
   }
 }
@@ -107,39 +88,6 @@ async function compareData(plainTextData, hashedData) {
 // Routes
 
 app
-<<<<<<< HEAD
-  .get('/more-meets', (req, res) => {
-    res.render('more-meets');
-  })
-  .get('/create-test-profile', async (req, res) => {
-    const userCollection = db.collection(collection);
-    const newUser = {
-      name: 'Ivy',
-      location: 'Amsterdam',
-      tags: ['Hiking', 'Coffee'],
-      languages: ['Dutch', 'English'],
-      bio: 'Backpacking across Europe | Love local cafe’s, beach walks and other stuff!'
-    };
-    try {
-      const result = await userCollection.insertOne(newUser);
-      res.send('Testprofiel gemaakt met ID: ' + result.insertedId);
-    } catch (error) {
-      console.error('Error creating test profile:', error);
-      res.status(500).send('Fout bij het maken van testprofiel');
-    }
-  })
-  .get('/profile/:id', async (req, res) => {
-    try {
-      const profile = await db.collection(collection).findOne({ _id: new ObjectId(req.params.id) });
-      const editing = req.query.edit === 'true';
-      res.render('profile', { profile: profile, editing: editing });
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      res.status(500).send('Fout bij het ophalen van profiel');
-    }
-  })
-  .post('/profile/:id', async (req, res) => {
-=======
   .get("/more-meets", (req, res) => {
     res.render("more-meets");
   })
@@ -173,128 +121,11 @@ app
     }
   })
   .post("/profile/:id", async (req, res) => {
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
     const updatedProfile = {
       name: req.body.name,
       location: req.body.location,
       tags: req.body.tags,
       languages: req.body.languages,
-<<<<<<< HEAD
-      bio: req.body.bio
-    };
-    try {
-      await db.collection(collection).updateOne(
-        { _id: new ObjectId(req.params.id) },
-        { $set: updatedProfile }
-      );
-      res.redirect('/profile/' + req.params.id);
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      res.status(500).send('Fout bij het bijwerken van profiel');
-    }
-  })
-
-
-  .post('/register', [
-    body('email')
-      .isEmail()
-      .withMessage('Fill in a valid E-mail adress'),
-    body('name')
-      .notEmpty()
-      .withMessage('Fill in your name'),
-    body('password')
-      .isLength({ min: 6 })
-      .withMessage('Password must contain atleast 6 charachters')
-  ],
-    async (req, res) => {
-      // check the results of the above validation
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        // render the form again, passing the array of errors
-        return res.status(400).render('register', {
-          errors: errors.array(),
-          formData: {
-            email: req.body.email,
-            name: req.body.name,
-            // we laten password wél leeg—gebruikers typen dat beter niet voor
-            // value terug in
-          }
-        });
-      }
-
-      // at this point email, name and password are all "good"
-      const { email, name, password } = req.body;
-      try {
-        const hashedPassword = await hashData(password);
-        const user = { email, name, password: hashedPassword };
-        const insertResult = await db.collection('users').insertOne(user);
-        console.log('Inserted user:', insertResult.insertedId);
-        return res.redirect('/home');
-      } catch (error) {
-        console.error('Error creating user:', error);
-        return res.status(500).render('register', {
-          errors: [{ msg: 'Something went wrong with registering your account' }]
-        });
-      }
-    });
-
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  // Missing fields
-  if (!email || !password) {
-    return res.render('login', {
-      errors: [{ msg: 'Fill in your e-mail and password' }],
-      formData: { email }
-    });
-  }
-
-  try {
-    const user = await db.collection('users').findOne({ email });
-    if (!user) {
-      return res.render('login', {
-        errors: [{ msg: 'Invalid e-mail or password' }],
-        formData: { email }
-      });
-    }
-
-    const isMatch = await compareData(password, user.password);
-    if (!isMatch) {
-      return res.render('login', {
-        errors: [{ msg: 'Invalid e-mail or password' }],
-        formData: { email }
-      });
-    }
-
-    return res.redirect('/home');
-  } catch (error) {
-    console.error('Error processing login:', error);
-    return res.status(500).render('login', {
-      errors: [{ msg: 'Server error, please try again later.' }],
-      formData: { email }
-    });
-  }
-});
-
-
-// Route handlers
-function onhome(req, res) {
-  res.send('<h1>Hello World!</h1> <img src="/static/images/snoopy.jpg" alt="Poster" width="50%"/>');
-}
-
-function onabout(req, res) {
-  res.send(`<h1>About me!</h1> <img src="/static/images/postermockup.png" alt="Poster" width="50%"/>`);
-}
-
-function song(req, res) {
-  let song = {
-    title: 'FAMJAM400',
-    description: 'You watched me grow up from a...'
-  }
-
-  res.render('detail.ejs', { data: song })
-}
-=======
       bio: req.body.bio,
     };
     try {
@@ -313,7 +144,6 @@ function song(req, res) {
   .post("/register", async (req, res) => {
     const result = validationResult(req);
     console.log("result validation", result);
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
 
     if (result.isEmpty()) {
       const { email, name, password } = req.body;
@@ -382,13 +212,6 @@ function song(req, res) {
 // --- REGISTRATIE & LOGIN -------------------------------------------------
 
 // Toon registerpagina
-<<<<<<< HEAD
-app.get('/register', (req, res) => {
-  res.render('register', {
-    errors: [],
-    formData: { email: '', name: '' }
-  });
-=======
 // app.get("/register", (req, res) => {
 //   res.render("register", { errors: [] });
 // });
@@ -647,21 +470,8 @@ app.get("/more-meets", (req, res) => {
 // Toon registerpagina
 app.get("/register", (req, res) => {
   res.render("register", { errors: [] });
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
 });
 // Verwerk registratie
-<<<<<<< HEAD
-
-// Toon loginpagina
-app.get('/login', (req, res) => {
-  res.render('login', {
-    errors: [],
-    formData: { email: '' }
-  });
-});
-
-
-=======
 app.post("/register", async (req, res) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
@@ -727,7 +537,6 @@ app.post("/login", async (req, res) => {
     });
   }
 });
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
 
 // Toon loginHome-pagina
 app.get("/loginHome", (req, res) => {
@@ -740,58 +549,6 @@ app.get("/dashboard", (req, res) => {
   res.send("<h1>Welkom op je dashboard</h1>");
 });
 
-<<<<<<< HEAD
-// homepage: 
-app.get('/home', (req, res) => {
-  const meetings = [
-    {
-      _id: '1',
-      title: 'Beach Walk',
-      username: 'jasprem_is_cool123',
-      time: new Date('2025-05-22T14:00:00'),
-      profileImage: '/static/images/profiel.svg'
-    },
-    {
-      _id: '2',
-      title: 'Mountain Hike',
-      username: 'kioko_mickey',
-      time: new Date('2025-05-22T16:30:00'),
-      profileImage: '/static/images/profiel.svg'
-    },
-    {
-      _id: '1',
-      title: 'Beach Walk',
-      username: 'jasprem_is_cool123',
-      time: new Date('2025-05-22T14:00:00'),
-      profileImage: '/static/images/profiel.svg'
-    },
-    {
-      _id: '2',
-      title: 'Mountain Hike',
-      username: 'kioko_mickey',
-      time: new Date('2025-05-22T16:30:00'),
-      profileImage: '/static/images/profiel.svg'
-    },
-    {
-      _id: '1',
-      title: 'Beach Walk',
-      username: 'jasprem_is_cool123',
-      time: new Date('2025-05-22T14:00:00'),
-      profileImage: '/static/images/profiel.svg'
-    },
-    {
-      _id: '2',
-      title: 'Mountain Hike',
-      username: 'kioko_mickey',
-      time: new Date('2025-05-22T16:30:00'),
-      profileImage: '/static/images/profiel.svg'
-    }
-  ];
-
-  res.render('homepage', { meetings });
-});
-=======
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
 // --- PROFIEL --------------------------------------------------------------
 
 // Maak test-profiel
@@ -824,8 +581,8 @@ app.get("/users", async (req, res) => {
   }
 });
 
-app.listen(3000);
-console.log("Server listening @ localhost:3000!");
+app.listen(8000);
+console.log("Server listening @ localhost:3000 !");
 
 // Profiel tonen
 app.get("/profile/:id", async (req, res) => {
@@ -861,22 +618,6 @@ app.post("/profile/:id", async (req, res) => {
   } catch {
     console.log(error);
   }
-<<<<<<< HEAD
-
-
-  function showRegister(req, res) {
-    res.render('register.ejs', { errors: [] });
-  }
-
-  function showLogin(req, res) {
-    res.render('login.ejs', { errors: [] });
-  }
-
-  function showLoginHome(req, res) {
-    res.render('loginHome.ejs', { errors: [] });
-  }
-})
-=======
 });
 
 
@@ -891,7 +632,6 @@ function showLogin(req, res) {
 function showLoginHome(req, res) {
   res.render("loginHome.ejs", { errors: [] });
 }
->>>>>>> 65d95be0885a3e48d3eba12427ceecb48d6cfa7c
 
 const userRoutes = require("./routes/user");
 
