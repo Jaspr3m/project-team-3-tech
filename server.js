@@ -1,73 +1,113 @@
 // server.js
-const express       = require('express');
-const path          = require('path');
-const session       = require('express-session');
+const express               = require('express');
+const path                  = require('path');
+const session               = require('express-session');
 const { MongoClient, ObjectId } = require('mongodb');
-const bcrypt        = require('bcryptjs');
-const multer        = require('multer');
-const { validationResult } = require('express-validator');
+const bcrypt                = require('bcryptjs');
+const multer                = require('multer');
 require('dotenv').config();
 
 const app = express();
 
-// Bodyparser, statics & sessions
+// Body parser, static files & sessions
 app.use(express.urlencoded({ extended: true }));
 app.use('/static', express.static(path.join(__dirname, 'static')));
-app.use('/uploads', express.static(path.join(__dirname, 'static/uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(session({
   secret:            process.env.SESSION_SECRET,
   resave:            false,
   saveUninitialized: false,
-  cookie:            { maxAge: 24*60*60*1000 }
+  cookie:            { maxAge: 24 * 60 * 60 * 1000 } // 1 day
 }));
 
-// View‐engine
+// View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'view'));
 
 // MongoDB
 const client = new MongoClient(process.env.URI);
-const db     = client.db(process.env.DB_NAME);
-const USERS  = process.env.USER_COLLECTION;
-client.connect().then(() => console.log('✅ DB connected'));
+let db;
+client.connect()
+  .then(() => {
+    db = client.db(process.env.DB_NAME);
+    console.log('✅ Database connected');
+  })
+  .catch(err => {
+    console.error('❌ Database connection error:', err);
+    process.exit(1);
+  });
 
-// Protect routes
+// Middleware: protect routes
 function requireLogin(req, res, next) {
-  if (!req.session.userId) return res.redirect('/login');
+  if (!req.session.userId) {
+    return res.redirect('/login');
+  }
   next();
 }
 
+// Helper: compare plaintext to hashed data
+async function compareData(plainText, hashed) {
+  try {
+    return await bcrypt.compare(plainText, hashed);
+  } catch (err) {
+    console.error('Error comparing data:', err);
+    throw err;
+  }
+}
 
-// ─── AUTH: register & login ─────────────────────────────────────────────
-app.get('/register', (req, res) => res.render('register', { errors: [] }));
+
+// ─── AUTH: Register & Login ────────────────────────────────────────────
+
+// Show registration form
+app.get('/register', (req, res) => {
+  res.render('register', { errors: [] });
+});
+
+// Handle registration
 app.post('/register', async (req, res) => {
   const { email, name, password } = req.body;
   const errors = [];
-  if (!email || !name || !password) errors.push({ msg: 'Vul alle velden in' });
-  if (errors.length) return res.render('register', { errors });
 
-  const hash = await bcrypt.hash(password, 10);
-  await db.collection(USERS).insertOne({ email, name, password: hash });
-  res.redirect('/login');
+  if (!email || !name || !password) {
+    errors.push({ msg: 'Please fill in all fields' });
+  }
+  if (errors.length) {
+    return res.render('register', { errors });
+  }
+
+  const hash   = await bcrypt.hash(password, 10);
+  const result = await db.collection(process.env.USER_COLLECTION).insertOne({
+    email,
+    name,
+    password: hash
+  });
+
+  // Log the user in
+  req.session.userId = result.insertedId;
+  res.redirect('/home');
 });
 
-app.get('/login', (req, res) => res.render('login', { errors: [] }));
+// Show login form
+app.get('/login', (req, res) => {
+  res.render('login', { errors: [], formData: {} });
+});
+
+// Handle login
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  // Missing fields
   if (!email || !password) {
     return res.render('login', {
-      errors: [{ msg: 'Fill in your e-mail and password' }],
+      errors: [{ msg: 'Please provide your email and password' }],
       formData: { email }
     });
   }
 
   try {
-    const user = await db.collection('users').findOne({ email });
+    const user = await db.collection(process.env.USER_COLLECTION).findOne({ email });
     if (!user) {
       return res.render('login', {
-        errors: [{ msg: 'Invalid e-mail or password' }],
+        errors: [{ msg: 'Invalid email or password' }],
         formData: { email }
       });
     }
@@ -75,15 +115,17 @@ app.post('/login', async (req, res) => {
     const isMatch = await compareData(password, user.password);
     if (!isMatch) {
       return res.render('login', {
-        errors: [{ msg: 'Invalid e-mail or password' }],
+        errors: [{ msg: 'Invalid email or password' }],
         formData: { email }
       });
     }
 
-    return res.redirect('/home');
+    // Log the user in
+    req.session.userId = user._id;
+    res.redirect('/home');
   } catch (error) {
     console.error('Error processing login:', error);
-    return res.status(500).render('login', {
+    res.status(500).render('login', {
       errors: [{ msg: 'Server error, please try again later.' }],
       formData: { email }
     });
@@ -91,26 +133,34 @@ app.post('/login', async (req, res) => {
 });
 
 
-// ─── HOMEPAGE (dummy data) ───────────────────────────────────────────────
-app.get('/homepage', requireLogin, (req, res) => {
-  const meetings = [
-    { _id: '1', title: 'Beach Walk', username: 'alice',   time: new Date(), profileImage: '/static/images/profiel.svg' },
-    { _id: '2', title: 'Mountain Hike', username: 'bob', time: new Date(), profileImage: '/static/images/profiel.svg' },
-  ];
-  res.render('homepage', {
-    meetings,
-    userId: req.session.userId
-  });
+// ─── HOMEPAGE ────────────────────────────────────────────────────────────
+
+// Redirect root to /home
+app.get('/', (req, res) => {
+  return res.redirect('/home');
 });
 
-// ─── TEST PROFILE CREATION ───────────────────────────────────────────────
-// multer voor foto uploaden en  stuff
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Protected homepage
+app.get('/home', requireLogin, async (req, res) => {
+  try {
+    // Fetch all meets from MongoDB
+const meets = await db.collection('meets').find({}).toArray();
+res.render('home', {
+  meets,
+  userId: req.session.userId
+});
+  } catch (error) {
+    console.error('Error fetching meetings:', error);
+    res.status(500).send('Error fetching meetings');
+  }
+});
 
 
+// ─── PROFILE & UPLOADS ───────────────────────────────────────────────────
+
+// Multer storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-   
     cb(null, path.join(__dirname, 'uploads'));
   },
   filename: (req, file, cb) => {
@@ -118,77 +168,93 @@ const storage = multer.diskStorage({
   }
 });
 
-
 const upload = multer({
   storage,
   limits: { fileSize: 2 * 1024 * 1024 },  // 2 MB
   fileFilter: (_, file, cb) =>
     file.mimetype.startsWith('image/')
       ? cb(null, true)
-      : cb(new Error('Alleen afbeeldingen toegestaan'))
+      : cb(new Error('Only image files are allowed'))
 });
 
-
-// Toon profiel (met ?edit=true voor bewerken)
+// View profile (add ?edit=true to edit)
 app.get('/profile/:id', requireLogin, async (req, res) => {
-  const profile = await db.collection(USERS)
-    .findOne({ _id: new ObjectId(req.params.id) });
-  if (!profile) return res.status(404).send('Profile not found');
-  res.render('profile', {
-    profile,
-    editing:    req.query.edit === 'true',
-    userId:     req.session.userId,
-    activePage: 'profile'
-  });
+  try {
+    const profile = await db.collection(process.env.USER_COLLECTION)
+      .findOne({ _id: new ObjectId(req.params.id) });
+    if (!profile) {
+      return res.status(404).send('Profile not found');
+    }
+
+    res.render('profile', {
+      profile,
+      editing:    req.query.edit === 'true',
+      userId:     req.session.userId,
+      activePage: 'profile'
+    });
+  } catch (error) {
+    console.error('Error loading profile:', error);
+    res.status(500).send('Error loading profile');
+  }
 });
 
-// Verwerk update + foto‐upload
+// Handle profile update & photo upload
 app.post(
   '/profile/:id',
   requireLogin,
   upload.single('photo'),
   async (req, res) => {
-    const id = req.params.id;
-    const tags      = (req.body.tags     || '').split(',').map(t => t.trim()).filter(Boolean);
-    const languages = (req.body.languages|| '').split(',').map(l => l.trim()).filter(Boolean);
+    try {
+      const id = req.params.id;
+      const tags      = (req.body.tags     || '').split(',').map(t => t.trim()).filter(Boolean);
+      const languages = (req.body.languages|| '').split(',').map(l => l.trim()).filter(Boolean);
 
-    const upd = {
-      name:      req.body.name,
-      location:  req.body.location,
-      tags,
-      languages,
-      bio:       req.body.bio
-    };
-    if (req.file) upd.photoUrl = '/uploads/' + req.file.filename;
+      const updateData = {
+        name:      req.body.name,
+        location:  req.body.location,
+        tags,
+        languages,
+        bio:       req.body.bio
+      };
+      if (req.file) {
+        updateData.photoUrl = '/uploads/' + req.file.filename;
+      }
 
-    await db.collection(USERS)
-      .updateOne({ _id: new ObjectId(id) }, { $set: upd });
+      await db.collection(process.env.USER_COLLECTION)
+        .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
 
-    res.redirect('/profile/' + id);
+      res.redirect('/profile/' + id);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      res.status(500).send('Error updating profile');
+    }
   }
 );
-// (alleen voor testen, daarna kun je dit weghalen)
+
+// (Optional) Test endpoint to create a profile
 app.get('/create-test-profile', async (req, res) => {
-  const newUser = {
-    name: 'Testgebruiker',
+  const testUser = {
+    name: 'Test User',
     location: 'Amsterdam',
     tags: ['Test','Demo'],
-    languages: ['Nederlands','English'],
-    bio: 'Dit is een testprofiel',
+    languages: ['Dutch','English'],
+    bio: 'This is a test profile'
   };
-  const result = await db.collection(USERS).insertOne(newUser);
-  res.send(`Testprofiel aangemaakt met ID: ${result.insertedId}`);
+  const result = await db.collection(process.env.USER_COLLECTION).insertOne(testUser);
+  res.send(`Test profile created with ID: ${result.insertedId}`);
 });
 
 
-// ─── MORE‐MEETS (example) ────────────────────────────────────────────────
+// ─── MORE MEETS ─────────────────────────────────────────────────────────
 app.get('/more-meets', requireLogin, (req, res) => {
   res.render('more-meets');
 });
 
-// ─── 404 ────────────────────────────────────────────────────────────────
-app.use((_, res) => res.status(404).send('Niet gevonden'));
 
-// ─── START SERVER ───────────────────────────────────────────────────────
+// ─── 404 & START SERVER ─────────────────────────────────────────────────
+// 404 handler
+app.use((_, res) => res.status(404).send('Not Found'));
+
+// Start server
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`🚀 Server draait op poort ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
