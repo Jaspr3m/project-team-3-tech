@@ -1,199 +1,84 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TravelLink</title>
-  <link rel="stylesheet" href="/static/css/filter.css" />
-  <link rel="stylesheet" href="/static/header.css" />
-</head>
-
-<body>
-  <header>
-    <a href="/">
-      <img src="/static/images/Screenshot 2025-05-12 at 13.42.28.png" alt="Travel Link logo" class="logo">
-    </a>
-
-    <input type="text" placeholder="Beach walk, 'party', 'relaxing'" class="search-input">
-
-    <nav>
-      <button>Create Meet</button>
-      <button>Manage Meets</button>
-    </nav>
-
-    <section class="icons">
-      <a href="/notifications">
-        <img src="/static/images/alarm.svg" alt="Notifications">
-      </a>
-      <a href="/profile">
-        <img src="/static/images/profiel.svg" alt="Profile">
-      </a>
-    </section>
-  </header>
-
-  <main>
-    <section class="filter-section">
-      <h1>Filter Meets</h1>
-    
-      <form class="filter-form">
-        <label>
-          Location:
-          <select name="location">
-            <option value="">-- choose --</option>
-            <option value="amsterdam">Amsterdam</option>
-            <option value="rotterdam">Rotterdam</option>
-            <option value="denhaag">Den Haag</option>
-            <option value="utrecht">Utrecht</option>
-          </select>
-        </label>
-    
-        <label>
-          Category:
-          <select name="category">
-            <option value="">-- choose --</option>
-            <option value="party">Party</option>
-            <option value="study">Study</option>
-            <option value="walk">Walk</option>
-          </select>
-        </label>
-
-        <label>
-          Date:
-          <input type="date" name="date">
-        </label>
-
-        <button type="submit">Apply Filters</button>
-      </form>
-    
-      <a href="/" class="back-link">← Back to Home</a>
-    </section>
-  </main>
-</body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/static/profile.css" />
   <link rel="stylesheet" href="/static/header.css" />
-  <link rel="stylesheet" href="/static/homepage.css" />  
+  <link rel="stylesheet" href="/static/homepage.css" />
   <link rel="stylesheet" href="/static/css/filter.css" />
   <title>More Meets</title>
 </head>
+
 <body>
   <%- include('partials/header') %>
 
-  <main>
-    <button id="toggle-filters">Show/Hide Filters</button>
+    <main>
+      <button id="toggle-filters">Show/Hide Filters</button>
+      <section id="filter-container" class="filter-section <%= keyword ? 'hidden' : '' %>">
+        <h1>Filter Meets</h1>
+        <form id="filter-form" class="filter-form" method="GET" action="/more-meets">
 
-    <section id="filter-container" class="filter-section">
-      <h1>Filter Meets</h1>
-      <form id="filter-form" class="filter-form" method="GET" action="/more-meets">
-        <label>
-          Location:
-          <select name="location">
-            <option value="">-- choose --</option>
-            <option value="amsterdam" <%= location === 'amsterdam' ? 'selected' : '' %>>Amsterdam</option>
-            <option value="rotterdam" <%= location === 'rotterdam' ? 'selected' : '' %>>Rotterdam</option>
-            <option value="denhaag" <%= location === 'denhaag' ? 'selected' : '' %>>Den Haag</option>
-            <option value="utrecht" <%= location === 'utrecht' ? 'selected' : '' %>>Utrecht</option>
+          <label>Date:</label>
+          <input type="date" name="startDate" value="<%= startDate || '' %>" />
+          <input type="date" name="endDate" value="<%= endDate || '' %>" />
+
+          <label>Duration:</label>
+          <select name="duration">
+            <option value="">Any</option>
+            <option value="Short" <%=duration==='Short' ? 'selected' : '' %>>Short</option>
+            <option value="Long" <%=duration==='Long' ? 'selected' : '' %>>Long</option>
           </select>
-        </label>
-        <label>
-          Category:
-          <select name="category">
-            <option value="">-- choose --</option>
-            <option value="party" <%= category === 'party' ? 'selected' : '' %>>Party</option>
-            <option value="study" <%= category === 'study' ? 'selected' : '' %>>Study</option>
-            <option value="walk" <%= category === 'walk' ? 'selected' : '' %>>Walk</option>
-            <option value="food" <%= category === 'food' ? 'selected' : '' %>>Food</option>
-          </select>
-        </label>
-        <label>
-          Date:
-          <input type="date" name="date" value="<%= date || '' %>" />
-        </label>
-        <label>
-          Sort by:
+
+          <label>Max People:</label>
+          <input type="number" name="minPeople" min="1" value="<%= minPeople || '' %>" placeholder="Min" />
+          <input type="number" name="maxPeople" min="1" value="<%= maxPeople || '' %>" placeholder="Max" />
+
+          <label>Location:</label>
+          <input type="text" name="address" placeholder="e.g., Amsterdam" value="<%= address || '' %>" />
+
+          <label>Sort by:</label>
           <select name="sort">
             <option value="">-- choose --</option>
-            <option value="date_asc" <%= sort === 'date_asc' ? 'selected' : '' %>>Date (most recent)</option>
-            <option value="date_desc" <%= sort === 'date_desc' ? 'selected' : '' %>>Date (oldest)</option>
-            <option value="title_asc" <%= sort === 'title_asc' ? 'selected' : '' %>>Title (A-Z)</option>
-            <option value="title_desc" <%= sort === 'title_desc' ? 'selected' : '' %>>Title (Z-A)</option>
+            <option value="date_asc" <%=sort==='date_asc' ? 'selected' : '' %>>Date (newest)</option>
+            <option value="date_desc" <%=sort==='date_desc' ? 'selected' : '' %>>Date (oldest)</option>
+            <option value="title_asc" <%=sort==='title_asc' ? 'selected' : '' %>>Title (A-Z)</option>
+            <option value="title_desc" <%=sort==='title_desc' ? 'selected' : '' %>>Title (Z-A)</option>
           </select>
-        </label>
-        
-        <div class="filter-buttons">
-          <button type="submit">Apply Filters</button>
-          <button type="button" onclick="window.location.href='/more-meets'" class="clear-filters-btn">Clear All</button>
-        </div>
-        
-      </form>
-    </section>
 
-    <section class="meet-row">
-      <% if (!meets.length) { %>
-        <p>No meets found.</p>
-      <% } else { %>
-        <% meets.forEach(meet => { %>
-          <%- include('partials/meets.ejs', { meet: meet }) %>
-        <% }) %>
-      <% } %>
-    </section>
+          <div class="filter-buttons">
+            <button type="submit">Apply Filters</button>
+            <button type="button" onclick="window.location.href='/more-meets'" class="clear-filters-btn">Clear
+              All</button>
+          </div>
+        </form>
 
-    <a href="/" class="back-link">← Back to Home</a>
-  </main>
+      </section>
 
-  <script>
-    // Your existing toggle filters JS...
-    const toggleBtn = document.getElementById("toggle-filters");
-    const filterContainer = document.getElementById("filter-container");
-    toggleBtn.addEventListener("click", () => filterContainer.classList.toggle("hidden"));
+      <section class="meet-row">
+        <% if (!meets.length) { %>
+          <p>No meets found.</p>
+          <% } else { %>
+            <% meets.forEach(meet=> { %>
+              <%- include('partials/meets.ejs', { meet: meet }) %>
+                <% }) %>
+                  <% } %>
+      </section>
 
-    // JS for join/leave forms (same as homepage)
-    function updateJoinLeaveButton(card, isMember) {
-      const meetId = card.getAttribute("data-meet-id");
-      let formHtml;
-      if (isMember) {
-        formHtml = `<form method='POST' action='/meet/${meetId}/cancel' class='join-leave-form' data-action='leave'><input type='hidden' name='userId' value='demoUserId' /><button type='submit' class='cancel-btn'>Leave Meet</button></form>`;
-      } else {
-        formHtml = `<form method='POST' action='/meet/${meetId}/join' class='join-leave-form' data-action='join'><input type='hidden' name='userId' value='demoUserId' /><button type='submit'>Join Meet</button></form>`;
-      }
-      card.querySelector(".meet-actions").innerHTML = formHtml;
-      attachJoinLeaveListeners(card);
-    }
+      <a href="/" class="back-link">← Back to Home</a>
+    </main>
 
-    function attachJoinLeaveListeners(scope) {
-      (scope ? scope.querySelectorAll(".join-leave-form") : document.querySelectorAll(".join-leave-form")).forEach(form => {
-        if (!form.hasAttribute("data-listener")) {
-          form.setAttribute("data-listener", "true");
-          form.addEventListener("submit", async e => {
-            e.preventDefault();
-            const card = form.closest(".meet-card");
-            const url = form.action;
-            const action = form.getAttribute("data-action");
-            const formData = new FormData(form);
-            await fetch(url, { method: "POST", body: formData });
-            if (action === "join") {
-              alert("You joined the meet!");
-              updateJoinLeaveButton(card, true);
-            } else {
-              alert("You left the meet.");
-              updateJoinLeaveButton(card, false);
-            }
-          });
-        }
-      });
-    }
+    <script>
+      const toggleBtn = document.getElementById("toggle-filters");
+      const filterContainer = document.getElementById("filter-container");
+      toggleBtn.addEventListener("click", () => filterContainer.classList.toggle("hidden"));
+    </script>
 
-    attachJoinLeaveListeners();
-  </script>
-
-  <footer>
-    <%- include('partials/footer', { userId: userId }) %>
-      </footer>
+    <footer>
+      <%- include('partials/footer', { userId: userId }) %>
+    </footer>
 
 </body>
+
 </html>
