@@ -60,7 +60,10 @@ async function compareData(plainText, hashed) {
 
 // Show registration form
 app.get('/register', (req, res) => {
-  res.render('register', { errors: [] });
+  res.render('register', {
+    errors: [],
+    formData: { email: '', name: '' }
+  });
 });
 
 // Handle registration
