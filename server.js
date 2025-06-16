@@ -251,7 +251,7 @@ app.get('/create-test-profile', async (req, res) => {
 });
 
 
-// ─── MORE MEETS ─────────────────────────────────────────────────────────
+//MORE MEETS
 function applyFilters(filters) {
   const query = {};
 
@@ -268,9 +268,8 @@ function applyFilters(filters) {
   // if (filters.category) query.category = filters.category;
   if (filters.date) query.date = filters.date;
 
-  // Min/max people filter
   if (filters.minPeople || filters.maxPeople) {
-    query.maxPeople = {}; // We filter on the meet's max capacity
+    query.maxPeople = {};
 
     if (filters.minPeople) {
       query.maxPeople.$gte = parseInt(filters.minPeople, 10);
@@ -280,7 +279,6 @@ function applyFilters(filters) {
       query.maxPeople.$lte = parseInt(filters.maxPeople, 10);
     }
 
-    // Clean up if empty
     if (Object.keys(query.maxPeople).length === 0) {
       delete query.maxPeople;
     }
@@ -296,9 +294,8 @@ app.get('/more-meets', async (req, res) => {
   const { keyword, sort } = filters;
   const query = {};
 
-  // 🔍 Add this to support full-text keyword search across multiple fields
   if (keyword) {
-    const searchRegex = new RegExp(keyword, 'i'); // case-insensitive
+    const searchRegex = new RegExp(keyword, 'i');
     query.$or = [
       { title: searchRegex },
       { description: searchRegex },
@@ -308,7 +305,6 @@ app.get('/more-meets', async (req, res) => {
     ];
   }
 
-  // Apply other filters if needed
   if (filters.address) query.address = filters.address;
   if (filters.category) query.category = filters.category;
   if (filters.date) query.date = filters.date;
@@ -340,11 +336,6 @@ app.get('/more-meets', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
-
-
-
-
-
 
 app.get('/api/meets', async (req, res) => {
   const { keyword, address, date } = req.query;
