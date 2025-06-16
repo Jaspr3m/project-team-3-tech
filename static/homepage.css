@@ -217,3 +217,67 @@ body {
     width: 100%;
   }
 }
+
+/* buttons mobile */
+
+.mobile-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  align-items: center;
+  padding-top: 5em;
+  margin: auto;
+
+}
+
+.mobile-actions .action-btn {
+  flex: 1;
+  text-align: center;
+  padding: 0.6rem 0;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: #fff;
+  transition: background 0.2s ease;
+}
+
+/* primaire knop */
+
+.float-btn {
+  position: fixed;
+  right: 1rem;             
+  bottom: 5.5rem;          
+  width: 3.5rem;
+  height: 3.5rem;
+  background: #3c3c3c;      
+  color: #fff;
+  font-size: 2rem;
+  line-height: 3.2rem;       /* verticaal centreren van het “+” */
+  text-align: center;
+  border-radius: 50%;      
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1001;           
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* secundaire knop */
+.mobile-actions .action-btn.manage {
+  background: #e14f53;
+}
+
+
+/* verberg op desktop */
+@media (min-width: 768px) {
+  .mobile-actions {
+    display: none;
+  }
+    .float-btn {
+    display: none;
+  }
+
+}
+
+

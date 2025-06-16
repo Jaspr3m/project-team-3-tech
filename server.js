@@ -253,6 +253,12 @@ app.get('/more-meets', requireLogin, (req, res) => {
   res.render('more-meets');
 });
 
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    // optioneel: foutafhandeling
+    res.redirect('/login');
+  });
+});
 
 // ─── 404 & START SERVER ─────────────────────────────────────────────────
 // 404 handler
@@ -261,3 +267,4 @@ app.use((_, res) => res.status(404).send('Not Found'));
 // Start server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+

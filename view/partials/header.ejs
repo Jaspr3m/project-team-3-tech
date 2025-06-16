@@ -3,7 +3,7 @@
   <!-- Desktop navbar -->
   <nav class="desktop-nav">
     <div class="nav-left">
-      <a href="/"><img src="/static/images/tllogo.png" alt="Travel Link logo" class="logo" /></a>
+      <a href="/"><img src="/static/images/logo.svg" alt="Travel Link logo" class="logo" /></a>
     </div>
 
     <div class="nav-search">
@@ -13,25 +13,22 @@
              name="keyword"
              id="searchInput" />
     </div>
+    
+  <div class="nav-links">
+    <a data-active="home" href="/home"            class="nav-link">Home</a>
+    <a data-active="location" href="/"       class="nav-link">Location</a>
+    <a href="/user/create-meet"    class="nav-link nav-button">Create Meet</a>
+    <a href="/meets"               class="nav-link nav-button">Manage Meets</a>
+    <a data-active="noti" href="/notifications" class="nav-link"><img src="/static/images/mdi_bell.svg" alt="Notifications" class="icon-notif"></a>
+    <a data-active="profile" href="/profile/<%= userId %>"class="nav-link"><img src="/static/images/profiel.svg" alt="Profile"></a>
+</div>
+</nav>
 
-    <div class="nav-links">
-      <a href="/"              class="nav-link">Home</a>
-      <a href="/search"        class="nav-link">Location</a>
-      <a href="/user/create-meet" class="nav-link"><button>Create Meet</button></a>
-      <a href="/meets"         class="nav-link"><button>Manage Meets</button></a>
-      <a href="/notifications" class="nav-link">
-        <img src="/static/images/alarm.svg" alt="Notifications" />
-      </a>
-      <a href="/profile/<%= userId %>" class="nav-link">
-        <img src="/static/images/profiel.svg" alt="Profile" />
-      </a>
-    </div>
-  </nav>
 
   <!-- Mobile header -->
   <nav class="mobile-header">
     <div class="header-left">
-      <a href="/"><img src="/static/images/tllogo.png" alt="Travel Link logo" class="logo" /></a>
+      <a href="/"><img src="/static/images/logo.svg" alt="Travel Link logo" class="logo" /></a>
     </div>
 
     <div class="header-center">
@@ -41,14 +38,17 @@
              name="keyword"
              id="searchInput" />
     </div>
-
-    <div class="header-right">
-      <a href="/notifications">
-        <img src="/static/images/alarm.svg" alt="Notifications" />
-      </a>
-      <a href="/profile/<%= userId %>">
-        <img src="/static/images/profiel.svg" alt="Profile" />
-      </a>
-    </div>
   </nav>
+  
 </header>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const path = window.location.pathname.toLowerCase();
+    document.querySelectorAll('.nav-link[data-active]').forEach(link => {
+      const key = link.dataset.active.toLowerCase();
+      if (path.includes(key)) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>

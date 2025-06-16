@@ -5,10 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profile</title>
   <link rel="stylesheet" href="/static/profile.css" />
+    <link rel="stylesheet" href="/static/header.css" />
+      <link rel="stylesheet" href="/static/footer.css" />
+
+ 
+
 </head>
 <body>
+  <header> 
 
 <%- include('partials/header') %>
+  </header>
 
   <main class="profile-container">
     <% if (!editing && profile) { %>
@@ -32,7 +39,13 @@
 
       <p><strong>Bio:</strong><br><%= profile.bio %></p>
 
-      <a href="/profile/<%= profile._id %>?edit=true" class="edit-link">Edit Profile</a>
+<div class="button-row">
+  <a href="/profile/<%= profile._id %>?edit=true" class="edit-btn">Edit Profile</a>
+  <button class="logout-link"
+          onclick="if (confirm('Are you sure you want to log out?')) location.href='/logout'">
+    Logout
+  </button>
+</div>
 
     <% } else if (editing && profile) { %>
 
@@ -43,31 +56,38 @@
         <label>Location:</label>
         <input type="text" name="location" value="<%= profile.location %>">
 
-        <label>Photo:</label>
+        <label>Picture:</label>
         <input type="file" name="photo">
 
-        <label>Tags (comma-separated):</label>
+        <label>Tags:</label>
         <input type="text" name="tags" value="<%= (profile.tags||[]).join(',') %>">
 
-        <label>Languages (comma-separated):</label>
+        <label>Languages:</label>
         <input type="text" name="languages" value="<%= (profile.languages||[]).join(',') %>">
 
         <label>Bio:</label>
         <textarea name="bio"><%= profile.bio %></textarea>
 
         <button type="submit">Save</button>
+        <a href="/profile/<%= userId %>" class="cancel-btn">Cancel</a>
       </form>
 
     <% } else { %>
       <h2>No profile found.</h2>
     <% } %>
+
+
   </main>
   <footer>
 
   <%- include('partials/footer', { userId: userId }) %>
   </footer>
 
+<script>
 
+
+  
+</script>
 
 </body>
 </html>

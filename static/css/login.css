@@ -1,103 +1,174 @@
+/*───────────────────────────────────────────────────────────────────
+  GLOBAL RESET & VARIABLES
+───────────────────────────────────────────────────────────────────*/
+:root {
+  --color-bg:        #F2F2F2;   /* soft concrete */
+  --color-foreground:#2B2B2B;  /* deep asphalt */
+  --color-grey-mid:  #A0A0A0;  /* subtle midtone */
+  --color-teal:      #087E8B;  /* TravelLink teal */
+  --color-sienna:    #D35400;  /* warm street accent */
+  --radius:          8px;
+  --space:           1rem;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-foreground);
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space);
 }
+
+/*───────────────────────────────────────────────────────────────────
+  LOGIN CARD
+───────────────────────────────────────────────────────────────────*/
 section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
+  background: white;
+  border-radius: var(--radius);
+  padding: calc(var(--space)*2);
+  max-width: 360px;
+  width: 100%;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  text-align: center;
 }
-h1, h2 {
-    text-align: center;
-    color: #333;
+
+section h1 img {
+  width: 120px;
+  margin-bottom: var(--space);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+section h2 {
+  font-size: 1.5rem;
+  margin-bottom: calc(var(--space)*1.5);
+  color: var(--color-teal);
+}
+
+/*───────────────────────────────────────────────────────────────────
+  FORM ELEMENTS
+───────────────────────────────────────────────────────────────────*/
 form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  display: grid;
+  gap: var(--space);
 }
+
 label {
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
+  display: block;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin-bottom: 0.25rem;
 }
-input {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--color-grey-mid);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+input:focus {
+  outline: none;
+  border-color: var(--color-teal);
+  box-shadow: 0 0 0 3px rgba(8,126,139,0.2);
+}
+
+/* password toggle button */
 .password-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    
-    
+  position: relative;
 }
-.password-container input {
-    width: 100%;
-    padding-right: 40px; /* Space for the button */
+.password-container .showPassword {
+  position: absolute;
+  top: 50%; right: 0.75rem;
+  transform: translateY(-50%);
+  background: none; border: none;
+  cursor: pointer;
+  padding: 0;
 }
-.showPassword {
-    position: absolute;
-    right: 10px;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
+.password-container svg {
+  width: 1.2rem; height: 1.2rem;
+  stroke: var(--color-grey-mid);
 }
-.showPassword svg {
-    padding-bottom: 50%;
-    width: 24px;
-    height: 24px;
+.password-container button:hover svg {
+  stroke: var(--color-foreground);
 }
-.showPassword:hover svg path,
-.showPassword:hover svg circle {
-    stroke: #0056b3; /* Hover effect */
+
+/* feedback messages */
+.feedback {
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--color-sienna);
+  min-height: 1.2em;
 }
+
+/*───────────────────────────────────────────────────────────────────
+  SUBMIT & LINKS
+───────────────────────────────────────────────────────────────────*/
 button[type="submit"] {
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
+  margin-top: var(--space);
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-teal);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 button[type="submit"]:hover {
-    background-color: #0056b3;
+  background: #0a6e78;
+  transform: scale(1.02);
 }
+
+section a {
+  display: inline-block;
+  margin-top: var(--space);
+  font-size: 0.9rem;
+  color: var(--color-foreground);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--color-grey-mid);
+  padding-bottom: 2px;
+}
+section a:hover {
+  color: var(--color-sienna);
+  border-color: var(--color-sienna);
+}
+
+/*───────────────────────────────────────────────────────────────────
+  ERROR LIST
+───────────────────────────────────────────────────────────────────*/
 .error-list {
-    color: red;
-    list-style-type: none;
-    padding: 0;
-    margin: 10px 0;
+  margin-top: var(--space);
+  list-style: none;
+  text-align: left;
+  color: var(--color-sienna);
 }
 .error-list li {
-    margin: 5px 0;
+  margin-bottom: 0.5rem;
 }
-.feedback {
-    font-size: 0.9em;
-    margin-top: -10px;
-    margin-bottom: 10px;
-}
-.feedback.valid {
-    color: green;
-}
-.feedback.invalid {
-    color: red;
+
+/*───────────────────────────────────────────────────────────────────
+  RESPONSIVE TWEAKS
+───────────────────────────────────────────────────────────────────*/
+@media (max-width: 400px) {
+  section {
+    padding: var(--space);
+  }
+  section h2 {
+    font-size: 1.25rem;
+  }
 }

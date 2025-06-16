@@ -1,6 +1,18 @@
+
 <nav class="mobile-navbar">
-  <a href="/"                class="nav-icon"><img src="/static/images/home.svg" alt="Home"><span></span></a>
-  <a href="/search"          class="nav-icon"><img src="/static/images/mdi_location.svg" alt="Location"><span></span></a>
-  <a href="/notifications"   class="nav-icon"><img src="/static/images/mdi_bell.svg" alt="Notifications"><span></span></a>
-  <a href="/profile/<%= userId %>" class="nav-icon"><img src="/static/images/profile.svg" alt="Profile"><span></span></a>
+  <a data-active="home" href="/home"                class="nav-icon"><img src="/static/images/home.svg" alt="Home"><span></span></a>
+  <a data-active="location" href="/"          class="nav-icon"><img src="/static/images/mdi_location.svg" alt="Location"><span></span></a>
+  <a data-active="noti" href="/notifications"   class="nav-icon"><img src="/static/images/mdi_bell.svg" alt="Notifications"><span></span></a>
+  <a data-active="profile" href="/profile/<%= userId %>" class="nav-icon"><img src="/static/images/profile.svg" alt="Profile"><span></span></a>
 </nav>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const path = window.location.pathname;
+    document.querySelectorAll('.mobile-navbar a.nav-icon').forEach(a => {
+      if (a.getAttribute('href') === path) {
+        a.classList.add('active');
+      }
+    });
+  });
+</script>
+

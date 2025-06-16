@@ -1,98 +1,165 @@
-/* Header styles for all pages */
-/* header {
-    width: 100%;
-    background: #f8f8f8;
-    border-bottom: 1px solid #e0e0e0;
-    padding: 0.5rem 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+/*───────────────────────────────────────────────────────────────────
+  DESKTOP NAVBAR (bovenaan)
+───────────────────────────────────────────────────────────────────*/
+/*───────────────────────────────────────────────────────────────────
+  CENTREREN VAN DE LINKS
+───────────────────────────────────────────────────────────────────*/
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: #fff;
+  border-bottom: 1px solid #ccc;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-header .header-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
+
+.desktop-nav .logo {
+  height: 40px;
+  flex-shrink: 0;
+}
+.desktop-nav .nav-links {
+  display: flex;
+  gap: 1rem;          
+  margin: 0 auto;     
 }
 
-header .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #222;
-    text-decoration: none;
+/*───────────────────────────────────────────────────────────────────
+  STYLING VOOR REGULIERE LINKS
+───────────────────────────────────────────────────────────────────*/
+.desktop-nav .nav-link {
+  position: relative;
+  padding: 6px 0;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  font-size: 0.95rem;
+}
+.desktop-nav .nav-link:hover {
+  color: #3C3C3C;
+}
+.desktop-nav .nav-link:hover::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0; right: 0;
+  height: 2px;
+  background: #3C3C3C;
+  border-radius: 1px;
+}
+.desktop-nav .nav-link.active {
+  color: #3C3C3C;
+}
+.desktop-nav .nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0; right: 0;
+  height: 2px;
+  background: #3C3C3C;
+  border-radius: 1px;
 }
 
-header nav {
-    display: flex;
-    gap: 1.5rem;
+/*───────────────────────────────────────────────────────────────────
+  KNOP‐LINKS (nav-button)
+───────────────────────────────────────────────────────────────────*/
+.desktop-nav .nav-link.nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ff5a5f;       
+  color: #fff;                
+  padding: 0.4rem 1rem;    
+  border-radius: 20px;       
+  font-size: 0.9rem;          
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
-header nav a {
-    color: #333;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 1rem;
-    transition: color 0.2s;
+
+.desktop-nav .nav-link.nav-button::after {
+  content: none;
 }
 
-header nav a:hover {
-    color: #007bff;
-} */
 
-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 2rem;
+.desktop-nav .nav-link.nav-button:hover {
+  background: #e55357;
+  transform: scale(1.03);
 }
 
-header img {
-    height: 5em;
+/*───────────────────────────────────────────────────────────────────
+  NOTIFICATIONS‐ICOON
+───────────────────────────────────────────────────────────────────*/
+.desktop-nav .nav-link .icon-notif {
+  width: 24px;
+  vertical-align: middle;
+  filter: brightness(0);
+  transition: filter 0.2s ease;
+}
+.desktop-nav .nav-link:hover .icon-notif {
+  filter: brightness(0.6);
 }
 
-header input[type="text"] {
-    flex: 1;
-    padding: 0.5rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    min-width: 200px;
-    margin: 0 2rem;
+
+@media (max-width: 767px) {
+  .desktop-nav { display: none; }
 }
 
-nav button {
-    background-color: #ff5a5f;
-    color: white;
-    border: none;
-    padding: 0.6rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: transform 0.2s ease;
-    margin: 0.1em;
+/*───────────────────────────────────────────────────────────────────
+  MOBILE HEADER (bovenaan op mobiel)
+───────────────────────────────────────────────────────────────────*/
+.mobile-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border-bottom: 1px solid #ddd;
+  z-index: 1000;
 }
 
-nav button:hover {
-    transform: scale(1.1);
+.mobile-header .logo {
+  height: 36px;
+  flex-shrink: 0;
 }
 
-@media (max-width: 700px) {
-    header .header-container {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0 1rem;
-    }
-
-    header nav {
-        gap: 1rem;
-        margin-top: 0.5rem;
-    }
+.mobile-header .header-center {
+  flex: 1;
+  margin: 0 12px;
+  display: flex;
+  align-items: center;
 }
+
+.mobile-header .search-input {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease;
+}
+
+.mobile-header .search-input:focus {
+  box-shadow: 0 0 6px rgba(255, 90, 95, 0.5);
+  border-color: #ff5a5f;
+}
+
+
+@media (max-width: 767px) {
+  .desktop-nav { display: none; }
+}
+
+
+@media (min-width: 768px) {
+  .mobile-header { display: none; }
+}
+
