@@ -19,6 +19,8 @@
         class="email"
         name="email"
         required
+            value="<%= typeof formData !== 'undefined' ? formData.email : '' %>"
+
         
       />
       <div class="feedback emailFeedback"></div>
@@ -29,7 +31,8 @@
         class="name"
         name="name"
         required
-        
+            value="<%= typeof formData !== 'undefined' ? formData.name : '' %>"
+
       />
 
       <label for="password">Password:</label>
@@ -39,7 +42,7 @@
           class="password"
           name="password"
           required
-          value=""
+          value="<%= typeof formData !== 'undefined' ? formData.password : '' %>"
         />
         <button
           type="button"

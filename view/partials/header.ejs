@@ -43,6 +43,7 @@
 </header>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+  
     const path = window.location.pathname.toLowerCase();
     document.querySelectorAll('.nav-link[data-active]').forEach(link => {
       const key = link.dataset.active.toLowerCase();
@@ -50,5 +51,24 @@
         link.classList.add('active');
       }
     });
+
+    // Search input handler
+    const searchInput = document.getElementById("searchInput");
+    if (!searchInput) return;
+
+    searchInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const keyword = e.target.value.trim();
+
+        if (keyword) {
+          
+          const currentPath = window.location.pathname;
+          const base = currentPath.includes('/more-meets') ? '/more-meets' : '/search';
+          window.location.href = `${base}?keyword=${encodeURIComponent(keyword)}`;
+        }
+      }
+    });
   });
 </script>
+

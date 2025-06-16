@@ -128,7 +128,7 @@ main img {
 /* 8) Responsive tweaks                                                        */
 /* ──────────────────────────────────────────────────────────────────────────── */
 @media (min-width: 480px) {
-  main > img {
+  main img {
     width: 50vw;
     max-width: 320px;
     margin-top: 3rem;

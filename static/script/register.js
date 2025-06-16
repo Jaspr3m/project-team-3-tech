@@ -125,4 +125,3 @@ document.addEventListener('DOMContentLoaded', () => {
     togglePassword.innerHTML = show ? icons.hide : icons.show;
   });
 });
-
