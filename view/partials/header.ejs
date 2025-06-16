@@ -1,68 +1,37 @@
-<header>
-  <nav class="desktop-nav">
-    <div class="nav-left">
-      <a href="/"
-        ><img
-          src="/static/images/tllogo.png"
-          alt="Travel Link logo"
-          class="logo"
-      /></a>
-    </div>
-
-    <div class="nav-search">
-      <input
-        type="text"
-        placeholder="Beach walk, 'party', 'relaxing'"
-        class="search-input"
-        name="keyword"
-        id="searchInput"
+<nav>
+  <a href="/">
+    <img
+      src="/static/images/topleft-logo.png"
+      alt="TravelLink - Make friends around the world!"
+    />
+  </a>
+  <div id="pages">
+    <div>page 1</div>
+    <div>page 2</div>
+    <div>page 3</div>
+    <div>page 4</div>
+  </div>
+  <input type="text" name="" id="" />
+  <div id="create-manage">
+    <a href="/users/create-meet"
+      ><button id="create-meet">Create Meet</button></a
+    >
+    <a href="/meets"><button id="manage-meets">Manage Meets</button></a>
+  </div>
+  <div id="profile">
+    <a href="/profile/<%= userId %>">
+      <img
+        src="<%= typeof user !== 'undefined' && user && user.photoUrl ? user.photoUrl : '/static/images/profile.png' %>"
+        alt="Profile Picture"
+        class="profile-pic"
+        style="
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #ccc;
+        "
       />
-    </div>
-
-    <div class="nav-links">
-      <a href="/" class="nav-link">Home</a>
-      <a href="/search" class="nav-link">Location</a>
-      <a href="/users/create-meet" class="nav-link"
-        ><button>Create Meet</button></a
-      >
-      <a href="/meets" class="nav-link"><button>Manage Meets</button></a>
-      <a href="/notifications" class="nav-link">
-        <img src="/static/images/alarm.svg" alt="Notifications" />
-      </a>
-      <a href="/profile/<%= userId %>" class="nav-link">
-        <img src="/static/images/profiel.svg" alt="Profile" />
-      </a>
-    </div>
-  </nav>
-
-  <!-- Mobile header -->
-  <nav class="mobile-header">
-    <div class="header-left">
-      <a href="/"
-        ><img
-          src="/static/images/tllogo.png"
-          alt="Travel Link logo"
-          class="logo"
-      /></a>
-    </div>
-
-    <div class="header-center">
-      <input
-        type="text"
-        placeholder="Beach walk, 'party', 'relaxing'"
-        class="search-input"
-        name="keyword"
-        id="searchInput"
-      />
-    </div>
-
-    <div class="header-right">
-      <a href="/notifications">
-        <img src="/static/images/alarm.svg" alt="Notifications" />
-      </a>
-      <a href="/profile/<%= userId %>">
-        <img src="/static/images/profiel.svg" alt="Profile" />
-      </a>
-    </div>
-  </nav>
-</header>
+    </a>
+  </div>
+</nav>

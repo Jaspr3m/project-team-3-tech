@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      header {
+        /* border: solid 3px red; */
+        padding-inline: 2vw;
+        padding-block: 1vh;
+      }
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: solid 3px green;
+        height: 5vh;
+        border-radius: 6px;
+        padding-inline: 0.5em;
+        background: rgb(214, 214, 214);
+      }
+      #pages {
+        display: flex;
+        justify-content: center;
+        gap: 1em;
+        border: solid 2px red;
+      }
+      #create-manage {
+        display: flex;
+        gap: 6px;
+      }
+      #create-meet {
+        padding-inline: 10px;
+        padding-block: 6px;
+      }
+      #manage-meets {
+        padding-inline: 10px;
+        padding-block: 6px;
+      }
+      form {
+        width: 25%;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <img
+          src="static\images\topleft-logo.png"
+          alt="TravelLink - Make friends around the world!"
+        />
+        <div id="pages">
+          <div>page 1</div>
+          <div>page 2</div>
+          <div>page 3</div>
+          <div>page 4</div>
+        </div>
+        <form action=""></form>
+        <div id="create-manage">
+          <button id="create-meet">Create Meet</button>
+          <button id="manage-meets">Manage Meets</button>
+        </div>
+        <div id="profile">profile</div>
+      </nav>
+    </header>
+  </body>
+</html>

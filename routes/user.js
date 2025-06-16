@@ -16,7 +16,10 @@ const upload = multer({ storage: storage });
 
 // GET: Render create meet form
 router.get("/create-meet", (req, res) => {
-  res.render("create-meet");
+  res.render("create-meet", {
+    userId: req.session.userId || null,
+    user: req.session.user || null,
+  });
 });
 
 // POST: Handle meet creation

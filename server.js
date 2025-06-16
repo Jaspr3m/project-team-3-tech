@@ -145,8 +145,18 @@ app.get("/loginHome", (req, res) => {
 // ─── HOMEPAGE ────────────────────────────────────────────────────────────
 
 // Redirect root to /home
-app.get("/", (req, res) => {
-  return res.redirect("/home");
+app.get("/", async (req, res) => {
+  try {
+    // Fetch all meets from MongoDB
+    const meets = await db.collection("meets").find({}).toArray();
+    res.render("home", {
+      meets,
+      userId: req.session.userId || null,
+    });
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+    res.status(500).send("Error fetching meetings");
+  }
 });
 
 // Protected homepage
@@ -267,13 +277,28 @@ app.get("/more-meets", requireLogin, (req, res) => {
   res.render("more-meets");
 });
 
-// ─── 404 & START SERVER ─────────────────────────────────────────────────
-// 404 handler
-app.use((_, res) => res.status(404).send("Not Found"));
+// ─── MANAGE MEETS ─────────────────────────────────────────────────────
+app.get("/meets", requireLogin, async (req, res) => {
+  try {
+    const meets = await db.collection("meets").find({}).toArray();
+    res.render("meets", {
+      meets,
+      userId: req.session.userId || null,
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error fetching meets for manage page:", error);
+    res.status(500).send("Error fetching meets");
+  }
+});
 
+// ─── 404 & START SERVER ─────────────────────────────────────────────────
 // User routes
 const userRoutes = require("./routes/user");
 app.use("/users", userRoutes);
+
+// 404 handler (should be last)
+app.use((_, res) => res.status(404).send("Not Found"));
 
 // Start server
 const PORT = process.env.PORT || 8000;
