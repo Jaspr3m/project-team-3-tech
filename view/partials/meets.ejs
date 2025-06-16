@@ -1,0 +1,104 @@
+<div class="meet-card" data-meet-id="<%= meet._id %>">
+    <img
+      src="<%= meet.image || '/static/images/map_placeholder.png' %>"
+      alt="Meet Image"
+      style="
+        max-width: 220px;
+        max-height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+      "
+    />
+    <div
+      style="
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.98rem;
+        color: #444;
+        margin-bottom: 0.3rem;
+      "
+    >
+      <span><strong>Date:</strong> <%= meet.date || '-' %></span>
+      <span><strong>Time:</strong> <%= meet.time || '-' %></span>
+    </div>
+    <div style="margin-bottom: 0.3rem; color: #666">
+      <strong>Location:</strong> <%= meet.address || meet.location || '-' %>
+    </div>
+    <div
+      class="meet-actions"
+      style="
+        display: flex;
+        gap: 0.5rem;
+        width: 100%;
+        margin-top: 0.5rem;
+      "
+    >
+      <a
+        href="/meet/<%= meet._id %>"
+        class="view-btn"
+        style="
+          background: #007bff;
+          color: #fff;
+          padding: 0.4rem 1rem;
+          border-radius: 5px;
+          text-decoration: none;
+          font-weight: bold;
+        "
+        >View</a
+      >
+      <% const userId = 'demoUserId'; %>
+      <% const isMember = Array.isArray(meet.members) && meet.members.some(m => m.id === userId); %>
+      <% if (!isMember) { %>
+        <form
+          method="POST"
+          action="/meet/<%= meet._id %>/join"
+          class="join-leave-form"
+          data-action="join"
+          style="display: inline"
+        >
+          <input type="hidden" name="userId" value="<%= userId %>" />
+          <button
+            type="submit"
+            style="
+              background: #28a745;
+              color: #fff;
+              border: none;
+              border-radius: 5px;
+              padding: 0.4rem 1rem;
+              font-weight: bold;
+            "
+          >
+            Join Meet
+          </button>
+        </form>
+      <% } else { %>
+        <form
+          method="POST"
+          action="/meet/<%= meet._id %>/cancel"
+          class="join-leave-form"
+          data-action="leave"
+          style="display: inline"
+        >
+          <input type="hidden" name="userId" value="<%= userId %>" />
+          <button
+            type="submit"
+            class="cancel-btn"
+            style="
+              background: #dc3545;
+              color: #fff;
+              border: none;
+              border-radius: 5px;
+              padding: 0.4rem 1rem;
+              font-weight: bold;
+            "
+          >
+            Leave Meet
+          </button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+  
+      

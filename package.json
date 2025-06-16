@@ -21,12 +21,7 @@
     "express-validator": "^7.2.1",
     "mongodb": "^6.16.0",
     "multer": "^2.0.1",
-<<<<<<< HEAD
-=======
-
     "nodemon": "^3.1.10",
-
->>>>>>> e06ddfb99f17ab0869505a8226210d241c37a585
     "xss": "^1.0.15"
   },
   "devDependencies": {
