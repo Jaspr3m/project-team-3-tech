@@ -6,13 +6,16 @@
       <a href="/"><img src="/static/images/tllogo.png" alt="Travel Link logo" class="logo" /></a>
     </div>
 
-    <div class="nav-search">
-      <input type="text"
-             placeholder="Beach walk, 'party', 'relaxing'"
-             class="search-input"
-             name="keyword"
-             id="searchInput" />
-    </div>
+    <form action="/more-meets" method="GET" class="search-form">
+      <input
+        type="text"
+        name="keyword"
+        placeholder="Search meets..."
+        class="search-input"
+        value="<%= typeof keyword !== 'undefined' ? keyword : '' %>"
+
+      />
+    </form>
 
     <div class="nav-links">
       <a href="/"              class="nav-link">Home</a>

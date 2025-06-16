@@ -1,10 +1,10 @@
 // server.js
-const express               = require('express');
-const path                  = require('path');
-const session               = require('express-session');
+const express = require('express');
+const path = require('path');
+const session = require('express-session');
 const { MongoClient, ObjectId } = require('mongodb');
-const bcrypt                = require('bcryptjs');
-const multer                = require('multer');
+const bcrypt = require('bcryptjs');
+const multer = require('multer');
 require('dotenv').config();
 
 const app = express();
@@ -14,10 +14,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/static', express.static(path.join(__dirname, 'static')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(session({
-  secret:            process.env.SESSION_SECRET,
-  resave:            false,
+  secret: process.env.SESSION_SECRET,
+  resave: false,
   saveUninitialized: false,
-  cookie:            { maxAge: 24 * 60 * 60 * 1000 } // 1 day
+  cookie: { maxAge: 24 * 60 * 60 * 1000 } // 1 day
 }));
 
 // View engine
@@ -78,7 +78,7 @@ app.post('/register', async (req, res) => {
     return res.render('register', { errors });
   }
 
-  const hash   = await bcrypt.hash(password, 10);
+  const hash = await bcrypt.hash(password, 10);
   const result = await db.collection(process.env.USER_COLLECTION).insertOne({
     email,
     name,
@@ -150,11 +150,11 @@ app.get('/', (req, res) => {
 app.get('/home', requireLogin, async (req, res) => {
   try {
     // Fetch all meets from MongoDB
-const meets = await db.collection('meets').find({}).toArray();
-res.render('home', {
-  meets,
-  userId: req.session.userId
-});
+    const meets = await db.collection('meets').find({}).toArray();
+    res.render('home', {
+      meets,
+      userId: req.session.userId
+    });
   } catch (error) {
     console.error('Error fetching meetings:', error);
     res.status(500).send('Error fetching meetings');
@@ -194,8 +194,8 @@ app.get('/profile/:id', requireLogin, async (req, res) => {
 
     res.render('profile', {
       profile,
-      editing:    req.query.edit === 'true',
-      userId:     req.session.userId,
+      editing: req.query.edit === 'true',
+      userId: req.session.userId,
       activePage: 'profile'
     });
   } catch (error) {
@@ -212,15 +212,15 @@ app.post(
   async (req, res) => {
     try {
       const id = req.params.id;
-      const tags      = (req.body.tags     || '').split(',').map(t => t.trim()).filter(Boolean);
-      const languages = (req.body.languages|| '').split(',').map(l => l.trim()).filter(Boolean);
+      const tags = (req.body.tags || '').split(',').map(t => t.trim()).filter(Boolean);
+      const languages = (req.body.languages || '').split(',').map(l => l.trim()).filter(Boolean);
 
       const updateData = {
-        name:      req.body.name,
-        location:  req.body.location,
+        name: req.body.name,
+        location: req.body.location,
         tags,
         languages,
-        bio:       req.body.bio
+        bio: req.body.bio
       };
       if (req.file) {
         updateData.photoUrl = '/uploads/' + req.file.filename;
@@ -242,8 +242,8 @@ app.get('/create-test-profile', async (req, res) => {
   const testUser = {
     name: 'Test User',
     location: 'Amsterdam',
-    tags: ['Test','Demo'],
-    languages: ['Dutch','English'],
+    tags: ['Test', 'Demo'],
+    languages: ['Dutch', 'English'],
     bio: 'This is a test profile'
   };
   const result = await db.collection(process.env.USER_COLLECTION).insertOne(testUser);
@@ -254,36 +254,84 @@ app.get('/create-test-profile', async (req, res) => {
 // ─── MORE MEETS ─────────────────────────────────────────────────────────
 function applyFilters(filters) {
   const query = {};
-  if (filters.location) query.location = filters.location;
-  if (filters.category) query.category = filters.category;
+
+  if (filters.keyword) {
+    const keywordRegex = new RegExp(filters.keyword, 'i');
+    query.$or = [
+      { title: keywordRegex },
+      { description: keywordRegex },
+      { address: keywordRegex },
+    ];
+  }
+
+  if (filters.address) query.address = filters.address;
+  // if (filters.category) query.category = filters.category;
   if (filters.date) query.date = filters.date;
+
+  // Min/max people filter
+  if (filters.minPeople || filters.maxPeople) {
+    query.maxPeople = {}; // We filter on the meet's max capacity
+
+    if (filters.minPeople) {
+      query.maxPeople.$gte = parseInt(filters.minPeople, 10);
+    }
+
+    if (filters.maxPeople) {
+      query.maxPeople.$lte = parseInt(filters.maxPeople, 10);
+    }
+
+    // Clean up if empty
+    if (Object.keys(query.maxPeople).length === 0) {
+      delete query.maxPeople;
+    }
+  }
+
   return query;
 }
 
+
+
 app.get('/more-meets', async (req, res) => {
   const filters = req.query;
-  const { sort } = filters;
-  const query = applyFilters(filters);
+  const { keyword, sort } = filters;
+  const query = {};
 
-  // Build sorting option
-  let sortOption = {};
-  if (sort === 'date_asc') {
-    sortOption.date = 1;
-  } else if (sort === 'date_desc') {
-    sortOption.date = -1;
-  } else if (sort === 'title_asc') {
-    sortOption.title = 1;
-  } else if (sort === 'title_desc') {
-    sortOption.title = -1;
+  // 🔍 Add this to support full-text keyword search across multiple fields
+  if (keyword) {
+    const searchRegex = new RegExp(keyword, 'i'); // case-insensitive
+    query.$or = [
+      { title: searchRegex },
+      { description: searchRegex },
+      { address: searchRegex },
+      // { category: searchRegex },
+      // { tags: searchRegex },
+    ];
   }
+
+  // Apply other filters if needed
+  if (filters.address) query.address = filters.address;
+  if (filters.category) query.category = filters.category;
+  if (filters.date) query.date = filters.date;
+
+  let sortOption = {};
+  if (sort === 'date_asc') sortOption.date = 1;
+  else if (sort === 'date_desc') sortOption.date = -1;
+  else if (sort === 'title_asc') sortOption.title = 1;
+  else if (sort === 'title_desc') sortOption.title = -1;
 
   try {
     const meets = await db.collection('meets').find(query).sort(sortOption).toArray();
     res.render('more-meets', {
       meets,
-      location: filters.location || '',
-      category: filters.category || '',
+      keyword,
+      address: filters.address || '',
+      // category: filters.category || '',
       date: filters.date || '',
+      duration: filters.duration || '',
+      startDate: filters.startDate || '',
+      minPeople: filters.minPeople || '',
+      maxPeople: filters.maxPeople || '',
+      endDate: filters.endDate || '',
       sort: sort || '',
       userId: req.session.userId || null
     });
@@ -297,8 +345,9 @@ app.get('/more-meets', async (req, res) => {
 
 
 
+
 app.get('/api/meets', async (req, res) => {
-  const { keyword, location, category, date } = req.query;
+  const { keyword, address, date } = req.query;
 
   const query = {};
 
@@ -306,12 +355,11 @@ app.get('/api/meets', async (req, res) => {
     query.$or = [
       { meetingName: new RegExp(keyword, 'i') },
       { description: new RegExp(keyword, 'i') },
-      { location: new RegExp(keyword, 'i') },
+      { address: new RegExp(keyword, 'i') },
     ];
   }
 
-  if (location) query.location = location;
-  if (category) query.category = category;
+  if (address) query.address = address;
   if (date) query.date = date;
 
   try {

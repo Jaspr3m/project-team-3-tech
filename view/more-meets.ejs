@@ -86,51 +86,44 @@
 
   <main>
     <button id="toggle-filters">Show/Hide Filters</button>
-
-    <section id="filter-container" class="filter-section">
+    <section id="filter-container" class="filter-section <%= keyword ? 'hidden' : '' %>">
       <h1>Filter Meets</h1>
       <form id="filter-form" class="filter-form" method="GET" action="/more-meets">
-        <label>
-          Location:
-          <select name="location">
-            <option value="">-- choose --</option>
-            <option value="amsterdam" <%= location === 'amsterdam' ? 'selected' : '' %>>Amsterdam</option>
-            <option value="rotterdam" <%= location === 'rotterdam' ? 'selected' : '' %>>Rotterdam</option>
-            <option value="denhaag" <%= location === 'denhaag' ? 'selected' : '' %>>Den Haag</option>
-            <option value="utrecht" <%= location === 'utrecht' ? 'selected' : '' %>>Utrecht</option>
-          </select>
-        </label>
-        <label>
-          Category:
-          <select name="category">
-            <option value="">-- choose --</option>
-            <option value="party" <%= category === 'party' ? 'selected' : '' %>>Party</option>
-            <option value="study" <%= category === 'study' ? 'selected' : '' %>>Study</option>
-            <option value="walk" <%= category === 'walk' ? 'selected' : '' %>>Walk</option>
-            <option value="food" <%= category === 'food' ? 'selected' : '' %>>Food</option>
-          </select>
-        </label>
-        <label>
-          Date:
-          <input type="date" name="date" value="<%= date || '' %>" />
-        </label>
-        <label>
-          Sort by:
-          <select name="sort">
-            <option value="">-- choose --</option>
-            <option value="date_asc" <%= sort === 'date_asc' ? 'selected' : '' %>>Date (most recent)</option>
-            <option value="date_desc" <%= sort === 'date_desc' ? 'selected' : '' %>>Date (oldest)</option>
-            <option value="title_asc" <%= sort === 'title_asc' ? 'selected' : '' %>>Title (A-Z)</option>
-            <option value="title_desc" <%= sort === 'title_desc' ? 'selected' : '' %>>Title (Z-A)</option>
-          </select>
-        </label>
-        
+        <!-- <input type="text" placeholder="Search by title..."/> -->
+      
+        <label>Date:</label>
+        <input type="date" name="startDate" value="<%= startDate || '' %>" />
+        <input type="date" name="endDate" value="<%= endDate || '' %>" />
+      
+        <label>Duration:</label>
+        <select name="duration">
+          <option value="">Any</option>
+          <option value="Short" <%= duration === 'Short' ? 'selected' : '' %>>Short</option>
+          <option value="Long" <%= duration === 'Long' ? 'selected' : '' %>>Long</option>
+        </select>
+      
+        <label>Max People:</label>
+        <input type="number" name="minPeople" min="1" value="<%= minPeople || '' %>" placeholder="Min" />
+        <input type="number" name="maxPeople" min="1" value="<%= maxPeople || '' %>" placeholder="Max" />
+      
+        <label>Location:</label>
+        <input type="text" name="address" placeholder="e.g., Amsterdam" value="<%= address || '' %>" />
+      
+        <label>Sort by:</label>
+        <select name="sort">
+          <option value="">-- choose --</option>
+          <option value="date_asc" <%= sort === 'date_asc' ? 'selected' : '' %>>Date (newest)</option>
+          <option value="date_desc" <%= sort === 'date_desc' ? 'selected' : '' %>>Date (oldest)</option>
+          <option value="title_asc" <%= sort === 'title_asc' ? 'selected' : '' %>>Title (A-Z)</option>
+          <option value="title_desc" <%= sort === 'title_desc' ? 'selected' : '' %>>Title (Z-A)</option>
+        </select>
+      
         <div class="filter-buttons">
           <button type="submit">Apply Filters</button>
           <button type="button" onclick="window.location.href='/more-meets'" class="clear-filters-btn">Clear All</button>
         </div>
-        
       </form>
+      
     </section>
 
     <section class="meet-row">
