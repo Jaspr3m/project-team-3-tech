@@ -52,3 +52,25 @@
     </div>
   </nav>
 </header>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+    if (!searchInput) return;
+
+    searchInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const keyword = e.target.value.trim();
+
+        if (keyword) {
+          // Navigate to the current page with search query or to a results page
+          const currentPath = window.location.pathname;
+          const base = currentPath.includes('/more-meets') ? '/more-meets' : '/search';
+          window.location.href = `${base}?keyword=${encodeURIComponent(keyword)}`;
+        }
+      }
+    });
+  });
+</script>
