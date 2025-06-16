@@ -23,7 +23,7 @@
         class="profile-pic"
       />
       <% } %>
-      <h1><%= profile.name %></h1>
+      <h1><%= profile.firstName %> <%= profile.lastName %></h1>
       <p class="location"><%= profile.location %></p>
 
       <p>
@@ -33,14 +33,10 @@
         <% }) %>
       </p>
 
-      <p>
-        <strong>Languages:</strong><br />
-        <% (profile.languages || []).forEach(lang => { %>
-        <span class="box"><%= lang %></span>
-        <% }) %>
-      </p>
-
-      <p><strong>Bio:</strong><br /><%= profile.bio %></p>
+      <p><strong>Vibe:</strong> <%= profile.vibe || '-' %></p>
+      <p><strong>Preferred Gender:</strong> <%= profile.preferredGender === 'm' ? 'Male' : (profile.preferredGender === 'f' ? 'Female' : '-') %></p>
+      <p><strong>Age Range:</strong> <%= profile.ageRange ? profile.ageRange.min + ' - ' + profile.ageRange.max : '-' %></p>
+      <p><strong>Biography:</strong><br /><%= profile.bio || '-' %></p>
 
       <a href="/profile/<%= profile._id %>?edit=true" class="edit-link"
         >Edit Profile</a
@@ -53,14 +49,17 @@
         method="POST"
         enctype="multipart/form-data"
       >
-        <label>Name:</label>
-        <input type="text" name="name" value="<%= profile.name %>" />
-
-        <label>Location:</label>
-        <input type="text" name="location" value="<%= profile.location %>" />
+        <label>First & Last Name:</label>
+        <div class="side-by-side">
+          <input type="text" name="firstName" placeholder="First Name" value="<%= profile.firstName || '' %>" required />
+          <input type="text" name="lastName" placeholder="Last Name" value="<%= profile.lastName || '' %>" required />
+        </div>
 
         <label>Photo:</label>
-        <input type="file" name="photo" />
+        <input type="file" name="photo" <%= profile.photoUrl ? '' : 'required' %> />
+        <% if (!profile.photoUrl) { %>
+        <div style="color: red; font-size: 0.9em;">* Profile photo is required</div>
+        <% } %>
 
         <label>Tags (comma-separated):</label>
         <input
@@ -69,17 +68,70 @@
           value="<%= (profile.tags||[]).join(',') %>"
         />
 
-        <label>Languages (comma-separated):</label>
-        <input
-          type="text"
-          name="languages"
-          value="<%= (profile.languages||[]).join(',') %>"
-        />
+        <label>Biography:</label>
+        <textarea name="bio" placeholder="Tell us about yourself" required><%= profile.bio || '' %></textarea>
 
-        <label>Bio:</label>
-        <textarea name="bio"><%= profile.bio %></textarea>
+        <label>Vibe:</label>
+        <select name="vibe" required>
+          <option value="">Select vibe</option>
+          <option value="Chill" <%= profile.vibe === 'Chill' ? 'selected' : '' %>>Chill</option>
+          <option value="Adventurous" <%= profile.vibe === 'Adventurous' ? 'selected' : '' %>>Adventurous</option>
+          <option value="Artsy" <%= profile.vibe === 'Artsy' ? 'selected' : '' %>>Artsy</option>
+          <option value="Party" <%= profile.vibe === 'Party' ? 'selected' : '' %>>Party</option>
+          <option value="Mindful" <%= profile.vibe === 'Mindful' ? 'selected' : '' %>>Mindful</option>
+          <option value="Foodie" <%= profile.vibe === 'Foodie' ? 'selected' : '' %>>Foodie</option>
+          <option value="Explorer" <%= profile.vibe === 'Explorer' ? 'selected' : '' %>>Explorer</option>
+          <option value="Sporty" <%= profile.vibe === 'Sporty' ? 'selected' : '' %>>Sporty</option>
+        </select>
+
+        <label>Preferred Gender:</label>
+        <select name="preferredGender" required>
+          <option value="">Select gender</option>
+          <option value="m" <%= profile.preferredGender === 'm' ? 'selected' : '' %>>Male</option>
+          <option value="f" <%= profile.preferredGender === 'f' ? 'selected' : '' %>>Female</option>
+        </select>
+
+        <label>Location:</label>
+        <select name="location" required>
+          <option value="">Select location</option>
+          <option value="Amsterdam" <%= profile.location === 'Amsterdam' ? 'selected' : '' %>>Amsterdam</option>
+          <option value="Den Haag" <%= profile.location === 'Den Haag' ? 'selected' : '' %>>Den Haag</option>
+          <option value="Rotterdam" <%= profile.location === 'Rotterdam' ? 'selected' : '' %>>Rotterdam</option>
+          <option value="Utrecht" <%= profile.location === 'Utrecht' ? 'selected' : '' %>>Utrecht</option>
+        </select>
+
+        <label>Age Range: <span id="ageRangeValue"><%= profile.ageRange ? profile.ageRange.min : 18 %> - <%= profile.ageRange ? profile.ageRange.max : 99 %></span></label>
+        <input
+          type="range"
+          name="ageMin"
+          min="18"
+          max="99"
+          value="<%= profile.ageRange ? profile.ageRange.min : 18 %>"
+          id="ageMin"
+          style="width: 48%"
+        />
+        <input
+          type="range"
+          name="ageMax"
+          min="18"
+          max="99"
+          value="<%= profile.ageRange ? profile.ageRange.max : 99 %>"
+          id="ageMax"
+          style="width: 48%"
+        />
+        <div class="slider-labels">
+          <span>18</span>
+          <span>99</span>
+        </div>
 
         <button type="submit">Save</button>
+      </form>
+      <form
+        action="/logout"
+        method="POST"
+        style="text-align: right; margin-bottom: 1em; margin-top: 1em;"
+      >
+        <button type="submit" class="logout-btn">Log Out</button>
       </form>
 
       <% } else { %>
@@ -87,5 +139,29 @@
       <% } %>
     </main>
     <footer><%- include('partials/footer', { userId: userId }) %></footer>
+    <script>
+      // Update age range display
+      const minSlider = document.getElementById("ageMin");
+      const maxSlider = document.getElementById("ageMax");
+      const ageRangeValue = document.getElementById("ageRangeValue");
+      function updateAgeRange() {
+        let min = parseInt(minSlider.value);
+        let max = parseInt(maxSlider.value);
+        if (min > max) [min, max] = [max, min];
+        ageRangeValue.textContent = `${min} - ${max}`;
+      }
+      minSlider.addEventListener("input", updateAgeRange);
+      maxSlider.addEventListener("input", updateAgeRange);
+      updateAgeRange();
+    </script>
+    <style>
+      .side-by-side {
+        display: flex;
+        gap: 12px;
+      }
+      .side-by-side input {
+        flex: 1;
+      }
+    </style>
   </body>
 </html>

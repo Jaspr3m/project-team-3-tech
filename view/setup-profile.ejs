@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setup Profile</title>
+    <link rel="stylesheet" href="/static/css/header.css" />
+    <link rel="stylesheet" href="/static/css/profile.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+      .side-by-side {
+        display: flex;
+        gap: 12px;
+      }
+      .side-by-side input {
+        flex: 1;
+      }
+      .slider-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.95em;
+        margin-top: -8px;
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header><%- include('partials/header', { userId: userId }) %></header>
+    <main class="profile-container">
+      <h1>Complete Your Profile</h1>
+      <form action="/setup-profile" method="POST" enctype="multipart/form-data">
+        <label>Profile Picture:</label>
+        <input type="file" name="photo" accept="image/*" required />
+        <label>First & Last Name:</label>
+        <div class="side-by-side">
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            required
+          />
+          <input type="text" name="lastName" placeholder="Last Name" required />
+        </div>
+
+        <label>Biography:</label>
+        <textarea
+          name="bio"
+          placeholder="Tell us about yourself"
+          required
+        ></textarea>
+
+        <label>Tags (comma-separated):</label>
+        <input type="text" name="tags" placeholder="e.g. hiking, music, tech" />
+
+        <label>Vibe:</label>
+        <select name="vibe" required>
+          <option value="">Select vibe</option>
+          <option value="Chill">Chill</option>
+          <option value="Adventurous">Adventurous</option>
+          <option value="Artsy">Artsy</option>
+          <option value="Party">Party</option>
+          <option value="Mindful">Mindful</option>
+          <option value="Foodie">Foodie</option>
+          <option value="Explorer">Explorer</option>
+          <option value="Sporty">Sporty</option>
+        </select>
+
+        <label>Preferred Gender:</label>
+        <select name="preferredGender" required>
+          <option value="">Select gender</option>
+          <option value="m">Male</option>
+          <option value="f">Female</option>
+        </select>
+
+        <label>Age Range: <span id="ageRangeValue">18 - 99</span></label>
+        <input
+          type="range"
+          name="ageMin"
+          min="18"
+          max="99"
+          value="18"
+          id="ageMin"
+          style="width: 48%"
+        />
+        <input
+          type="range"
+          name="ageMax"
+          min="18"
+          max="99"
+          value="99"
+          id="ageMax"
+          style="width: 48%"
+        />
+        <div class="slider-labels">
+          <span>18</span>
+          <span>99</span>
+        </div>
+
+        <label>Location:</label>
+        <select name="location" required>
+          <option value="">Select location</option>
+          <option value="Amsterdam">Amsterdam</option>
+          <option value="Den Haag">Den Haag</option>
+          <option value="Rotterdam">Rotterdam</option>
+          <option value="Utrecht">Utrecht</option>
+        </select>
+
+        <button type="submit">Save & Continue</button>
+      </form>
+    </main>
+    <footer><%- include('partials/footer', { userId: userId }) %></footer>
+    <script>
+      // Update age range display
+      const minSlider = document.getElementById("ageMin");
+      const maxSlider = document.getElementById("ageMax");
+      const ageRangeValue = document.getElementById("ageRangeValue");
+      function updateAgeRange() {
+        let min = parseInt(minSlider.value);
+        let max = parseInt(maxSlider.value);
+        if (min > max) [min, max] = [max, min];
+        ageRangeValue.textContent = `${min} - ${max}`;
+      }
+      minSlider.addEventListener("input", updateAgeRange);
+      maxSlider.addEventListener("input", updateAgeRange);
+      updateAgeRange();
+    </script>
+  </body>
+</html>

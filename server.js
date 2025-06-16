@@ -108,7 +108,7 @@ app.post("/register", async (req, res) => {
 
   // Log the user in
   req.session.userId = result.insertedId;
-  res.redirect("/home");
+  res.redirect("/setup-profile"); // Redirect to setup flow
 });
 
 // Show login form
@@ -259,12 +259,35 @@ app.post(
         .map((l) => l.trim())
         .filter(Boolean);
 
+      // Fetch current profile to check for photo
+      const currentProfile = await req.app.locals.db
+        .collection(process.env.USER_COLLECTION)
+        .findOne({ _id: new ObjectId(id) });
+
+      // If no photo uploaded and no existing photo, reject
+      if (!req.file && (!currentProfile || !currentProfile.photoUrl)) {
+        return res.status(400).render("profile", {
+          profile: currentProfile,
+          editing: true,
+          userId: req.session.userId,
+          activePage: "profile",
+          error: "Profile photo is required.",
+        });
+      }
+
       const updateData = {
-        name: req.body.name,
-        location: req.body.location,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        location: req.body.location, // Save location from dropdown
         tags,
         languages,
         bio: req.body.bio,
+        vibe: req.body.vibe,
+        preferredGender: req.body.preferredGender,
+        ageRange: {
+          min: parseInt(req.body.ageMin, 10),
+          max: parseInt(req.body.ageMax, 10),
+        },
       };
       if (req.file) {
         updateData.photoUrl = "/uploads/" + req.file.filename;
@@ -326,6 +349,91 @@ app.get("/meets", requireLogin, async (req, res) => {
 // User routes
 const userRoutes = require("./routes/user");
 app.use("/users", userRoutes);
+
+// ─── SETUP PROFILE FLOW ───────────────────────────────────────────────
+
+// Show setup profile form
+app.get("/setup-profile", requireLogin, async (req, res) => {
+  res.render("setup-profile", { userId: req.session.userId, error: null });
+});
+
+// Handle setup profile form submission
+app.post(
+  "/setup-profile",
+  requireLogin,
+  upload.single("photo"),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).render("setup-profile", {
+          userId: req.session.userId,
+          error: "Profile picture is required.",
+        });
+      }
+      const id = req.session.userId;
+      const tags = (req.body.tags || "")
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+      const updateData = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        bio: req.body.bio,
+        tags,
+        vibe: req.body.vibe,
+        preferredGender: req.body.preferredGender,
+        ageRange: {
+          min: parseInt(req.body.ageMin, 10),
+          max: parseInt(req.body.ageMax, 10),
+        },
+        photoUrl: "/uploads/" + req.file.filename,
+        location: req.body.location, // Save location from dropdown
+      };
+      await req.app.locals.db
+        .collection(process.env.USER_COLLECTION)
+        .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
+      res.redirect("/home");
+    } catch (error) {
+      console.error("Error updating setup profile:", error);
+      res.status(500).send("Error saving profile setup");
+    }
+  }
+);
+
+// Handle logout
+app.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Logout error:", err);
+      return res.status(500).send("Error logging out");
+    }
+    res.redirect("/login"); // Redirect to login page after logout
+  });
+});
+
+// ─── MEET DETAIL PAGE ───────────────────────────────────────────────
+app.get("/meet/:id", requireLogin, async (req, res) => {
+  try {
+    const meet = await req.app.locals.db
+      .collection("meets")
+      .findOne({ _id: new ObjectId(req.params.id) });
+    if (!meet) {
+      return res.status(404).send("Meet not found");
+    }
+    // Optionally, check if user is a member
+    const isMember = (meet.members || []).some(
+      (m) => m.toString() === req.session.userId?.toString()
+    );
+    res.render("meet-overview", {
+      meet,
+      userId: req.session.userId,
+      isMember,
+    });
+  } catch (error) {
+    console.error("Error loading meet detail:", error);
+    res.status(500).send("Error loading meet detail");
+  }
+});
 
 // 404 handler (should be last)
 app.use((_, res) => res.status(404).send("Not Found"));
