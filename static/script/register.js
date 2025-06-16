@@ -125,7 +125,3 @@ document.addEventListener('DOMContentLoaded', () => {
     togglePassword.innerHTML = show ? icons.hide : icons.show;
   });
 });
-<<<<<<< HEAD
-=======
-
->>>>>>> e06ddfb99f17ab0869505a8226210d241c37a585

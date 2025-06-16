@@ -3,11 +3,14 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const { MongoClient, ObjectId } = require('mongodb');
-const bcrypt = require('bcryptjs');
-const multer = require('multer');
+const bcrypt                = require('bcryptjs');
+const { body, validationResult } = require('express-validator');
+const multer                = require('multer');
+// const xss = require('xss');
 require('dotenv').config();
 
 const app = express();
+const saltRounds = 10
 
 // Body parser, static files & sessions
 app.use(express.urlencoded({ extended: true }));
@@ -37,13 +40,25 @@ client.connect()
     process.exit(1);
   });
 
-// Middleware: protect routes
-function requireLogin(req, res, next) {
-  if (!req.session.userId) {
-    return res.redirect('/login');
+  async function hashData(data) {
+   
+  try {
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedData = await bcrypt.hash(data, salt);
+    return hashedData;
+  } catch (error) {
+    console.error('Error hashing data:', error);
+    throw error;
   }
-  next();
 }
+
+// Middleware: protect routes
+// function requireLogin(req, res, next) {
+//   if (!req.session.userId) {
+//     return res.redirect('/login');
+//   }
+//   next();
+// }
 
 // Helper: compare plaintext to hashed data
 async function compareData(plainText, hashed) {
@@ -66,17 +81,29 @@ app.get('/register', (req, res) => {
   });
 });
 
-// Handle registration
-app.post('/register', async (req, res) => {
-  const { email, name, password } = req.body;
-  const errors = [];
+app.post(
+  '/register',
+  [
+    body('email')
+      .isEmail()
+      .withMessage('Fill in a valid E-mail adress'),
+    body('name')
+      .notEmpty()
+      .withMessage('Fill in your name'),
+    body('password')
+      .isLength({ min: 6 })
+      .withMessage('Password must contain at least 6 charachters')
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    const { email, name, password } = req.body;
 
-  if (!email || !name || !password) {
-    errors.push({ msg: 'Please fill in all fields' });
-  }
-  if (errors.length) {
-    return res.render('register', { errors });
-  }
+    if (!errors.isEmpty()) {
+      return res.status(400).render('register', {
+        errors: errors.array(),
+        formData: { email, name, password }
+      });
+    }
 
   const hash = await bcrypt.hash(password, 10);
   const result = await db.collection(process.env.USER_COLLECTION).insertOne({
@@ -84,11 +111,22 @@ app.post('/register', async (req, res) => {
     name,
     password: hash
   });
+    try {
+      const hashedPassword = await hashData(password);
+      const user = { email, name, password: hashedPassword };
+      const insertResult = await db.collection('users').insertOne(user);
+      console.log('Inserted user:', insertResult.insertedId);
+      return res.redirect('/home');
+    } catch (error) {
+      console.error('Error creating user:', error);
+      return res.status(500).render('register', {
+        errors: [{ msg: 'Something went wrong with registering your account' }],
+        formData: { email, name, password }
+      });
+    }
+  }
+);
 
-  // Log the user in
-  req.session.userId = result.insertedId;
-  res.redirect('/home');
-});
 
 // Show login form
 app.get('/login', (req, res) => {
@@ -102,7 +140,7 @@ app.post('/login', async (req, res) => {
   if (!email || !password) {
     return res.render('login', {
       errors: [{ msg: 'Please provide your email and password' }],
-      formData: { email }
+      formData: { email, password }
     });
   }
 
@@ -139,6 +177,20 @@ app.post('/login', async (req, res) => {
 app.get('/loginHome', (req, res) => {
   res.render('loginHome.ejs');
 });
+
+ function showRegister(req, res) {
+    res.render('register.ejs', { errors: [] });
+  }
+
+  function showLogin(req, res) {
+    res.render('login.ejs', { errors: [] });
+  }
+
+  function showLoginHome(req, res) {
+    res.render('loginHome.ejs', { errors: [] });
+  }
+
+
 // ─── HOMEPAGE ────────────────────────────────────────────────────────────
 
 // Redirect root to /home
@@ -147,7 +199,7 @@ app.get('/', (req, res) => {
 });
 
 // Protected homepage
-app.get('/home', requireLogin, async (req, res) => {
+app.get('/home',  async (req, res) => {
   try {
     // Fetch all meets from MongoDB
     const meets = await db.collection('meets').find({}).toArray();
@@ -184,7 +236,7 @@ const upload = multer({
 });
 
 // View profile (add ?edit=true to edit)
-app.get('/profile/:id', requireLogin, async (req, res) => {
+app.get('/profile/:id',  async (req, res) => {
   try {
     const profile = await db.collection(process.env.USER_COLLECTION)
       .findOne({ _id: new ObjectId(req.params.id) });
@@ -207,7 +259,7 @@ app.get('/profile/:id', requireLogin, async (req, res) => {
 // Handle profile update & photo upload
 app.post(
   '/profile/:id',
-  requireLogin,
+ 
   upload.single('photo'),
   async (req, res) => {
     try {

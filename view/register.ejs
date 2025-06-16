@@ -19,11 +19,9 @@
         class="email"
         name="email"
         required
-<<<<<<< HEAD
-        value="<%= formData.email %>"
-=======
+            value="<%= typeof formData !== 'undefined' ? formData.email : '' %>"
+
         
->>>>>>> e06ddfb99f17ab0869505a8226210d241c37a585
       />
       <div class="feedback emailFeedback"></div>
 
@@ -33,11 +31,8 @@
         class="name"
         name="name"
         required
-<<<<<<< HEAD
-        value="<%= formData.name %>"
-=======
-        
->>>>>>> e06ddfb99f17ab0869505a8226210d241c37a585
+            value="<%= typeof formData !== 'undefined' ? formData.name : '' %>"
+
       />
 
       <label for="password">Password:</label>
@@ -47,7 +42,7 @@
           class="password"
           name="password"
           required
-          value=""
+          value="<%= typeof formData !== 'undefined' ? formData.password : '' %>"
         />
         <button
           type="button"
