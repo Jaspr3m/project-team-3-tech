@@ -1,11 +1,16 @@
 /*───────────────────────────────────────────────────────────────────
   GLOBAL / BODY
 ───────────────────────────────────────────────────────────────────*/
+body,
+html,
+* {
+  font-family: 'Instrument Sans', Arial, sans-serif !important;
+}
+
 body {
   margin: 0;
   padding-bottom: 64px;
   /* ruimte voor mobiele footer */
-  font-family: "Instrument Sans", "Helvetica Neue", sans-serif;
   background: #f9f9f9;
 }
 

@@ -1,18 +1,11 @@
 /* Header styles for all pages */
 header {
-    width: 100vw;
-    min-width: 100vw;
-    box-sizing: border-box;
     display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    justify-content: flex-start;
-    padding: 0;
-    margin: 0;
+    justify-content: center;
 }
 
 header img {
-    height: 3em;
+    height: 2.6em;
 }
 
 header input[type="text"] {
@@ -27,13 +20,14 @@ header input[type="text"] {
 }
 
 nav {
-    width: 80vw;
+    width: 85vw;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.5em 2vw;
+    padding-inline: 1em;
+    padding-top: 2em;
     margin: 0;
     box-sizing: border-box;
 }

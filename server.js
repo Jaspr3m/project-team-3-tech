@@ -29,16 +29,33 @@ app.set("views", path.join(__dirname, "view"));
 // MongoDB
 const client = new MongoClient(process.env.URI);
 let db;
+
+// Connect to MongoDB and start server only after connection is ready
 client
   .connect()
   .then(() => {
     db = client.db(process.env.DB_NAME);
+    app.locals.db = db; // Attach db to app.locals
     console.log("✅ Database connected");
+
+    // Start server only after DB is ready
+    const PORT = process.env.PORT || 8000;
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => {
     console.error("❌ Database connection error:", err);
     process.exit(1);
   });
+
+// Middleware to ensure db is available in all requests
+app.use((req, res, next) => {
+  if (!req.app.locals.db) {
+    return res
+      .status(503)
+      .send("Database not connected. Please try again later.");
+  }
+  next();
+});
 
 // Middleware: protect routes
 function requireLogin(req, res, next) {
@@ -81,11 +98,13 @@ app.post("/register", async (req, res) => {
   }
 
   const hash = await bcrypt.hash(password, 10);
-  const result = await db.collection(process.env.USER_COLLECTION).insertOne({
-    email,
-    name,
-    password: hash,
-  });
+  const result = await req.app.locals.db
+    .collection(process.env.USER_COLLECTION)
+    .insertOne({
+      email,
+      name,
+      password: hash,
+    });
 
   // Log the user in
   req.session.userId = result.insertedId;
@@ -109,7 +128,7 @@ app.post("/login", async (req, res) => {
   }
 
   try {
-    const user = await db
+    const user = await req.app.locals.db
       .collection(process.env.USER_COLLECTION)
       .findOne({ email });
     if (!user) {
@@ -148,7 +167,10 @@ app.get("/loginHome", (req, res) => {
 app.get("/", async (req, res) => {
   try {
     // Fetch all meets from MongoDB
-    const meets = await db.collection("meets").find({}).toArray();
+    const meets = await req.app.locals.db
+      .collection("meets")
+      .find({})
+      .toArray();
     res.render("home", {
       meets,
       userId: req.session.userId || null,
@@ -163,7 +185,10 @@ app.get("/", async (req, res) => {
 app.get("/home", requireLogin, async (req, res) => {
   try {
     // Fetch all meets from MongoDB
-    const meets = await db.collection("meets").find({}).toArray();
+    const meets = await req.app.locals.db
+      .collection("meets")
+      .find({})
+      .toArray();
     res.render("home", {
       meets,
       userId: req.session.userId,
@@ -198,7 +223,7 @@ const upload = multer({
 // View profile (add ?edit=true to edit)
 app.get("/profile/:id", requireLogin, async (req, res) => {
   try {
-    const profile = await db
+    const profile = await req.app.locals.db
       .collection(process.env.USER_COLLECTION)
       .findOne({ _id: new ObjectId(req.params.id) });
     if (!profile) {
@@ -245,7 +270,7 @@ app.post(
         updateData.photoUrl = "/uploads/" + req.file.filename;
       }
 
-      await db
+      await req.app.locals.db
         .collection(process.env.USER_COLLECTION)
         .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
 
@@ -266,7 +291,7 @@ app.get("/create-test-profile", async (req, res) => {
     languages: ["Dutch", "English"],
     bio: "This is a test profile",
   };
-  const result = await db
+  const result = await req.app.locals.db
     .collection(process.env.USER_COLLECTION)
     .insertOne(testUser);
   res.send(`Test profile created with ID: ${result.insertedId}`);
@@ -274,13 +299,19 @@ app.get("/create-test-profile", async (req, res) => {
 
 // ─── MORE MEETS ─────────────────────────────────────────────────────────
 app.get("/more-meets", requireLogin, (req, res) => {
-  res.render("more-meets");
+  res.render("more-meets", {
+    userId: req.session.userId || null,
+    user: req.session.user || null,
+  });
 });
 
 // ─── MANAGE MEETS ─────────────────────────────────────────────────────
 app.get("/meets", requireLogin, async (req, res) => {
   try {
-    const meets = await db.collection("meets").find({}).toArray();
+    const meets = await req.app.locals.db
+      .collection("meets")
+      .find({})
+      .toArray();
     res.render("meets", {
       meets,
       userId: req.session.userId || null,
@@ -292,14 +323,9 @@ app.get("/meets", requireLogin, async (req, res) => {
   }
 });
 
-// ─── 404 & START SERVER ─────────────────────────────────────────────────
 // User routes
 const userRoutes = require("./routes/user");
 app.use("/users", userRoutes);
 
 // 404 handler (should be last)
 app.use((_, res) => res.status(404).send("Not Found"));
-
-// Start server
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

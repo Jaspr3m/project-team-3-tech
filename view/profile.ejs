@@ -4,12 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile</title>
+    <link rel="stylesheet" href="/static/css/header.css" />
     <link rel="stylesheet" href="/static/css/profile.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/homepage.css" />
   </head>
   <body>
-    <%- include('partials/header') %>
-
+    <header>
+      <%- include('partials/header', { user: typeof user !== 'undefined' ? user
+      : null, userId: typeof userId !== 'undefined' ? userId : (profile &&
+      profile._id ? profile._id : null) }) %>
+    </header>
     <main class="profile-container">
       <% if (!editing && profile) { %> <% if (profile.photoUrl) { %>
       <img

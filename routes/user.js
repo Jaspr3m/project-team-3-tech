@@ -30,11 +30,7 @@ router.post("/create-meet", upload.single("image"), async (req, res) => {
     });
   }
   // Save the meet to the database
-  const db =
-    req.app.locals.db ||
-    require("mongodb")
-      .MongoClient.connect(process.env.URI)
-      .then((client) => client.db(process.env.DB_NAME));
+  const db = req.app.locals.db;
   const meet = {
     title: req.body.title,
     maxPeople: req.body.maxPeople,
@@ -45,8 +41,7 @@ router.post("/create-meet", upload.single("image"), async (req, res) => {
     image: "/static/images/" + req.file.filename,
     members: [],
   };
-  const dbInstance = await db;
-  await dbInstance.collection("meets").insertOne(meet);
+  await db.collection("meets").insertOne(meet);
   res.send(
     `<script>alert('Meet created! Data: ${JSON.stringify(
       meet

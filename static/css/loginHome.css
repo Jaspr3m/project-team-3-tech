@@ -8,11 +8,17 @@
   margin: 0;
   padding: 0;
 }
- body {
+
+body,
+html,
+* {
+  font-family: 'Instrument Sans', Arial, sans-serif !important;
+}
+
+body {
   height: 100%;
   width: 100%;
-  font-family: 'Inter', sans-serif;
-background-color: #FAF3DD;
+  background-color: #FAF3DD;
   display: flex;
   flex-direction: column;
 }
@@ -24,10 +30,14 @@ background-color: #FAF3DD;
 /* ──────────────────────────────────────────────────────────────────────────── */
 main img {
   display: block;
-  width: 60vw;           /* 60% of viewport width */
-  max-width: 240px;      /* never larger than 240px */
-  height: auto;          /* keep aspect ratio */
-  margin: 2rem auto 0;   /* top gap, centered */
+  width: 60vw;
+  /* 60% of viewport width */
+  max-width: 240px;
+  /* never larger than 240px */
+  height: auto;
+  /* keep aspect ratio */
+  margin: 2rem auto 0;
+  /* top gap, centered */
 }
 
 /* ──────────────────────────────────────────────────────────────────────────── */
@@ -39,11 +49,12 @@ main img {
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 1.5rem 1rem 4rem;  /* extra bottom padding for buttons */
+  padding: 1.5rem 1rem 4rem;
+  /* extra bottom padding for buttons */
   border-top-left-radius: 2em;
   border-top-right-radius: 2em;
   /* ensure it sits above everything */
-  box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* heading & paragraph inside the panel */
@@ -52,6 +63,7 @@ main img {
   text-align: center;
   margin-bottom: 0.5rem;
 }
+
 .welcomeTekst p {
   font-size: 0.94rem;
   line-height: 1.4;
@@ -69,6 +81,7 @@ main img {
   gap: 1rem;
   margin-bottom: 1rem;
 }
+
 .welcomeTekst a button {
   font-size: 1rem;
   border: none;
@@ -84,6 +97,7 @@ main img {
   background-color: #000;
   color: #FAF3DD;
 }
+
 .welcomeTekst a:nth-of-type(2) button {
   background-color: #FAF3DD;
   color: #000;
@@ -98,6 +112,7 @@ main img {
   justify-content: center;
   margin: 1rem 0;
 }
+
 .divider::before,
 .divider::after {
   content: '';
@@ -105,6 +120,7 @@ main img {
   border-bottom: 1px solid #2F4858;
   margin: 0 0.5rem;
 }
+
 .divider span {
   font-size: 0.875rem;
   color: #2F4858;
@@ -117,6 +133,7 @@ main img {
   text-align: center;
   font-size: 0.875rem;
 }
+
 .welcomeTekst p:last-of-type a {
   color: #000;
   font-weight: bold;
@@ -128,25 +145,25 @@ main img {
 /* 8) Responsive tweaks                                                        */
 /* ──────────────────────────────────────────────────────────────────────────── */
 @media (min-width: 480px) {
-<<<<<<< HEAD
   main img {
-=======
-  main > img {
->>>>>>> e06ddfb99f17ab0869505a8226210d241c37a585
     width: 50vw;
     max-width: 320px;
     margin-top: 3rem;
   }
+
   .welcomeTekst {
     padding: 2rem 1.5rem 5rem;
   }
+
   .welcomeTekst h1 {
     font-size: 1.75rem;
   }
+
   .welcomeTekst p {
     font-size: 1rem;
     padding: 0 2rem;
   }
+
   .welcomeTekst a button {
     padding: 1rem 2rem;
     min-width: 120px;

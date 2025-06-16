@@ -57,79 +57,83 @@
   }
    */
 
-   body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #fafafa;
-  }
-  
-  main {
-    padding: 2rem;
-    padding-top: 5em;
-  }
-  
-  #toggle-filters {
-    margin-bottom: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #0096c7;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .hidden {
-    display: none;
-  }
-  
-  .filter-section {
-    background-color: #fff;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-  }
-  
-  .filter-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .filter-form label {
-    display: flex;
-    flex-direction: column;
-    font-weight: bold;
-  }
-  
-  button[type="submit"] {
-    width: fit-content;
-    padding: 0.5rem 1rem;
-    background-color: #00b4d8;
-    border: none;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .meet-card {
-    background-color: #ffffff;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .meet-card h3 {
-    margin: 0 0 0.5rem 0;
-  }
-  
-  .back-link {
-    display: inline-block;
-    margin-top: 2rem;
-    color: #0077b6;
-    text-decoration: none;
-  }
-  
+body,
+html,
+* {
+  font-family: 'Instrument Sans', Arial, sans-serif !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #fafafa;
+}
+
+main {
+  padding: 2rem;
+  padding-top: 5em;
+}
+
+#toggle-filters {
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #0096c7;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.hidden {
+  display: none;
+}
+
+.filter-section {
+  background-color: #fff;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filter-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+button[type="submit"] {
+  width: fit-content;
+  padding: 0.5rem 1rem;
+  background-color: #00b4d8;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.meet-card {
+  background-color: #ffffff;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.meet-card h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 2rem;
+  color: #0077b6;
+  text-decoration: none;
+}
