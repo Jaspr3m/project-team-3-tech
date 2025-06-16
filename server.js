@@ -249,9 +249,78 @@ app.get('/create-test-profile', async (req, res) => {
 
 
 // ─── MORE MEETS ─────────────────────────────────────────────────────────
-app.get('/more-meets', requireLogin, (req, res) => {
-  res.render('more-meets');
+function applyFilters(filters) {
+  const query = {};
+  if (filters.location) query.location = filters.location;
+  if (filters.category) query.category = filters.category;
+  if (filters.date) query.date = filters.date;
+  return query;
+}
+
+app.get('/more-meets', async (req, res) => {
+  const filters = req.query;
+  const { sort } = filters;
+  const query = applyFilters(filters);
+
+  // Build sorting option
+  let sortOption = {};
+  if (sort === 'date_asc') {
+    sortOption.date = 1;
+  } else if (sort === 'date_desc') {
+    sortOption.date = -1;
+  } else if (sort === 'title_asc') {
+    sortOption.title = 1;
+  } else if (sort === 'title_desc') {
+    sortOption.title = -1;
+  }
+
+  try {
+    const meets = await db.collection('meets').find(query).sort(sortOption).toArray();
+    res.render('more-meets', {
+      meets,
+      location: filters.location || '',
+      category: filters.category || '',
+      date: filters.date || '',
+      sort: sort || '',
+      userId: req.session.userId || null
+    });
+  } catch (err) {
+    console.error('Error fetching meets:', err);
+    res.status(500).send('Server error');
+  }
 });
+
+
+
+
+
+app.get('/api/meets', async (req, res) => {
+  const { keyword, location, category, date } = req.query;
+
+  const query = {};
+
+  if (keyword) {
+    query.$or = [
+      { meetingName: new RegExp(keyword, 'i') },
+      { description: new RegExp(keyword, 'i') },
+      { location: new RegExp(keyword, 'i') },
+    ];
+  }
+
+  if (location) query.location = location;
+  if (category) query.category = category;
+  if (date) query.date = date;
+
+  try {
+    const meets = await db.collection('meets').find(query).toArray();
+    res.json(meets);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 
 
 // ─── 404 & START SERVER ─────────────────────────────────────────────────
