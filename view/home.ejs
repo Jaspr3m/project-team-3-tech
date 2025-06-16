@@ -4,14 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TravelLink</title>
-    <link rel="stylesheet" href="/static/profile.css" />
-    <link rel="stylesheet" href="/static/header.css" />
-    <link rel="stylesheet" href="/static/homepage.css" />
+    <link rel="stylesheet" href="/static/css/profile.css" />
+    <link rel="stylesheet" href="/static/css/header.css" />
+    <link rel="stylesheet" href="/static/css/homepage.css" />
   </head>
   <body>
-<header>
-  <%- include('partials/header') %>
-</header>
+    <header><%- include('partials/header') %></header>
 
     <main>
       <section>
@@ -254,8 +252,6 @@
       // Initial attach for all join/leave forms
       attachJoinLeaveListeners();
     </script>
-    <footer>
-  <%- include('partials/footer', { userId: userId }) %>
-    </footer>
+    <footer><%- include('partials/footer', { userId: userId }) %></footer>
   </body>
 </html>

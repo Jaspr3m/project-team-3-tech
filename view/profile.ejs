@@ -1,56 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Profile</title>
-  <link rel="stylesheet" href="/static/profile.css" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+    <link rel="stylesheet" href="/static/css/profile.css" />
+  </head>
+  <body>
+    <%- include('partials/header') %>
 
-<%- include('partials/header') %>
-
-  <main class="profile-container">
-    <% if (!editing && profile) { %>
-      <% if (profile.photoUrl) { %>
-        <img src="<%= profile.photoUrl %>" alt="Profile photo" class="profile-pic"/>
+    <main class="profile-container">
+      <% if (!editing && profile) { %> <% if (profile.photoUrl) { %>
+      <img
+        src="<%= profile.photoUrl %>"
+        alt="Profile photo"
+        class="profile-pic"
+      />
       <% } %>
       <h1><%= profile.name %></h1>
       <p class="location"><%= profile.location %></p>
 
-      <p><strong>Tags:</strong><br>
+      <p>
+        <strong>Tags:</strong><br />
         <% (profile.tags || []).forEach(tag => { %>
-          <span class="box"><%= tag %></span>
+        <span class="box"><%= tag %></span>
         <% }) %>
       </p>
 
-      <p><strong>Languages:</strong><br>
+      <p>
+        <strong>Languages:</strong><br />
         <% (profile.languages || []).forEach(lang => { %>
-          <span class="box"><%= lang %></span>
+        <span class="box"><%= lang %></span>
         <% }) %>
       </p>
 
-      <p><strong>Bio:</strong><br><%= profile.bio %></p>
+      <p><strong>Bio:</strong><br /><%= profile.bio %></p>
 
-      <a href="/profile/<%= profile._id %>?edit=true" class="edit-link">Edit Profile</a>
+      <a href="/profile/<%= profile._id %>?edit=true" class="edit-link"
+        >Edit Profile</a
+      >
 
-    <% } else if (editing && profile) { %>
+      <% } else if (editing && profile) { %>
 
-      <form action="/profile/<%= profile._id %>" method="POST" enctype="multipart/form-data">
+      <form
+        action="/profile/<%= profile._id %>"
+        method="POST"
+        enctype="multipart/form-data"
+      >
         <label>Name:</label>
-        <input type="text" name="name" value="<%= profile.name %>">
+        <input type="text" name="name" value="<%= profile.name %>" />
 
         <label>Location:</label>
-        <input type="text" name="location" value="<%= profile.location %>">
+        <input type="text" name="location" value="<%= profile.location %>" />
 
         <label>Photo:</label>
-        <input type="file" name="photo">
+        <input type="file" name="photo" />
 
         <label>Tags (comma-separated):</label>
-        <input type="text" name="tags" value="<%= (profile.tags||[]).join(',') %>">
+        <input
+          type="text"
+          name="tags"
+          value="<%= (profile.tags||[]).join(',') %>"
+        />
 
         <label>Languages (comma-separated):</label>
-        <input type="text" name="languages" value="<%= (profile.languages||[]).join(',') %>">
+        <input
+          type="text"
+          name="languages"
+          value="<%= (profile.languages||[]).join(',') %>"
+        />
 
         <label>Bio:</label>
         <textarea name="bio"><%= profile.bio %></textarea>
@@ -58,17 +76,10 @@
         <button type="submit">Save</button>
       </form>
 
-    <% } else { %>
+      <% } else { %>
       <h2>No profile found.</h2>
-    <% } %>
-  </main>
-  <footer>
-
-  <%- include('partials/footer', { userId: userId }) %>
-  </footer>
-
-
-
-</body>
+      <% } %>
+    </main>
+    <footer><%- include('partials/footer', { userId: userId }) %></footer>
+  </body>
 </html>
-
