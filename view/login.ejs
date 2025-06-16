@@ -1,75 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/style.css" />
     <title>Inloggen</title>
-    <link rel="stylesheet" href="/static/css/login.css">
-
-</head>
-<body>
-    <section>
-    <h1>Travel Link</h1>
-    <h2>Login</h2>
-
-    <form method="POST" action="/login">
-      <label for="email">E-mail:</label>
-      <input
-        type="email"
-        class="email"
-        name="email"
-        required
-<<<<<<< HEAD
-        value="<%= formData && formData.email ? formData.email : '' %>"
-=======
-
->>>>>>> e06ddfb99f17ab0869505a8226210d241c37a585
-      />
-      <div class="feedback emailFeedback"></div>
-
-
-
-      <label for="password">Password:</label>
-      <div class="password-container">
-        <input
-          type="password"
-          class="password"
-          name="password"
-          required
-          value=""
-        />
-        <button
-          type="button"
-          class="showPassword"
-          aria-label="Toggle password visibility"
-        >
-          <!-- SVG show/hide icons… -->
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-               xmlns="http://www.w3.org/2000/svg">
-            <title>Show password</title>
-            <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12"
-                  stroke="#000" stroke-width="2" stroke-linecap="round"/>
-            <path d="M1 12C1 12 5 20 12 20C19 20 23 12 23 12"
-                  stroke="#000" stroke-width="2" stroke-linecap="round"/>
-            <circle cx="12" cy="12" r="3"
-                    stroke="#000" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
+    <style>
+      .login-flex-container {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+      }
+      .login-bg {
+        flex: 1;
+        background: url("/static/images/login-background.png") no-repeat center
+          center;
+        background-size: cover;
+        min-width: 300px;
+      }
+      .login-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+      }
+      .login-content > h1 {
+        font-size: 4rem;
+      }
+      section {
+        background: #fff;
+        padding: 48px 32px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        min-width: 320px;
+        max-width: 400px;
+      }
+      .error-list {
+        color: red;
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 1em;
+      }
+      .error-list li {
+        margin: 5px 0;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.3em;
+        font-weight: bold;
+      }
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 1em;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 1em;
+        box-sizing: border-box;
+      }
+      button[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      button[type="submit"]:hover {
+        background: #0056b3;
+      }
+      .password-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .showPassword {
+        position: absolute;
+        right: 10px;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+      .showPassword svg {
+        width: 24px;
+        height: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-flex-container">
+      <div class="login-bg"></div>
+      <div class="login-content">
+        <h1>Travel Link</h1>
+        <section>
+          <h2>Login</h2>
+          <form method="POST" action="/login">
+            <label for="email">E-mail:</label>
+            <input
+              type="email"
+              class="email"
+              name="email"
+              required
+              value="<%= formData && formData.email ? formData.email : '' %>"
+            />
+            <div class="feedback emailFeedback"></div>
+            <label for="password">Password:</label>
+            <div class="password-container">
+              <input
+                type="password"
+                class="password"
+                name="password"
+                required
+                value=""
+              />
+              <button
+                type="button"
+                class="showPassword"
+                aria-label="Toggle password visibility"
+              >
+                <!-- SVG show/hide icons… -->
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <title>Show password</title>
+                  <path
+                    d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12"
+                    stroke="#000"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M1 12C1 12 5 20 12 20C19 20 23 12 23 12"
+                    stroke="#000"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                    stroke="#000"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="feedback passwordFeedback"></div>
+            <button type="submit">Login</button>
+          </form>
+          Don't have an account? <a href="/register">Create account</a>
+          <% if (errors && errors.length) { %>
+          <ul class="error-list">
+            <% errors.forEach(error => { %>
+            <li><%= error.msg %></li>
+            <% }) %>
+          </ul>
+          <% } %>
+        </section>
       </div>
-      <div class="feedback passwordFeedback"></div>
-
-      <button type="submit">Login</button>
-    </form>
-    Don't hav e an account? <a href="/register">Create account</a>
-
-    <% if (errors && errors.length) { %>
-      <ul class="error-list">
-        <% errors.forEach(error => { %>
-          <li><%= error.msg %></li>
-        <% }) %>
-      </ul>
-    <% } %>
-  </section>
+    </div>
     <script src="/static/script/login.js"></script>
-</body>
+  </body>
 </html>
