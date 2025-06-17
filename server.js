@@ -15,7 +15,14 @@ app.use("/static", express.static(path.join(__dirname, "static")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret:
+      process.env.SESSION_SECRET ||
+      (() => {
+        console.warn(
+          "⚠️  SESSION_SECRET not set in environment. Using fallback secret. This is NOT safe for production!"
+        );
+        return "dev-fallback-secret-please-change";
+      })(),
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 1 day
