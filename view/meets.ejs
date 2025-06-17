@@ -177,71 +177,78 @@
       .join-leave-form button {
         flex: 1;
       }
+      .tab-btn {
+        padding: 0.7rem 2rem;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+      }
+      #joinedTabBtn {
+        background: #007bff;
+        color: #fff;
+      }
+      #createdTabBtn {
+        background: #eee;
+        color: #333;
+      }
     </style>
   </head>
   <body>
     <header><%- include('partials/header') %></header>
     <main style="max-width: 900px; margin: 0 auto; padding: 2rem 1rem">
-      <h1 style="margin-bottom: 2rem">Meets You've Joined</h1>
-      <% if (meets.length === 0) { %>
-      <p style="font-size: 1.2rem; color: #888; text-align: center">
-        You haven't joined any meets yet.
-      </p>
-      <% } %>
-      <div
-        class="meet-list"
-        style="display: flex; flex-direction: column; gap: 2rem"
-      >
-        <% meets.forEach(meet => { %>
-        <div
-          class="meet-card"
-          style="
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
-            padding: 1.5rem;
-          "
-        >
-          <img
-            src="<%= meet.image || '/static/images/map_placeholder.png' %>"
-            alt="Meet Image"
-            style="
-              width: 120px;
-              height: 120px;
-              object-fit: cover;
-              border-radius: 10px;
-              margin-right: 2rem;
-            "
-          />
-          <div class="meet-info" style="flex: 1">
-            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.3rem">
-              <%= meet.meetingName %>
-            </h3>
-            <p style="margin: 0 0 0.3rem 0; color: #666">
-              <strong>Location:</strong> <%= meet.location %>
-            </p>
-            <p style="margin: 0 0 0.3rem 0; color: #666">
-              <strong>Description:</strong> <%= meet.description %>
-            </p>
-            <p style="margin: 0 0 0.3rem 0; color: #666">
-              <strong>Max People:</strong> <%= meet.maxPeople %>
-            </p>
-            <a
-              href="/meet/<%= meet._id %>"
-              style="
-                color: #007bff;
-                text-decoration: underline;
-                font-weight: bold;
-              "
-              >View</a
-            >
-          </div>
+      <div style="display: flex; gap: 1rem; margin-bottom: 2rem">
+        <button id="joinedTabBtn" class="tab-btn">Joined Meets</button>
+        <button id="createdTabBtn" class="tab-btn">Created Meets</button>
+      </div>
+      <div id="joinedMeetsSection">
+        <h1 style="margin-bottom: 2rem">Joined Meets</h1>
+        <% if (joinedMeets.length === 0) { %>
+        <p style="font-size: 1.2rem; color: #888; text-align: center">
+          You haven't joined any meets yet.
+        </p>
+        <% } %>
+        <div class="meet-row">
+          <% joinedMeets.forEach(meet => { %> <%- include('partials/meets', {
+          meet: meet }) %> <% }) %>
         </div>
-        <% }) %>
+      </div>
+      <div id="createdMeetsSection" style="display: none">
+        <h1 style="margin-bottom: 2rem">Created Meets</h1>
+        <% if (createdMeets.length === 0) { %>
+        <p style="font-size: 1.2rem; color: #888; text-align: center">
+          You haven't created any meets yet.
+        </p>
+        <% } %>
+        <div class="meet-row">
+          <% createdMeets.forEach(meet => { %> <%- include('partials/meets', {
+          meet: meet }) %> <% }) %>
+        </div>
       </div>
     </main>
+    <script>
+      const joinedBtn = document.getElementById("joinedTabBtn");
+      const createdBtn = document.getElementById("createdTabBtn");
+      const joinedSection = document.getElementById("joinedMeetsSection");
+      const createdSection = document.getElementById("createdMeetsSection");
+      joinedBtn.addEventListener("click", function () {
+        joinedSection.style.display = "";
+        createdSection.style.display = "none";
+        joinedBtn.style.background = "#007bff";
+        joinedBtn.style.color = "#fff";
+        createdBtn.style.background = "#eee";
+        createdBtn.style.color = "#333";
+      });
+      createdBtn.addEventListener("click", function () {
+        joinedSection.style.display = "none";
+        createdSection.style.display = "";
+        createdBtn.style.background = "#007bff";
+        createdBtn.style.color = "#fff";
+        joinedBtn.style.background = "#eee";
+        joinedBtn.style.color = "#333";
+      });
+    </script>
     <!-- <footer><%- include('partials/footer') %></footer> -->
   </body>
 </html>

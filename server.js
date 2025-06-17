@@ -338,13 +338,22 @@ app.get("/more-meets", requireLogin, (req, res) => {
 // ─── MANAGE MEETS ─────────────────────────────────────────────────────
 app.get("/meets", requireLogin, async (req, res) => {
   try {
+    const userId = req.session.userId?.toString();
     const meets = await req.app.locals.db
       .collection("meets")
       .find({})
       .toArray();
+    // Joined: user is in members array
+    const joinedMeets = meets.filter(
+      (meet) =>
+        Array.isArray(meet.members) && meet.members.some((m) => m.id === userId)
+    );
+    // Created: user is the creator (assuming meet.creatorId is set)
+    const createdMeets = meets.filter((meet) => meet.creatorId === userId);
     res.render("meets", {
-      meets,
-      userId: req.session.userId || null,
+      joinedMeets,
+      createdMeets,
+      userId,
       user: req.session.user || null,
     });
   } catch (error) {

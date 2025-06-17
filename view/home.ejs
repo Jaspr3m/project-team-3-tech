@@ -116,36 +116,8 @@
       <div id="meeting-row">
         <h2>Recommended Meets</h2>
         <div class="card-row">
-          <% meets.slice(0, 1).forEach(meet => { %>
-          <div class="card">
-            <div id="top">
-              <img
-                src="<%= meet.image || '/static/images/map_placeholder.png' %>"
-                alt="Meet Image"
-              />
-            </div>
-            <div id="mid">
-              <div id="title"><%= meet.meetingName %></div>
-              <div id="desc"><%= meet.description %></div>
-            </div>
-            <div id="bottom">
-              <div id="location"><%= meet.location || '-' %></div>
-              <div id="time">
-                <%= meet.date || '-' %> <%= meet.time || '' %>
-              </div>
-              <div id="people">
-                <%= meet.maxPeople ? 'Max: ' + meet.maxPeople : '' %>
-              </div>
-              <form
-                action="/meet/<%= meet._id %>"
-                method="get"
-                style="margin: 0"
-              >
-                <button id="view" type="submit">View</button>
-              </form>
-            </div>
-          </div>
-          <% }) %>
+          <% meets.slice(0, 1).forEach(meet => { %> <%-
+          include('partials/meets', { meet: meet }) %> <% }) %>
         </div>
       </div>
       <div id="meeting-row">
@@ -154,36 +126,8 @@
           <a href="/more-meets"><button id="more-meets">View More</button></a>
         </div>
         <div class="card-row">
-          <% meets.slice(1, 4).forEach(meet => { %>
-          <div class="card">
-            <div id="top">
-              <img
-                src="<%= meet.image || '/static/images/map_placeholder.png' %>"
-                alt="Meet Image"
-              />
-            </div>
-            <div id="mid">
-              <div id="title"><%= meet.meetingName %></div>
-              <div id="desc"><%= meet.description %></div>
-            </div>
-            <div id="bottom">
-              <div id="location"><%= meet.location || '-' %></div>
-              <div id="time">
-                <%= meet.date || '-' %> <%= meet.time || '' %>
-              </div>
-              <div id="people">
-                <%= meet.maxPeople ? 'Max: ' + meet.maxPeople : '' %>
-              </div>
-              <form
-                action="/meet/<%= meet._id %>"
-                method="get"
-                style="margin: 0"
-              >
-                <button id="view" type="submit">View</button>
-              </form>
-            </div>
-          </div>
-          <% }) %>
+          <% meets.slice(1, 4).forEach(meet => { %> <%-
+          include('partials/meets', { meet: meet }) %> <% }) %>
         </div>
       </div>
     </main>

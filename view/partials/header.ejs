@@ -15,7 +15,15 @@
     >
     <a href="/meets"><button id="manage-meets">Manage Meets</button></a>
   </div>
-  <div id="profile">
+  <div
+    id="profile"
+    style="
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    "
+  >
     <a href="/profile/<%= userId %>">
       <img
         src="<%= typeof user !== 'undefined' && user && user.photoUrl ? user.photoUrl : '/static/images/profile.png' %>"
@@ -30,5 +38,21 @@
         "
       />
     </a>
+    <% if (typeof user !== 'undefined' && user && user.firstName) { %>
+    <span
+      style="
+        font-size: 0.95em;
+        margin-top: 2px;
+        color: #333;
+        font-weight: 500;
+        position: absolute;
+        left: 50px;
+        top: 10px;
+        white-space: nowrap;
+      "
+    >
+      <%= user.firstName %>
+    </span>
+    <% } %>
   </div>
 </nav>
