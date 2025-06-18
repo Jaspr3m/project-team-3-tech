@@ -559,11 +559,62 @@ app.get("/meet/:id", async (req, res) => {
         Array.isArray(meet.members) &&
         meet.members.some((m) => m.id === userId);
     }
+
+    // Fetch all users except the current user
+    const allUsers = await db
+      .collection(process.env.USER_COLLECTION)
+      .find({ _id: { $ne: new ObjectId(userId) } })
+      .toArray();
+
+    // Helper: calculate match score
+    function calculateMatchScore(userProfile, meet) {
+      let score = 0;
+      // Age range match (if available)
+      if (
+        userProfile.ageMin &&
+        userProfile.ageMax &&
+        meet.ageMin &&
+        meet.ageMax
+      ) {
+        // Overlap in age range
+        const overlap = Math.max(
+          0,
+          Math.min(userProfile.ageMax, meet.ageMax) -
+            Math.max(userProfile.ageMin, meet.ageMin)
+        );
+        if (overlap > 0) score += 40;
+      }
+      // Gender match (if available)
+      if (meet.preferredGender && userProfile.preferredGender) {
+        if (
+          meet.preferredGender === "any" ||
+          userProfile.preferredGender === "any" ||
+          meet.preferredGender === userProfile.preferredGender
+        ) {
+          score += 30;
+        }
+      }
+      // Vibe match (if available)
+      if (meet.vibe && userProfile.vibe && meet.vibe === userProfile.vibe) {
+        score += 30;
+      }
+      return score;
+    }
+
+    // Calculate and sort matches
+    const userMatches = allUsers
+      .map((u) => ({
+        user: u,
+        matchScore: calculateMatchScore(u, meet),
+      }))
+      .sort((a, b) => b.matchScore - a.matchScore);
+
     res.render("meet-overview", {
       meet,
       userId,
       user,
       isMember,
+      userMatches, // Pass matches to EJS
     });
   } catch (error) {
     console.error("Error loading meet overview:", error);
