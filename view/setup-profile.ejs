@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setup Profile</title>
+    <link rel="stylesheet" href="/static/css/header.css" />
+    <link rel="stylesheet" href="/static/css/profile.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+      .side-by-side {
+        display: flex;
+        gap: 12px;
+      }
+      .side-by-side input {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="profile-container">
+      <h1>Complete Your Profile</h1>
+      <% if (typeof error !== 'undefined' && error) { %>
+      <div style="color: red; margin-bottom: 1em"><%= error %></div>
+      <% } %>
+      <form action="/setup-profile" method="POST" enctype="multipart/form-data">
+        <label>Profile Picture:</label>
+        <input type="file" name="photo" accept="image/*" required />
+        <label>First & Last Name:</label>
+        <div class="side-by-side">
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            required
+          />
+          <input type="text" name="lastName" placeholder="Last Name" required />
+        </div>
+
+        <label>Biography:</label>
+        <textarea
+          name="bio"
+          placeholder="Tell us about yourself"
+          required
+        ></textarea>
+
+        <label>Tags (comma-separated):</label>
+        <input type="text" name="tags" placeholder="e.g. hiking, music, tech" />
+
+        <label>Vibe:</label>
+        <select name="vibe" required>
+          <option value="">Select vibe</option>
+          <option value="Chill">Chill</option>
+          <option value="Adventurous">Adventurous</option>
+          <option value="Artsy">Artsy</option>
+          <option value="Party">Party</option>
+          <option value="Mindful">Mindful</option>
+          <option value="Foodie">Foodie</option>
+          <option value="Explorer">Explorer</option>
+          <option value="Sporty">Sporty</option>
+        </select>
+
+        <label>Preferred Gender:</label>
+        <select name="preferredGender" required>
+          <option value="">Select gender</option>
+          <option value="m">Male</option>
+          <option value="f">Female</option>
+        </select>
+
+        <label>Date of Birth:</label>
+        <input
+          type="date"
+          name="dob"
+          required
+          max="<%= new Date(Date.now() - 568025136000).toISOString().split('T')[0] %>"
+        />
+
+        <label>Preferred Age Range:</label>
+        <div class="side-by-side">
+          <input
+            type="number"
+            name="ageMin"
+            min="18"
+            max="99"
+            value="18"
+            placeholder="Min Age"
+            required
+          />
+          <input
+            type="number"
+            name="ageMax"
+            min="18"
+            max="99"
+            value="99"
+            placeholder="Max Age"
+            required
+          />
+        </div>
+
+        <label>Location:</label>
+        <select name="location" required>
+          <option value="">Select location</option>
+          <option value="Amsterdam">Amsterdam</option>
+          <option value="Den Haag">Den Haag</option>
+          <option value="Rotterdam">Rotterdam</option>
+          <option value="Utrecht">Utrecht</option>
+        </select>
+
+        <button type="submit">Save & Continue</button>
+      </form>
+    </main>
+    <footer><%- include('partials/footer', { userId: userId }) %></footer>
+  </body>
+</html>

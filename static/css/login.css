@@ -1,12 +1,18 @@
+body,
+html,
+* {
+    font-family: 'Instrument Sans', Arial, sans-serif !important;
+}
+
 body {
     margin: 0;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: Arial, sans-serif;
     background-color: #f4f4f4;
 }
+
 section {
     display: flex;
     flex-direction: column;
@@ -18,20 +24,25 @@ section {
     width: 100%;
     max-width: 400px;
 }
-h1, h2 {
+
+h1,
+h2 {
     text-align: center;
     color: #333;
 }
+
 form {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
+
 label {
     margin-bottom: 5px;
     font-weight: bold;
     color: #555;
 }
+
 input {
     margin-bottom: 15px;
     padding: 10px;
@@ -39,17 +50,21 @@ input {
     border-radius: 4px;
     font-size: 16px;
 }
+
 .password-container {
     position: relative;
     display: flex;
     align-items: center;
-    
-    
+
+
 }
+
 .password-container input {
     width: 100%;
-    padding-right: 40px; /* Space for the button */
+    padding-right: 40px;
+    /* Space for the button */
 }
+
 .showPassword {
     position: absolute;
     right: 10px;
@@ -60,15 +75,19 @@ input {
     display: flex;
     align-items: center;
 }
+
 .showPassword svg {
     padding-bottom: 50%;
     width: 24px;
     height: 24px;
 }
+
 .showPassword:hover svg path,
 .showPassword:hover svg circle {
-    stroke: #0056b3; /* Hover effect */
+    stroke: #0056b3;
+    /* Hover effect */
 }
+
 button[type="submit"] {
     padding: 10px;
     background-color: #007bff;
@@ -78,26 +97,32 @@ button[type="submit"] {
     font-size: 16px;
     cursor: pointer;
 }
+
 button[type="submit"]:hover {
     background-color: #0056b3;
 }
+
 .error-list {
     color: red;
     list-style-type: none;
     padding: 0;
     margin: 10px 0;
 }
+
 .error-list li {
     margin: 5px 0;
 }
+
 .feedback {
     font-size: 0.9em;
     margin-top: -10px;
     margin-bottom: 10px;
 }
+
 .feedback.valid {
     color: green;
 }
+
 .feedback.invalid {
     color: red;
 }

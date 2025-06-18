@@ -16,7 +16,10 @@ const upload = multer({ storage: storage });
 
 // GET: Render create meet form
 router.get("/create-meet", (req, res) => {
-  res.render("create-meet");
+  res.render("create-meet", {
+    userId: req.session.userId || null,
+    user: req.session.user || null,
+  });
 });
 
 // POST: Handle meet creation
@@ -24,6 +27,8 @@ router.post("/create-meet", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.render("create-meet", {
       error: "You must upload a cover image to create a meet.",
+      userId: req.session.userId || null,
+      user: req.session.user || null,
     });
   }
   // Save the meet to the database
@@ -41,14 +46,11 @@ router.post("/create-meet", upload.single("image"), async (req, res) => {
     address: req.body.address,
     image: "/static/images/" + req.file.filename,
     members: [],
+    creatorId: req.session.userId ? req.session.userId.toString() : null,
   };
   const dbInstance = await db;
   await dbInstance.collection("meets").insertOne(meet);
-  res.send(
-    `<script>alert('Meet created! Data: ${JSON.stringify(
-      meet
-    )}'); window.location.href = '/';</script>`
-  );
+  res.redirect("/meets");
 });
 
 module.exports = router;

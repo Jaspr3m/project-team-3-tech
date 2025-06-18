@@ -1,79 +1,72 @@
-
-<header>
-  <!-- Desktop navbar -->
-  <nav class="desktop-nav">
-    <div class="nav-left">
-      <a href="/"><img src="/static/images/tllogo.png" alt="Travel Link logo" class="logo" /></a>
-    </div>
-
-    <form action="/more-meets" method="GET" class="search-form">
-      <input
-        type="text"
-        name="keyword"
-        placeholder="Search meets..."
-        class="search-input"
-        value="<%= typeof keyword !== 'undefined' ? keyword : '' %>"
-
+<nav>
+  <a href="/">
+    <img
+      src="/static/images/topleft-logo.png"
+      alt="TravelLink - Make friends around the world!"
+    />
+  </a>
+  <div id="pages"></div>
+  <input type="text" name="" id="" />
+  <div id="create-manage">
+    <a href="/users/create-meet"
+      ><button id="create-meet">Create Meet</button></a
+    >
+    <a href="/meets"><button id="manage-meets">Manage Meets</button></a>
+  </div>
+  <div
+    id="profile"
+    style="
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    "
+  >
+    <% if (user && user._id) { %>
+    <a href="/profile/<%= user._id %>">
+      <img
+        src="<%= user.photoUrl ? user.photoUrl : '/static/images/profile.png' %>"
+        alt="Profile Picture"
+        class="profile-pic"
+        style="
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #ccc;
+        "
       />
-    </form>
-
-    <div class="nav-links">
-      <a href="/"              class="nav-link">Home</a>
-      <a href="/search"        class="nav-link">Location</a>
-      <a href="/user/create-meet" class="nav-link"><button>Create Meet</button></a>
-      <a href="/meets"         class="nav-link"><button>Manage Meets</button></a>
-      <a href="/notifications" class="nav-link">
-        <img src="/static/images/alarm.svg" alt="Notifications" />
-      </a>
-      <a href="/profile/<%= userId %>" class="nav-link">
-        <img src="/static/images/profiel.svg" alt="Profile" />
-      </a>
-    </div>
-  </nav>
-
-  <!-- Mobile header -->
-  <nav class="mobile-header">
-    <div class="header-left">
-      <a href="/"><img src="/static/images/tllogo.png" alt="Travel Link logo" class="logo" /></a>
-    </div>
-
-    <div class="header-center">
-      <input type="text"
-             placeholder="Beach walk, 'party', 'relaxing'"
-             class="search-input"
-             name="keyword"
-             id="searchInput" />
-    </div>
-
-    <div class="header-right">
-      <a href="/notifications">
-        <img src="/static/images/alarm.svg" alt="Notifications" />
-      </a>
-      <a href="/profile/<%= userId %>">
-        <img src="/static/images/profiel.svg" alt="Profile" />
-      </a>
-    </div>
-  </nav>
-</header>
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("searchInput");
-    if (!searchInput) return;
-
-    searchInput.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const keyword = e.target.value.trim();
-
-        if (keyword) {
-          // Navigate to the current page with search query or to a results page
-          const currentPath = window.location.pathname;
-          const base = currentPath.includes('/more-meets') ? '/more-meets' : '/search';
-          window.location.href = `${base}?keyword=${encodeURIComponent(keyword)}`;
-        }
-      }
-    });
-  });
-</script>
+    </a>
+    <% if (user.firstName) { %>
+    <span
+      style="
+        font-size: 0.95em;
+        margin-top: 2px;
+        color: #333;
+        font-weight: 500;
+        position: absolute;
+        left: 50px;
+        top: 10px;
+        white-space: nowrap;
+      "
+    >
+      <%= user.firstName %>
+    </span>
+    <% } %> <% } else { %>
+    <a href="/login">
+      <img
+        src="/static/images/profile.png"
+        alt="Profile Picture"
+        class="profile-pic"
+        style="
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #ccc;
+        "
+      />
+    </a>
+    <% } %>
+  </div>
+</nav>
