@@ -24,8 +24,8 @@
         <p class="meets-empty">You haven't joined any meets yet.</p>
         <% } %>
         <div class="meet-row">
-          <% joined.forEach(meet => { %> <%- include('partials/meets', { meet:
-          meet }) %> <% }) %>
+          <% joined.forEach(meet => { %> <%- include('partials/meet-card', {
+          meet: meet }) %> <% }) %>
         </div>
       </div>
       <div id="createdMeetsSection" style="display: none">
@@ -34,8 +34,8 @@
         <p class="meets-empty">You haven't created any meets yet.</p>
         <% } %>
         <div class="meet-row">
-          <% created.forEach(meet => { %> <%- include('partials/meets', { meet:
-          meet }) %> <% }) %>
+          <% created.forEach(meet => { %> <%- include('partials/meet-card', {
+          meet: meet }) %> <% }) %>
         </div>
       </div>
     </main>

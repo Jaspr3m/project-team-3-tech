@@ -61,7 +61,7 @@
           <p>No meets found.</p>
           <% } else { %>
             <% meets.forEach(meet=> { %>
-              <%- include('partials/meets.ejs', { meet: meet }) %>
+              <%- include('partials/meet-card.ejs', { meet: meet }) %>
                 <% }) %>
                   <% } %>
       </section>
