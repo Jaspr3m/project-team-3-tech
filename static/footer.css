@@ -1,69 +1,85 @@
-:root {
-  --color-cream:  #F4EEE0;
-  --color-teal:   #087E8B;
-  --color-char:   #3C3C3C;
-  --color-sage:   #A3B18A; 
-}
 
-/*───────────────────────────────────────────────────────────────────
-  FOOTER / MOBILE NAVBAR (Pill-shape)
-───────────────────────────────────────────────────────────────────*/
 .mobile-navbar {
   position: fixed;
-  bottom: 12px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 40px);
+  width: calc(100% - 2rem);
   max-width: 500px;
-  height: 56px;
-  background: var(--color-sage);
-  border-radius: 28px;
+  height: 60px;
+  background: #F7A7A8;           
+  border-radius: 30px 30px 0 0;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
   align-items: center;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
   z-index: 1000;
 }
 
-/* hide labels */
-.mobile-navbar .nav-icon span {
-  display: none;
+
+@media (min-width: 768px) {
+  .mobile-navbar {
+    display: none;
+  }
 }
 
-/*───────────────────────────────────────────────────────────────────
-  ICON STYLING
-───────────────────────────────────────────────────────────────────*/
-.mobile-navbar .nav-icon img {
+
+.nav-icon {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+.nav-icon img {
   width: 24px;
   height: 24px;
-  filter: brightness(3);
-  transition: filter 0.2s ease, transform 0.2s ease;
+  filter: brightness(0) invert(1); 
+  transition: transform 0.2s ease;
 }
-
-/* Hover: licht omhoog & iets donkerder */
-.mobile-navbar .nav-icon:hover img {
-  filter: brightness(0.7);
+.nav-icon:hover img {
   transform: translateY(-2px);
 }
 
-/* Subtiel donkergrijs voor actieve icon */
-.mobile-navbar .nav-icon.active img {
-  /* “brightness(0)” maakt alles zwart, en “saturate(.4)” haalt de hardste contrasten er een beetje uit */
-  filter: brightness(0) saturate(.4);
-  transition: filter 0.2s ease;
-  
-}
-
-/* Label in crème houden */
-.mobile-navbar .nav-icon.active span {
-  display: block;
-  margin-top: 4px;
-  font-size: 10px;
-  color: var(--color-cream);
+/* actieve icon = donkergrijs */
+.nav-icon.active img {
+ 
+  filter: none;
 }
 
 
-/* hide on desktop */
+.float-btn {
+  position: absolute;
+  top: -33px;                  
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background: #3c3c3c;            
+  color: #fff;
+  font-size: 1.8rem;
+  line-height: 1;
+  text-align: center;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+  z-index: 1001;
+}
+.float-btn:hover {
+  transform: translate(-50%, -30px) scale(1.05);
+}
+
+
+@media (max-width: 767px) {
+  main.profile-container {
+    padding-bottom: 120px; 
+  }
+}
+
+/* Desktop: automatisch geen extra padding */
 @media (min-width: 768px) {
-  .mobile-navbar { display: none; }
+  main.profile-container {
+    padding-bottom: 0;
+  }
 }
