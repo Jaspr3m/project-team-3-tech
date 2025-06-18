@@ -23,6 +23,16 @@
     <a data-active="profile" href="/profile/<%= userId %>"class="nav-link"><img src="/static/images/profile.svg" alt="Profile"></a>
 </div>
 </nav>
+    <form action="/more-meets" method="GET" class="search-form">
+      <input
+        type="text"
+        name="keyword"
+        placeholder="Search meets..."
+        class="search-input"
+        value="<%= typeof keyword !== 'undefined' ? keyword : '' %>"
+
+      />
+    </form>
 
 
 
