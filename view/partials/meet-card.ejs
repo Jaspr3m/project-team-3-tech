@@ -13,6 +13,15 @@
 
   <div class="meet-meta">
     <p>
+      <strong>City:</strong>
+      <%= meet.location || '-' %>
+    </p>
+    <p>
+      <strong>Category:</strong>
+      <%= meet.category || '-' %>
+    </p>
+    
+    <p>
       <strong>Date:</strong>
       <%= meet.date || '-' %>
     </p>
@@ -20,14 +29,12 @@
       <strong>Time:</strong>
       <%= meet.time || '-' %>
     </p>
-    <p><strong>Duration:</strong> <%= meet.duration || '-' %></p>
-    <p>
       <strong>Max People:</strong>
       <%= meet.maxPeople || '-' %>
     </p>
     <p>
-      <strong>Location:</strong>
-      <%= meet.address || meet.location || '-' %>
+      <strong>Adress:</strong>
+      <%= meet.address || meet.address || '-' %>
     </p>
   </div>
 
