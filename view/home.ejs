@@ -10,6 +10,7 @@
      <link rel="stylesheet" href="/static/footer.css" />
   </head>
   <body>
+
 <header>
   <%- include('partials/header') %>
   <nav>
@@ -19,16 +20,15 @@
   </nav>
 </header>
 
+
     <main>
       <section>
         <h2>Find a meet near <em>you!</em></h2>
         <a href="/more-meets">Explore More Meets</a>
         <div class="meet-row">
-          <% meets.forEach(meet => { %>
-            <%- include('partials/meets.ejs', { meet: meet }) %>
-          <% }) %>
+          <% meets.forEach(meet => { %> <%- include('partials/meet-card.ejs', {
+          meet: meet }) %> <% }) %>
         </div>
-        
       </section>
       <!-- <section>
         <h2>Discover meets near <em>you!</em></h2>
@@ -52,9 +52,6 @@
       </section> -->
     </main>
 
-
-    <footer>
-  <%- include('partials/footer', { userId: userId }) %>
-    </footer>
+    <footer><%- include('partials/footer', { userId: userId }) %></footer>
   </body>
 </html>

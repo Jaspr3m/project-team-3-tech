@@ -3,51 +3,41 @@
 </head>
 
 <div class="meet-card" data-meet-id="<%= meet._id %>">
-  <img src="<%= meet.image || '/static/images/map_placeholder.png' %>" alt="Meet Image" class="meet-image" />
+  <img
+    src="<%= meet.image || '/static/images/map_placeholder.png' %>"
+    alt="Meet Image"
+    class="meet-image"
+  />
 
-  <h3 class="meet-title">
-    <%= meet.title %>
-  </h3>
+  <h3 class="meet-title"><%= meet.title %></h3>
 
   <div class="meet-meta">
-    <p><strong>Date:</strong>
+    <p>
+      <strong>Date:</strong>
       <%= meet.date || '-' %>
     </p>
-    <p><strong>Time:</strong>
+    <p>
+      <strong>Time:</strong>
       <%= meet.time || '-' %>
     </p>
     <p><strong>Duration:</strong> <%= meet.duration || '-' %></p>
-    <p><strong>Max People:</strong>
+    <p>
+      <strong>Max People:</strong>
       <%= meet.maxPeople || '-' %>
     </p>
-    <p><strong>Location:</strong>
+    <p>
+      <strong>Location:</strong>
       <%= meet.address || meet.location || '-' %>
     </p>
   </div>
 
   <% if (meet.description) { %>
-    <p class="meet-description">
-      <%= meet.description %>
-    </p>
-    <% } %>
+  <p class="meet-description"><%= meet.description %></p>
+  <% } %>
 
-      <div class="meet-actions">
-        <a href="/meet/<%= meet._id %>" class="view-btn">View</a>
-
-        <% const userId='demoUserId' ; %>
-          <% const isMember=Array.isArray(meet.members) && meet.members.some(m=> m.id === userId); %>
-            <% if (!isMember) { %>
-              <form method="POST" action="/meet/<%= meet._id %>/join" class="join-leave-form" data-action="join">
-                <input type="hidden" name="userId" value="<%= userId %>" />
-                <button type="submit" class="join-btn">Join Meet</button>
-              </form>
-              <% } else { %>
-                <form method="POST" action="/meet/<%= meet._id %>/cancel" class="join-leave-form" data-action="leave">
-                  <input type="hidden" name="userId" value="<%= userId %>" />
-                  <button type="submit" class="cancel-btn">Leave Meet</button>
-                </form>
-                <% } %>
-      </div>
+  <div class="meet-actions">
+    <a href="/meet/<%= meet._id %>" class="view-btn">View</a>
+  </div>
 </div>
 
 <!--  -->

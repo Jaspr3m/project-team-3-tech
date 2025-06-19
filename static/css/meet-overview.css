@@ -1,0 +1,108 @@
+body {
+    background-color: #f5f5f5;
+    color: #111;
+    line-height: 1.5;
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.meet-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 900px;
+    margin: 40px auto 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    padding: 2rem;
+}
+
+.meet-image {
+    text-align: center;
+}
+
+.meet-image img {
+    width: 220px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.meet-info h1 {
+    margin-bottom: 0.5rem;
+}
+
+.meet-info p {
+    margin: 0.5rem 0;
+}
+
+.meet-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-start;
+    gap: 1.5rem;
+}
+
+.meet-actions button {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    background: #53b8d7;
+    color: #fff;
+    transition: background 0.2s;
+}
+
+.meet-actions .cancel-btn {
+    background: #e0e0e0;
+    color: #222;
+}
+
+.user-match-list-section {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    padding: 2rem;
+}
+
+.user-match-list .user-match {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.user-match-list .user-match:last-child {
+    border-bottom: none;
+}
+
+.user-photo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 1rem;
+}
+
+.your-match-label {
+    background: #53b8d7;
+    color: #fff;
+    border-radius: 6px;
+    padding: 0.2em 0.7em;
+    font-size: 0.9em;
+    margin-left: 0.7em;
+}
+
+.match-score {
+    font-weight: bold;
+    color: #53b8d7;
+    margin-top: 0.2em;
+}

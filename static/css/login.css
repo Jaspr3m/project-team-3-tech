@@ -1,3 +1,4 @@
+
 * {
   margin: 0;
   padding: 0;
@@ -52,6 +53,26 @@ h2 {
   margin-bottom: 30px;
   font-size: 24px;
   font-weight: 600;
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
 }
 
 form {
@@ -60,6 +81,7 @@ form {
 }
 
 label {
+
   text-align: left;
   margin-bottom: 5px;
   font-weight: 500;
@@ -175,6 +197,83 @@ input[type="email"]:focus {
 
 
 /* Feedback teksten */
+
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+input {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 40px;
+    /* Space for the button */
+}
+
+.showPassword {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.showPassword svg {
+    padding-bottom: 50%;
+    width: 24px;
+    height: 24px;
+}
+
+.showPassword:hover svg path,
+.showPassword:hover svg circle {
+    stroke: #0056b3;
+    /* Hover effect */
+}
+
+button[type="submit"] {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.error-list {
+    color: red;
+    list-style-type: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.error-list li {
+    margin: 5px 0;
+}
+
+
 .feedback {
   font-size: 14px;           
   min-height: 18px;         

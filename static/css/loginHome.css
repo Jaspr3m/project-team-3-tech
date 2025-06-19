@@ -6,10 +6,13 @@
   font-family: 'Arial', sans-serif;
 }
 
+
 /* BACKGROUND & OVERLAY */
 .login-bg {
   background: url('/static/images/meetspicture.png') no-repeat center/cover;
   height: 100vh;
+
+
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -22,6 +25,7 @@
   background: rgba(0,0,0,0.4);
   z-index: 1;
 }
+
 
 /* LOGO */
 .logo {
@@ -36,6 +40,7 @@
 }
 .logo img:hover {
   transform: scale(1.1);
+
 }
 
 /* WELCOME-CONTAINER (exact /login-card style) */
@@ -47,11 +52,13 @@
   border-radius: 30px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.3);
   width: 100%;
+
   max-width: 400px;
   text-align: center;
   opacity: 0;
   animation: fadeInForm 1s ease-out forwards;
   animation-delay: 1s;
+
 }
 
 /* ANIMATIE FORM */
@@ -59,6 +66,7 @@
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
 
 /* TITEL & INTRO */
 .welcome-container h1 {
@@ -71,6 +79,7 @@
   font-size: 16px;
   margin-bottom: 40px;             /* meer ruimte */
   color: #444;
+
   line-height: 1.4;
 }
 
@@ -93,8 +102,11 @@
   color: #fff;
 }
 
+
 .buttons a button {
   padding: 13px 90px;                    
+
+
   border: none;
   border-radius: 30px;
   font-size: 16px;
@@ -105,9 +117,13 @@
   background-color: #F7A7A8;
   transform: scale(1.02);
 }
+
 .buttons a:nth-of-type(2) button:hover {
   background-color: #4c4c4c;
   transform: scale(1.02);
+
+
+
 }
 
 /* DIVIDER */
@@ -118,8 +134,10 @@
   color: #888;
   font-size: 14px;
 }
+
 .divider::before,
 .divider::after {
+
   content: "";
   position: absolute;
   top: 50%;
@@ -129,11 +147,13 @@
 }
 .divider::before { left: 0; }
 .divider::after { right: 0; }
+
 .divider span {
   position: relative;
   background: #fff;
   padding: 0 10px;
 }
+
 
 /* SIGNUP LINK */
 .signup {
@@ -143,6 +163,7 @@
 }
 .signup a {
   color: #F7A7A8;                 
+
   text-decoration: none;
 }
 .signup a:hover {
@@ -174,6 +195,7 @@
   .welcome-container {
     margin-left: 30px;
   }
+
 }
 @media (max-width: 768px) {
   .login-bg {
@@ -206,5 +228,6 @@
   .buttons a button {
     padding: 14px 80px;
     font-size: 14px;
+
   }
 }
