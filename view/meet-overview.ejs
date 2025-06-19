@@ -62,16 +62,9 @@
           </form>
           <% } %>
         </div>
-        <div style="margin-top: 2rem">
-          <h3>Members:</h3>
-          <% if (meet.members && meet.members.length > 0) { %>
-          <ul style="list-style: none; padding: 0">
-            <% meet.members.forEach(function(member) { %>
-            <li><%= member.name %></li>
-            <% }) %>
-          </ul>
-          <% } else { %>
-          <p>No one has joined this meet yet.</p>
+        <div id="is-member" style="margin-top: 2rem">
+          <% if (isMember) { %>
+            <h3 style="color: green; font-weight: bold;">You are already a part of the meet.</h3>
           <% } %>
         </div>
       </div>
