@@ -13,15 +13,7 @@
     >
     <a href="/meets"><button id="manage-meets">Manage Meets</button></a>
   </div>
-  <div
-    id="profile"
-    style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-    "
-  >
+  <div id="profile" style="display: flex; flex-direction: column">
     <% if (user && user._id) { %>
     <a href="/profile/<%= user._id %>">
       <img
@@ -38,18 +30,7 @@
       />
     </a>
     <% if (user.firstName) { %>
-    <span
-      style="
-        font-size: 0.95em;
-        margin-top: 2px;
-        color: #333;
-        font-weight: 500;
-        position: absolute;
-        left: 50px;
-        top: 10px;
-        white-space: nowrap;
-      "
-    >
+    <span style="font-size: 0.95em; white-space: nowrap; text-align: center">
       <%= user.firstName %>
     </span>
     <% } %> <% } else { %>
