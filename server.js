@@ -560,10 +560,15 @@ app.get("/meet/:id", async (req, res) => {
         meet.members.some((m) => m.id === userId);
     }
 
-    // Fetch all users except the current user
-    const allUsers = await db
+    // Fetch only users who are members of this meet (not all users)
+    const memberIds = (meet.members || [])
+      .map((m) => m.id)
+      .filter(Boolean)
+      .map((id) => new ObjectId(id));
+
+    const joinedUsers = await db
       .collection(process.env.USER_COLLECTION)
-      .find({ _id: { $ne: new ObjectId(userId) } })
+      .find({ _id: { $in: memberIds } })
       .toArray();
 
     // Helper: calculate match score
@@ -601,8 +606,8 @@ app.get("/meet/:id", async (req, res) => {
       return score;
     }
 
-    // Calculate and sort matches
-    const userMatches = allUsers
+    // Calculate and sort matches only among joined users
+    const userMatches = joinedUsers
       .map((u) => ({
         user: u,
         matchScore: calculateMatchScore(u, meet),
@@ -614,7 +619,7 @@ app.get("/meet/:id", async (req, res) => {
       userId,
       user,
       isMember,
-      userMatches, // Pass matches to EJS
+      userMatches, // Only joined users, sorted by match
     });
   } catch (error) {
     console.error("Error loading meet overview:", error);
