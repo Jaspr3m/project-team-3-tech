@@ -627,8 +627,11 @@ app.get("/meet/:id", async (req, res) => {
   }
 });
 
-// ─── 404 & START SERVER ─────────────────────────────────────────────────
-// 404 handler
+// Mount user routes
+const userRoutes = require("./routes/user");
+app.use("/users", userRoutes);
+
+// 404 handler (should be last)
 app.use((_, res) => res.status(404).send("Not Found"));
 
 // Start server
