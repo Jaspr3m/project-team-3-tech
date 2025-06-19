@@ -20,22 +20,37 @@
         <h1>Filter Meets</h1>
         <form id="filter-form" class="filter-form" method="GET" action="/more-meets">
 
+          <label>City:</label>
+          <select name="location">
+            <option value="">Any</option>
+            <option value="Amsterdam" <%=location==='Amsterdam' ? 'selected' : '' %>>Amsterdam</option>
+            <option value="Rotterdam" <%=location==='Rotterdam' ? 'selected' : '' %>>Rotterdam</option>
+            <option value="Utrecht" <%=location==='Utrecht' ? 'selected' : '' %>>Utrecht</option>
+            <!-- more cities? -->
+          </select>
+
+          <label>Category:</label>
+          <select name="category">
+            <option value="">Any</option>
+            <option value="Party" <%=category==='Party' ? 'selected' : '' %>>Party</option>
+            <option value="Study" <%=category==='Study' ? 'selected' : '' %>>Study</option>
+            <option value="Walk" <%=category==='Walk' ? 'selected' : '' %>>Walk</option>
+            <option value="Food" <%=category==='Food' ? 'selected' : '' %>>Food</option>
+            <!-- more categories? -->
+          </select>
+
+
           <label>Date:</label>
           <input type="date" name="startDate" value="<%= startDate || '' %>" />
           <input type="date" name="endDate" value="<%= endDate || '' %>" />
 
-          <label>Duration:</label>
-          <select name="duration">
-            <option value="">Any</option>
-            <option value="Short" <%=duration==='Short' ? 'selected' : '' %>>Short</option>
-            <option value="Long" <%=duration==='Long' ? 'selected' : '' %>>Long</option>
-          </select>
+
 
           <label>Max People:</label>
           <input type="number" name="minPeople" min="1" value="<%= minPeople || '' %>" placeholder="Min" />
           <input type="number" name="maxPeople" min="1" value="<%= maxPeople || '' %>" placeholder="Max" />
 
-          <label>Location:</label>
+          <label>Address:</label>
           <input type="text" name="address" placeholder="e.g., Amsterdam" value="<%= address || '' %>" />
 
           <label>Sort by:</label>

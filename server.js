@@ -357,26 +357,60 @@ function applyFilters(filters) {
   return query;
 }
 
-app.get("/more-meets", async (req, res) => {
-  const filters = req.query;
-  const { keyword, sort } = filters;
+//------------------------ MORE MEETS ------------------------ 
+function applyFilters(filters) {
   const query = {};
 
-  if (keyword) {
-    const searchRegex = new RegExp(keyword, "i");
+  if (filters.keyword) {
+    const keywordRegex = new RegExp(filters.keyword, "i");
     query.$or = [
-      { title: searchRegex },
-      { description: searchRegex },
-      { address: searchRegex },
-      // { category: searchRegex },
-      // { tags: searchRegex },
+      { title: keywordRegex },
+      { description: keywordRegex },
+      { address: keywordRegex },
     ];
   }
 
-  if (filters.address) query.address = filters.address;
-  if (filters.category) query.category = filters.category;
-  if (filters.date) query.date = filters.date;
+  if (filters.location) {
+    query.location = filters.location; // ✅ fix here
+  }
 
+  if (filters.category) {
+    query.category = filters.category;
+  }
+
+  if (filters.address) {
+    query.address = new RegExp(filters.address, "i");
+  }
+
+  if (filters.startDate || filters.endDate) {
+    query.date = {};
+    if (filters.startDate) query.date.$gte = filters.startDate;
+    if (filters.endDate) query.date.$lte = filters.endDate;
+  }
+
+  if (filters.minPeople || filters.maxPeople) {
+    query.maxPeople = {};
+    if (filters.minPeople) query.maxPeople.$gte = parseInt(filters.minPeople, 10);
+    if (filters.maxPeople) query.maxPeople.$lte = parseInt(filters.maxPeople, 10);
+
+    if (Object.keys(query.maxPeople).length === 0) {
+      delete query.maxPeople;
+    }
+  }
+
+  return query;
+}
+
+// Kioko
+
+app.get("/more-meets", async (req, res) => {
+  const filters = req.query;
+  const { keyword, sort } = filters;
+
+
+  const query = applyFilters(filters);
+
+  
   let sortOption = {};
   if (sort === "date_asc") sortOption.date = 1;
   else if (sort === "date_desc") sortOption.date = -1;
@@ -389,32 +423,52 @@ app.get("/more-meets", async (req, res) => {
       .find(query)
       .sort(sortOption)
       .toArray();
-    let user = null;
-    if (req.session.userId) {
-      user = await db
-        .collection(process.env.USER_COLLECTION)
-        .findOne({ _id: new ObjectId(req.session.userId) });
-    }
     res.render("more-meets", {
       meets,
       keyword,
+      location: filters.location || "",
+      category: filters.category || "",
       address: filters.address || "",
-      // category: filters.category || '',
       date: filters.date || "",
-      duration: filters.duration || "",
       startDate: filters.startDate || "",
       minPeople: filters.minPeople || "",
       maxPeople: filters.maxPeople || "",
       endDate: filters.endDate || "",
       sort: sort || "",
       userId: req.session.userId || null,
-      user,
+      user: req.session.user || null,
     });
   } catch (err) {
     console.error("Error fetching meets:", err);
     res.status(500).send("Server error");
   }
 });
+
+app.get("/api/meets", async (req, res) => {
+  const { keyword, address, date } = req.query;
+
+  const query = {};
+
+  if (keyword) {
+    query.$or = [
+      { meetingName: new RegExp(keyword, "i") },
+      { description: new RegExp(keyword, "i") },
+      { address: new RegExp(keyword, "i") },
+    ];
+  }
+
+  if (address) query.address = address;
+  if (date) query.date = date;
+
+  try {
+    const meets = await db.collection("meets").find(query).toArray();
+    res.json(meets);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 app.get('/logout', (req, res) => {
   req.session.destroy(err => {
