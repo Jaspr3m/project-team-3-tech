@@ -399,7 +399,7 @@ app.get("/more-meets", async (req, res) => {
 
 app.get('/logout', (req, res) => {
   req.session.destroy(err => {
-    res.redirect('/login');
+    res.redirect('/loginHome');
   });
 });
 
@@ -483,7 +483,125 @@ app.get('/api/meets', async (req, res) => {
 //   }
 //   next();
 // });
-// ─── 404 HANDLER ──────────────────────────────────────────────────
+// CREAT MEETS
+
+app.get("/create-meet", (req, res) => {
+  res.render("create-meet", {
+    userId: req.session.userId || null,
+    user: req.session.user || null,
+  });
+});
+
+app.get("/meets", async (req, res) => {
+  try {
+    const userId = req.session.userId?.toString();
+    const meets = await db.collection("meets").find({}).toArray();
+    // Joined: user is in members array
+    const joinedMeets = meets.filter(
+      (meet) =>
+        Array.isArray(meet.members) && meet.members.some((m) => m.id === userId)
+    );
+    // Created: user is the creator (assuming meet.creatorId is set)
+    const createdMeets = meets.filter((meet) => meet.creatorId === userId);
+    res.render("meets", {
+      joinedMeets,
+      createdMeets,
+      userId: req.session.userId || null,
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error fetching meets for manage page:", error);
+    res.status(500).send("Error fetching meets");
+  }
+});
+
+app.get("/meet/:id", async (req, res) => {
+  try {
+    const meet = await db
+      .collection("meets")
+      .findOne({ _id: new ObjectId(req.params.id) });
+    if (!meet) {
+      return res.status(404).send("Meet not found");
+    }
+    let user = null;
+    let isMember = false;
+    let userId = req.session.userId ? req.session.userId.toString() : null;
+    if (userId) {
+      user = await db
+        .collection(process.env.USER_COLLECTION)
+        .findOne({ _id: new ObjectId(userId) });
+      isMember =
+        Array.isArray(meet.members) &&
+        meet.members.some((m) => m.id === userId);
+    }
+
+    // Fetch only users who are members of this meet (not all users)
+    const memberIds = (meet.members || [])
+      .map((m) => m.id)
+      .filter(Boolean)
+      .map((id) => new ObjectId(id));
+
+    const joinedUsers = await db
+      .collection(process.env.USER_COLLECTION)
+      .find({ _id: { $in: memberIds } })
+      .toArray();
+
+    // Helper: calculate match score
+    function calculateMatchScore(userProfile, meet) {
+      let score = 0;
+      // Age range match (if available)
+      if (
+        userProfile.ageMin &&
+        userProfile.ageMax &&
+        meet.ageMin &&
+        meet.ageMax
+      ) {
+        // Overlap in age range
+        const overlap = Math.max(
+          0,
+          Math.min(userProfile.ageMax, meet.ageMax) -
+            Math.max(userProfile.ageMin, meet.ageMin)
+        );
+        if (overlap > 0) score += 40;
+      }
+      // Gender match (if available)
+      if (meet.preferredGender && userProfile.preferredGender) {
+        if (
+          meet.preferredGender === "any" ||
+          userProfile.preferredGender === "any" ||
+          meet.preferredGender === userProfile.preferredGender
+        ) {
+          score += 30;
+        }
+      }
+      // Vibe match (if available)
+      if (meet.vibe && userProfile.vibe && meet.vibe === userProfile.vibe) {
+        score += 30;
+      }
+      return score;
+    }
+
+    // Calculate and sort matches only among joined users
+    const userMatches = joinedUsers
+      .map((u) => ({
+        user: u,
+        matchScore: calculateMatchScore(u, meet),
+      }))
+      .sort((a, b) => b.matchScore - a.matchScore);
+
+    res.render("meet-overview", {
+      meet,
+      userId,
+      user,
+      isMember,
+      userMatches, // Only joined users, sorted by match
+    });
+  } catch (error) {
+    console.error("Error loading meet overview:", error);
+    res.status(500).send("Error loading meet overview");
+  }
+});
+
 
 
 // ─── START SERVER ─────────────────────────────────────────────────
