@@ -2,43 +2,35 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/static/css/loginHome.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>loginHome</title>
+  <link rel="stylesheet" href="/static/css/loginHome.css" />
 </head>
-
 <body>
-    <header></header>
-    <main>
-        <img src="/static/images/Screenshot 2025-05-12 at 13.42.28.png" alt="logo travel link">
-        <section class="welcomeTekst">
-            <h1>welcome</h1>
-            <p>Welcome to Travel Link. Your go to app for planning meetups based on shared interests. Discover adventures, connect with like minded travelers, and make every journey a chance to meet new friends!
-            </p>
+  <div class="login-bg">
+    <div class="login-overlay"></div>
 
-            <section>
-                <a href="/login">
-                    <button>
-                        Sign In
-                    </button>
-                </a>
+    <!-- stap 2: logo -->
+    <div class="logo">
+      <img src="/static/images/logo.svg" alt="Travel Link logo">
+    </div>
 
-                <a href="/home">
-                    <button>
-                        Visit as guest
-                    </button>
-                </a>
-            </section>
-            <div class="divider">
-                <span>Or</span>
-            </div>
-            <p>Don't have an account? <a href="/register">Sign up</a></p>
-        </section>
-    </main>
-    <footer></footer>
 
-<script src="/static/script/loginHome.js"></script>
+    <div class="welcome-container">
+      <h1>Welcome</h1>
+      <p class="intro">Find your people. Meet, move & explore together.</p>
+      <div class="buttons">
+        <a href="/login"><button>Login</button></a>
+        <a href="/home?guest=true"><button>Guest</button></a>
+      </div>
+      <div class="divider">Or</div>
+      <p class="signup">Don't have an account? <a href="/register">Create account</a></p>
+    </div>
+  </div>
+
+  <script src="/static/script/loginHome.js"></script>
 </body>
-
 </html>
+
+ 

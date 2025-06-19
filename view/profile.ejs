@@ -1,84 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profile</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/profile.css" />
+    <link rel="stylesheet" href="/static/header.css" />
+      <link rel="stylesheet" href="/static/footer.css" />
+
+ 
+
 </head>
 <body>
-  <header>
-    <%- include('partials/header') %>
+  <header> 
+
+<%- include('partials/header') %>
   </header>
-  <div class="profile-container">
 
-    <h1>Profile Page</h1>
-    <img src="/static/images/profileivy.jpeg" alt="Profile">
+  <main class="profile-container">
+    <% if (!editing && profile) { %>
+      <% if (profile.photoUrl) { %>
+        <img src="<%= profile.photoUrl %>" alt="Profile photo" class="profile-pic"/>
 
-<% if (editing) { %>
-      <form action="/profile/<%= profile._id %>" method="POST">
-        <p>Name:</p>
-        <input type="text" 
-        name="name" 
-        value="<%= profile.name %>">
+      <% } %>
+      <h1><%= profile.firstName %> <%= profile.lastName %>
+        <% if (profile.dob) { %>
+          <span style="font-size:0.7em; color:#888;">(
+            <%= (() => {
+              const dob = new Date(profile.dob);
+              const today = new Date();
+              let age = today.getFullYear() - dob.getFullYear();
+              const m = today.getMonth() - dob.getMonth();
+              if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+              return age;
+            })() %> yrs)
+          </span>
+        <% } %>
+      </h1>
+      <p class="location"><%= profile.location %></p>
 
-        <p>Location:</p>
-        <input 
-        type="text" 
-        name="location" 
-        value="<%= profile.location %>">
-
-        <p>Tags:</p>
-        <input 
-        type="text" 
-        name="tags" 
-        value="<%= profile.tags %>">
-
-        <p>Languages:</p>
-        <input 
-        type="text" 
-        name="languages" 
-        value="<%= profile.languages %>">
-
-        <p>Bio:</p>
-        <textarea name="bio"><%= profile.bio %></textarea>
-
-        <button type="submit">Save</button>
-      </form>
-      
-    <% } else { %>
-      <h2><%= profile.name %></h2>
-      <p><strong>Location:</strong> <%= profile.location %></p>
-
- <p><strong>Tags:</strong><br>
-  <% if (Array.isArray(profile.tags)) { %>
-    <% profile.tags.forEach(function(tag) { %>
-      <span class="box"><%= tag.trim() %></span>
-    <% }) %>
-  <% } else if (typeof profile.tags === 'string') { %>
-    <% profile.tags.split(',').forEach(function(tag) { %>
-      <span class="box"><%= tag.trim() %></span>
-    <% }) %>
-  <% } else { %>
-    <span>No tags available</span>
-  <% } %>
-</p>
-
-      <p class="bio"><%= profile.bio %></p>
-
-      <p><strong>Languages:</strong><br>
-        <% profile.languages.split(',').forEach(function(lang) { %>
-          <span class="box"><%= lang.trim() %></span>
+      <p>
+        <strong>Tags:</strong><br />
+        <% (profile.tags || []).forEach(tag => { %>
+        <span class="box"><%= tag %></span>
         <% }) %>
       </p>
 
-      <a href="/profile/<%= profile._id %>?edit=true">✏️ Edit</a>
+
+      <p><strong>Bio:</strong><br><%= profile.bio %></p>
+
+<div class="button-row">
+  <a href="/profile/<%= profile._id %>?edit=true" class="edit-btn">Edit Profile</a>
+  <button class="logout-link"
+          onclick="if (confirm('Are you sure you want to log out?')) location.href='/logout'">
+    Logout
+  </button>
+</div>
+
+
+      <a href="/profile/<%= profile._id %>?edit=true" class="edit-link"
+        >Edit Profile</a
+      >
+
+      <% } else if (editing && profile) { %>
+
+      <form
+        action="/profile/<%= profile._id %>"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <label>First & Last Name:</label>
+        <div class="side-by-side">
+          <input type="text" name="firstName" placeholder="First Name" value="<%= profile.firstName || '' %>" required />
+          <input type="text" name="lastName" placeholder="Last Name" value="<%= profile.lastName || '' %>" required />
+        </div>
+
+
+        <label>Picture:</label>
+        <input type="file" name="photo">
+
+        <label>Tags:</label>
+        <input type="text" name="tags" value="<%= (profile.tags||[]).join(',') %>">
+
+        <label>Languages:</label>
+        <input type="text" name="languages" value="<%= (profile.languages||[]).join(',') %>">
+
+
+
+        <label>Location:</label>
+        <select name="location" required>
+          <option value="">Select location</option>
+          <option value="Amsterdam" <%= profile.location === 'Amsterdam' ? 'selected' : '' %>>Amsterdam</option>
+          <option value="Den Haag" <%= profile.location === 'Den Haag' ? 'selected' : '' %>>Den Haag</option>
+          <option value="Rotterdam" <%= profile.location === 'Rotterdam' ? 'selected' : '' %>>Rotterdam</option>
+          <option value="Utrecht" <%= profile.location === 'Utrecht' ? 'selected' : '' %>>Utrecht</option>
+        </select>
+
+        <label>Age Range: <span id="ageRangeValue"><%= profile.ageRange ? profile.ageRange.min : 18 %> - <%= profile.ageRange ? profile.ageRange.max : 99 %></span></label>
+        <input
+          type="range"
+          name="ageMin"
+          min="18"
+          max="99"
+          value="<%= profile.ageRange ? profile.ageRange.min : 18 %>"
+          id="ageMin"
+          style="width: 48%"
+        />
+        <input
+          type="range"
+          name="ageMax"
+          min="18"
+          max="99"
+          value="<%= profile.ageRange ? profile.ageRange.max : 99 %>"
+          id="ageMax"
+          style="width: 48%"
+        />
+        <div class="slider-labels">
+          <span>18</span>
+          <span>99</span>
+        </div>
+
+        <button type="submit">Save</button>
+        <a href="/profile/<%= userId %>" class="cancel-btn">Cancel</a>
+      </form>
+      <form
+        action="/logout"
+        method="POST"
+        style="text-align: right; margin-bottom: 1em; margin-top: 1em;"
+      >
+        <button type="submit" class="logout-btn">Log Out</button>
+      </form>
+
+      <% } else { %>
+      <h2>No profile found.</h2>
+
     <% } %>
 
-  </div>
+
+  </main>
+  <footer>
+
+  <%- include('partials/footer', { userId: userId }) %>
+  </footer>
+
+<script>
+
+
   
-<footer>
-  <%- include('partials/footer') %>
-</footer>
+</script>
+
 </body>
+
 </html>

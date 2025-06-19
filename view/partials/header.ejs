@@ -1,15 +1,65 @@
-<header class="mobile-header">
-  <div class="header-left">
-    <img src="/static/images/logo.svg" alt="Logo" class="logo">
-  </div>
 
-  <div class="header-center">
 
-    <input type="text" placeholder="Search..." class="search-input" name="keyword" id="searchInput">
+<header>
+  <!-- Desktop navbar -->
+  <nav class="desktop-nav">
+    <div class="nav-left">
+      <a href="/"><img src="/static/images/logo.svg" alt="Travel Link logo" class="logo" /></a>
+    </div>
+    
+    <form action="/more-meets" method="GET" class="search-form">
+      <input
+        type="text"
+        name="keyword"
+        placeholder="Search meets..."
+        class="search-input"
+        value="<%= typeof keyword !== 'undefined' ? keyword : '' %>"
 
-  </div>
+      />
+    </form>
+    
+  <div class="nav-links">
+    <a data-active="home" href="/home"            class="nav-link">Home</a>
+    <a data-active="location" href="/"       class="nav-link">Location</a>
+    <a href="/user/create-meet"    class="nav-link nav-button">Create Meet</a>
+    <a href="/meets"               class="nav-link nav-button">Manage Meets</a>
+    <a data-active="noti" href="/notifications" class="nav-link"><img src="/static/images/mdi_bell.svg" alt="Notifications" class="icon-notif"></a>
+    <a data-active="profile" href="/profile/<%= userId %>"class="nav-link"><img src="/static/images/profile.svg" alt="Profile"></a>
+</div>
+</nav>
 
-  <div class="header-right">
-    <img src="/static/images/profileivy.jpeg" alt="Profile" class="profile-icon">
-  </div>
+
+  
 </header>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  
+    const path = window.location.pathname.toLowerCase();
+    document.querySelectorAll('.nav-link[data-active]').forEach(link => {
+      const key = link.dataset.active.toLowerCase();
+      if (path.includes(key)) {
+        link.classList.add('active');
+      }
+    });
+
+    // Search input handler
+    const searchInput = document.getElementById("searchInput");
+    if (!searchInput) return;
+
+    searchInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const keyword = e.target.value.trim();
+
+        if (keyword) {
+          
+          const currentPath = window.location.pathname;
+          const base = currentPath.includes('/more-meets') ? '/more-meets' : '/search';
+          window.location.href = `${base}?keyword=${encodeURIComponent(keyword)}`;
+        }
+      }
+    });
+  });
+</script>
+
+

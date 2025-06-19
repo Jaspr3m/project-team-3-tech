@@ -1,0 +1,61 @@
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Notifications</title>
+  <link rel="stylesheet" href="/static/css/noti.css">
+</head>
+<body>
+  <header>
+    <%- include('partials/header') %>
+  </header>
+
+  <main class="notifications-container">
+    <h1>Notifications</h1>
+    <% if (notifications.length) { %>
+      <ul class="notif-list">
+        <% notifications.forEach(n => { %>
+          <li class="notif-item<%= n.isRead ? ' read' : '' %>">
+            <p><%= n.message %></p>
+            <time><%= new Date(n.createdAt).toLocaleString() %></time>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p>You have no notifications.</p>
+    <% } %>
+  </main>
+
+  <footer>
+    <%- include('partials/footer', { userId: userId }) %>
+  </footer>
+</body>
+</html>
+<div id="toast-container"></div>
+<script>
+  const socket = io();
+
+  // join de juiste meet-room op paginalaad
+  const meetId = '<%= meetId || "" %>';
+  if (meetId) {
+    socket.emit('joinMeetRoom', meetId);
+  }
+
+  // toast-functie
+  function showToast(msg) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = msg;
+    container.appendChild(toast);
+    // automatisch verwijderen na animatie
+    setTimeout(() => container.removeChild(toast), 5000);
+  }
+
+  // luister notifications
+  socket.on('notification', data => {
+    showToast(data.message);
+  });
+</script> -->

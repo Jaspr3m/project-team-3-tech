@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelLink</title>
+    <link rel="stylesheet" href="/static/profile.css" />
+    <link rel="stylesheet" href="/static/header.css" />
+    <link rel="stylesheet" href="/static/homepage.css" />
+     <link rel="stylesheet" href="/static/footer.css" />
+  </head>
+  <body>
+
+<header>
+  <%- include('partials/header') %>
+  <nav>
+    <div class="mobile-actions">
+  <a href="/meets"            class="action-btn manage">Manage Meets</a>
+</div>
+  </nav>
+</header>
+
+
+    <main>
+      <section>
+        <h2>Find a meet near <em>you!</em></h2>
+        <a href="/more-meets">Explore More Meets</a>
+        <div class="meet-row">
+          <% meets.forEach(meet => { %> <%- include('partials/meet-card.ejs', {
+          meet: meet }) %> <% }) %>
+        </div>
+      </section>
+      <!-- <section>
+        <h2>Discover meets near <em>you!</em></h2>
+        <div class="meet-row">
+          <% meets.forEach(meet => { %>
+          <div class="meet-card">
+            <h3><%= meet.meetingName %></h3>
+            <p><%= meet.location %></p>
+            <p><%= meet.description %></p>
+            <a href="/meet/<%= meet._id %>">View</a>
+          </div>
+          <% }) %>
+        </div>
+      </section>
+      <section>
+        <h2>View all nearby locations</h2>
+        <img
+          src="/static/images/map_placeholder.png"
+          alt="Map showing nearby locations"
+        />
+      </section> -->
+    </main>
+
+    <footer><%- include('partials/footer', { userId: userId }) %></footer>
+  </body>
+</html>

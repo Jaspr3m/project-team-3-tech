@@ -1,209 +1,84 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TravelLink</title>
-  <link rel="stylesheet" href="/static/css/filter.css" />
-  <link rel="stylesheet" href="/static/header.css" />
-</head>
-
-<body>
-  <header>
-    <a href="/">
-      <img src="/static/images/Screenshot 2025-05-12 at 13.42.28.png" alt="Travel Link logo" class="logo">
-    </a>
-
-    <input type="text" placeholder="Beach walk, 'party', 'relaxing'" class="search-input">
-
-    <nav>
-      <button>Create Meet</button>
-      <button>Manage Meets</button>
-    </nav>
-
-    <section class="icons">
-      <a href="/notifications">
-        <img src="/static/images/alarm.svg" alt="Notifications">
-      </a>
-      <a href="/profile">
-        <img src="/static/images/profiel.svg" alt="Profile">
-      </a>
-    </section>
-  </header>
-
-  <main>
-    <section class="filter-section">
-      <h1>Filter Meets</h1>
-    
-      <form class="filter-form">
-        <label>
-          Location:
-          <select name="location">
-            <option value="">-- choose --</option>
-            <option value="amsterdam">Amsterdam</option>
-            <option value="rotterdam">Rotterdam</option>
-            <option value="denhaag">Den Haag</option>
-            <option value="utrecht">Utrecht</option>
-          </select>
-        </label>
-    
-        <label>
-          Category:
-          <select name="category">
-            <option value="">-- choose --</option>
-            <option value="party">Party</option>
-            <option value="study">Study</option>
-            <option value="walk">Walk</option>
-          </select>
-        </label>
-
-        <label>
-          Date:
-          <input type="date" name="date">
-        </label>
-
-        <button type="submit">Apply Filters</button>
-      </form>
-    
-      <a href="/" class="back-link">← Back to Home</a>
-    </section>
-  </main>
-</body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TravelLink - Filter Meets</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/static/profile.css" />
+  <link rel="stylesheet" href="/static/header.css" />
+  <link rel="stylesheet" href="/static/homepage.css" />
   <link rel="stylesheet" href="/static/css/filter.css" />
+  <title>More Meets</title>
 </head>
 
 <body>
-  <!-- <header>
-    <a href="/">
-      <img src="/static/images/Screenshot 2025-05-12 at 13.42.28.png" alt="Travel Link logo" class="logo">
-    </a>
-    <input type="text" placeholder="Beach walk, 'party', 'relaxing'" class="search-input">
-    <nav>
-      <button>Create Meet</button>
-      <button>Manage Meets</button>
-    </nav>
-    <section class="icons">
-      <a href="/notifications"><img src="/static/images/alarm.svg" alt="Notifications"></a>
-      <a href="/profile"><img src="/static/images/profiel.svg" alt="Profile"></a>
-    </section>
-  </header> -->
+  <%- include('partials/header') %>
 
-  <header>
-    <%- include('partials/header') %>
-  </header>
+    <main>
+      <button id="toggle-filters">Show/Hide Filters</button>
+      <section id="filter-container" class="filter-section <%= keyword ? 'hidden' : '' %>">
+        <h1>Filter Meets</h1>
+        <form id="filter-form" class="filter-form" method="GET" action="/more-meets">
 
+          <label>Date:</label>
+          <input type="date" name="startDate" value="<%= startDate || '' %>" />
+          <input type="date" name="endDate" value="<%= endDate || '' %>" />
 
-  <main>
-    <button id="toggle-filters">Show/Hide Filters</button>
-
-    <section id="filter-container" class="filter-section">
-      <h1>Filter Meets</h1>
-      <form class="filter-form">
-        <label>
-          Location:
-          <select name="Location">
-            <option value="">-- choose --</option>
-            <option value="amsterdam">Amsterdam</option>
-            <option value="rotterdam">Rotterdam</option>
-            <option value="denhaag">Den Haag</option>
-            <option value="utrecht">Utrecht</option>
+          <label>Duration:</label>
+          <select name="duration">
+            <option value="">Any</option>
+            <option value="Short" <%=duration==='Short' ? 'selected' : '' %>>Short</option>
+            <option value="Long" <%=duration==='Long' ? 'selected' : '' %>>Long</option>
           </select>
-        </label>
-        <label>
-          Category:
-          <select name="category">
+
+          <label>Max People:</label>
+          <input type="number" name="minPeople" min="1" value="<%= minPeople || '' %>" placeholder="Min" />
+          <input type="number" name="maxPeople" min="1" value="<%= maxPeople || '' %>" placeholder="Max" />
+
+          <label>Location:</label>
+          <input type="text" name="address" placeholder="e.g., Amsterdam" value="<%= address || '' %>" />
+
+          <label>Sort by:</label>
+          <select name="sort">
             <option value="">-- choose --</option>
-            <option value="party">Party</option>
-            <option value="study">Study</option>
-            <option value="walk">Walk</option>
-            <option value="walk">Food</option>
+            <option value="date_asc" <%=sort==='date_asc' ? 'selected' : '' %>>Date (newest)</option>
+            <option value="date_desc" <%=sort==='date_desc' ? 'selected' : '' %>>Date (oldest)</option>
+            <option value="title_asc" <%=sort==='title_asc' ? 'selected' : '' %>>Title (A-Z)</option>
+            <option value="title_desc" <%=sort==='title_desc' ? 'selected' : '' %>>Title (Z-A)</option>
           </select>
-        </label>
-        <label>
-          Date:
-          <input type="date" name="date">
-        </label>
-        <button type="submit">Apply Filters</button>
-      </form>
-    </section>
 
-    <section id="meet-results"></section>
-    <a href="/" class="back-link">← Back to Home</a>
-  </main>
+          <div class="filter-buttons">
+            <button type="submit">Apply Filters</button>
+            <button type="button" onclick="window.location.href='/more-meets'" class="clear-filters-btn">Clear
+              All</button>
+          </div>
+        </form>
 
-  <script>
-    // Collapse filter section
-    const toggleBtn = document.getElementById("toggle-filters");
-    const filterContainer = document.getElementById("filter-container");
+      </section>
 
-    toggleBtn.addEventListener("click", () => {
-      filterContainer.classList.toggle("hidden");
-    });
+      <section class="meet-row">
+        <% if (!meets.length) { %>
+          <p>No meets found.</p>
+          <% } else { %>
+            <% meets.forEach(meet=> { %>
+              <%- include('partials/meet-card.ejs', { meet: meet }) %>
+                <% }) %>
+                  <% } %>
+      </section>
 
-    // Load and display meets
-    async function fetchMeets(filters = {}) {
-      const params = new URLSearchParams(filters);
-      const res = await fetch(`/api/meets?${params}`);
-      const meets = await res.json();
+      <a href="/" class="back-link">← Back to Home</a>
+    </main>
 
-      const container = document.getElementById("meet-results");
-      container.innerHTML = ""; // Clear old content
+    <script>
+      const toggleBtn = document.getElementById("toggle-filters");
+      const filterContainer = document.getElementById("filter-container");
+      toggleBtn.addEventListener("click", () => filterContainer.classList.toggle("hidden"));
+    </script>
 
-      if (!meets.length) {
-        container.innerHTML = "<p>No meets found.</p>";
-        return;
-      }
+    <footer>
+      <%- include('partials/footer', { userId: userId }) %>
+    </footer>
 
-      meets.forEach(meet => {
-        const div = document.createElement("div");
-        div.className = "meet-card";
-        div.className = "meet-card";
-        div.onclick = () => window.location.href = `/meet/${meet._id}`;
-        div.innerHTML = `
-          <img src="${meet.image || '/static/images/map_placeholder.png'}" alt="Meet Image" />
-        <div class="meet-info">
-         <h3>${meet.meetingName}</h3>
-         <p>${meet.location}</p>
-         <p>${meet.description}</p>
-         <p>Max: ${meet.maxPeople}</p>
-       </div>
-`;
-
-        container.appendChild(div);
-      });
-    }
-
-    window.onload = () => fetchMeets();
-
-    document.querySelector(".filter-form").addEventListener("submit", e => {
-      e.preventDefault();
-      const form = e.target;
-      const filters = {
-        location: form.location.value,
-        category: form.category.value,
-        date: form.date.value
-      };
-      fetchMeets(filters);
-    });
-
-    // listen for search input
-    document.getElementById("searchInput").addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const keyword = e.target.value.trim();
-        fetchMeets({ keyword });
-      }
-    });
-  </script>
 </body>
 
 </html>

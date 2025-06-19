@@ -1,15 +1,18 @@
+// server.js
 const express = require("express");
 const path = require("path");
+const session = require("express-session");
 const { MongoClient, ObjectId } = require("mongodb");
 const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 const { validationResult } = require("express-validator");
+
 require("dotenv").config();
 
 const app = express();
 
 // URL-encoded body parser
-
+app.use(express.urlencoded({ extended: true }));
 // Static files (css, afbeeldingen, etc.)
 app.use("/static", express.static(path.join(__dirname, "static")));
 
@@ -20,8 +23,30 @@ app.set("views", path.join(__dirname, "view"));
 app.use(express.urlencoded({ extended: true }))
 
 
+require("dotenv").config();
+
+
+
+// URL-encoded body parser
+app.use(express.urlencoded({ extended: true }));
+// Static files (css, afbeeldingen, etc.)
+app.use("/static", express.static(path.join(__dirname, "static")));
+
+// Zet de viewengine en de juiste map
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "view"));
+
+app.use(express.urlencoded({ extended: true }));
+
+require("dotenv").config();
+
 const multer = require("multer");
 
+// Middleware
+app
+  .use(express.urlencoded({ extended: true }))
+  .use("/static", express.static("static"))
+  .set("view engine", "ejs");
 
 // MongoDB configuration
 const uri = process.env.URI;
@@ -33,6 +58,7 @@ const collection = process.env.USER_COLLECTION;
 async function connectDB() {
   try {
     await client.connect();
+
     console.log('Client connected to database');
   } catch (error) {
     console.error('Error connecting to database:', error);
@@ -58,7 +84,9 @@ async function compareData(plainTextData, hashedData) {
     const match = await bcrypt.compare(plainTextData, hashedData);
     return match;
   } catch (error) {
-    console.error("Error comparing data:", error);
+
+    console.error('Error comparing data:', error);
+
     throw error;
   }
 }
@@ -66,44 +94,45 @@ async function compareData(plainTextData, hashedData) {
 // Routes
 
 app
-  .get("/more-meets", (req, res) => {
-    res.render("more-meets");
+
+  .get('/more-meets', (req, res) => {
+    res.render('more-meets');
   })
-  .get("/create-test-profile", async (req, res) => {
+  .get('/create-test-profile', async (req, res) => {
     const userCollection = db.collection(collection);
     const newUser = {
-      name: "Ivy",
-      location: "Amsterdam",
-      tags: ["Hiking", "Coffee"],
-      languages: ["Dutch", "English"],
-      bio: "Backpacking across Europe | Love local cafe’s, beach walks and other stuff!",
+      name: 'Ivy',
+      location: 'Amsterdam',
+      tags: ['Hiking', 'Coffee'],
+      languages: ['Dutch', 'English'],
+      bio: 'Backpacking across Europe | Love local cafe’s, beach walks and other stuff!'
     };
     try {
       const result = await userCollection.insertOne(newUser);
-      res.send("Testprofiel gemaakt met ID: " + result.insertedId);
+      res.send('Testprofiel gemaakt met ID: ' + result.insertedId);
     } catch (error) {
-      console.error("Error creating test profile:", error);
-      res.status(500).send("Fout bij het maken van testprofiel");
+      console.error('Error creating test profile:', error);
+      res.status(500).send('Fout bij het maken van testprofiel');
     }
   })
-  .get("/profile/:id", async (req, res) => {
+  .get('/profile/:id', async (req, res) => {
     try {
-      const profile = await db
-        .collection(collection)
-        .findOne({ _id: new ObjectId(req.params.id) });
-      const editing = req.query.edit === "true";
-      res.render("profile", { profile: profile, editing: editing });
+      const profile = await db.collection(collection).findOne({ _id: new ObjectId(req.params.id) });
+      const editing = req.query.edit === 'true';
+      res.render('profile', { profile: profile, editing: editing });
     } catch (error) {
-      console.error("Error fetching profile:", error);
-      res.status(500).send("Fout bij het ophalen van profiel");
+      console.error('Error fetching profile:', error);
+      res.status(500).send('Fout bij het ophalen van profiel');
     }
   })
-  .post("/profile/:id", async (req, res) => {
+  .post('/profile/:id', async (req, res) => {
+
     const updatedProfile = {
       name: req.body.name,
       location: req.body.location,
       tags: req.body.tags,
       languages: req.body.languages,
+
       bio: req.body.bio
     };
     try {
@@ -128,86 +157,98 @@ app
       .withMessage('Fill in your name'),
     body('password')
       .isLength({ min: 6 })
-      .withMessage('Password must contain atleast 6 charachters')
+      .withMessage("Password must contain at least 6 characters"),
   ],
-    async (req, res) => {
-      // check the results of the above validation
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        // render the form again, passing the array of errors
-        return res.status(400).render('register', {
-          errors: errors.array(),
-          formData: {
-            email: req.body.email,
-            name: req.body.name,
-            // we laten password wél leeg—gebruikers typen dat beter niet voor
-            // value terug in
-          }
-        });
-      }
+  async (req, res) => {
+    const errors = validationResult(req);
+    const { email, name, password } = req.body;
 
-      // at this point email, name and password are all "good"
-      const { email, name, password } = req.body;
-      try {
-        const hashedPassword = await hashData(password);
-        const user = { email, name, password: hashedPassword };
-        const insertResult = await db.collection('users').insertOne(user);
-        console.log('Inserted user:', insertResult.insertedId);
-        return res.redirect('/home');
-      } catch (error) {
-        console.error('Error creating user:', error);
-        return res.status(500).render('register', {
-          errors: [{ msg: 'Something went wrong with registering your account' }]
-        });
-      }
-    });
+    if (!errors.isEmpty()) {
+      return res.status(400).render("register", {
+        errors: errors.array(),
+        formData: { email, name },
+      });
+    }
 
-app.post('/login', async (req, res) => {
+    try {
+
+      const hashedPw = await bcrypt.hash(password, saltRounds);
+      const result = await db
+        .collection(process.env.USER_COLLECTION)
+        .insertOne({ email, name, password: hashedPw });
+
+      // log de gebruiker in
+      req.session.userId = result.insertedId;
+
+      // redirect naar de bestaande `/profile/:id` route
+      return res.redirect(`/profile/${result.insertedId}`);
+
+    } catch (error) {
+      console.error("Error registering user:", error);
+      return res.status(500).render("register", {
+        errors: [{ msg: "Something went wrong, please try again later." }],
+        formData: { email, name },
+      });
+    }
+  }
+);
+// Show login form
+app.get("/login", (req, res) => {
+  res.render("login", { errors: [], formData: {} });
+});
+
+// Handle login
+app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  // Missing fields
   if (!email || !password) {
-    return res.render('login', {
-      errors: [{ msg: 'Fill in your e-mail and password' }],
-      formData: { email }
+    return res.render("login", {
+      errors: [{ msg: "Please provide your email and password" }],
+      formData: { email, password },
     });
   }
 
   try {
-    const user = await db.collection('users').findOne({ email });
+    const user = await db
+      .collection(process.env.USER_COLLECTION)
+      .findOne({ email });
     if (!user) {
-      return res.render('login', {
-        errors: [{ msg: 'Invalid e-mail or password' }],
-        formData: { email }
+      return res.render("login", {
+        errors: [{ msg: "Invalid email or password" }],
+        formData: { email },
       });
     }
 
     const isMatch = await compareData(password, user.password);
     if (!isMatch) {
-      return res.render('login', {
-        errors: [{ msg: 'Invalid e-mail or password' }],
-        formData: { email }
+      return res.render("login", {
+        errors: [{ msg: "Invalid email or password" }],
+        formData: { email },
       });
     }
 
-    return res.redirect('/home');
+    // Log the user in
+    req.session.userId = user._id;
+    res.redirect("/home");
   } catch (error) {
-    console.error('Error processing login:', error);
-    return res.status(500).render('login', {
-      errors: [{ msg: 'Server error, please try again later.' }],
-      formData: { email }
+    console.error("Error processing login:", error);
+    res.status(500).render("login", {
+      errors: [{ msg: "Server error, please try again later." }],
+      formData: { email },
     });
   }
 });
 
+app.get("/loginHome", (req, res) => {
+  res.render("loginHome.ejs");
+});
 
-// Route handlers
-function onhome(req, res) {
-  res.send('<h1>Hello World!</h1> <img src="/static/images/snoopy.jpg" alt="Poster" width="50%"/>');
+function showRegister(req, res) {
+  res.render("register.ejs", { errors: [] });
 }
 
-function onabout(req, res) {
-  res.send(`<h1>About me!</h1> <img src="/static/images/postermockup.png" alt="Poster" width="50%"/>`);
+function showLogin(req, res) {
+  res.render("login.ejs", { errors: [] });
 }
 
 function song(req, res) {
@@ -219,22 +260,18 @@ function song(req, res) {
   res.render('detail.ejs', { data: song })
 }
 
-// Verwerk registratie
-app.post(
-  '/register',
-  [
-    // hier je express-validator checks (body('email')… etc)
-  ],
-  async (req, res) => {
-    const result = validationResult(req);
 
     if (result.isEmpty()) {
       const { email, name, password } = req.body;
-      console.log('form data:', req.body);
+      console.log("form data:", req.body);
 
       if (!email || !name || !password) {
-        return res.status(400).render('register.ejs', {
-          errors: [{ msg: 'Vul alle verplichte velden in: e-mail, naam en wachtwoord' }],
+        return res.status(400).render("register.ejs", {
+          errors: [
+            {
+              msg: "Vul alle verplichte velden in: e-mail, naam en wachtwoord",
+            },
+          ],
         });
       }
 
@@ -243,35 +280,31 @@ app.post(
         const user = { email, name, password: hashedPassword };
 
         if (!db) {
-          console.error('Database not initialized');
-          return res.status(500).render('register.ejs', {
-            errors: [{ msg: 'Serverfout: database niet geïnitialiseerd' }],
+          console.error("Database not initialized");
+          return res.status(500).render("register.ejs", {
+            errors: [{ msg: "Serverfout: database niet geïnitialiseerd" }],
           });
         }
 
-        const insertResult = await db.collection('users').insertOne(user);
-        console.log('Inserted user:', insertResult.insertedId);
-        return res.redirect('/login');
+        const insertResult = await db.collection("users").insertOne(user);
+        console.log("Inserted user:", insertResult.insertedId);
+        return res.redirect("/login");
       } catch (error) {
-        console.error('Error processing form:', error);
-        return res.status(500).render('register.ejs', {
-          errors: [{ msg: 'Fout bij het registreren: probeer het later opnieuw' }],
+        console.error("Error processing form:", error);
+        return res.status(500).render("register.ejs", {
+          errors: [
+            { msg: "Fout bij het registreren: probeer het later opnieuw" },
+          ],
         });
       }
     } else {
       const errors = result.array();
-      console.log('Validation errors:', errors);
-      return res.render('register.ejs', { errors });
+      console.log("Validation errors:", errors);
+      return res.render("register.ejs", { errors });
     }
-  }  // <-- sluit hier de async callback af
-);   // <-- sluit hier de app.post af
-
-// Verwerk login
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  // …je login‐logic hier…
-});
-
+  }
+  .post("/login", async (req, res) => {
+    const { email, password } = req.body;
 
 
 // --- ROUTES --------------------------------------------------------------
@@ -295,13 +328,275 @@ app.post('/login', async (req, res) => {
 // --- REGISTRATIE & LOGIN -------------------------------------------------
 
 // Toon registerpagina
+
 app.get('/register', (req, res) => {
   res.render('register', {
     errors: [],
     formData: { email: '', name: '' }
   });
+
+// app.get("/register", (req, res) => {
+//   res.render("register", { errors: [] });
+// });
+
+// Verwerk registratie
+// app.post("/register", async (req, res) => {
+//   const result = validationResult(req);
+//   if (!result.isEmpty()) {
+//     return res.render("register", { errors: result.array() });
+//   }
+
+//   const { email, name, password } = req.body;
+//   if (!email || !name || !password) {
+//     return res.status(400).render("register", {
+//       errors: [
+//         { msg: "Vul alle verplichte velden in: e-mail, naam en wachtwoord" },
+//       ],
+//     });
+//   }
+
+//   try {
+//     const hashedPassword = await hashData(password);
+//     const user = { email, name, password: hashedPassword };
+
+//     if (!db) {
+//       console.error("Database niet geïnitialiseerd");
+//       return res.status(500).render("register", {
+//         errors: [{ msg: "Serverfout: database niet geïnitialiseerd" }],
+//       });
+//     }
+//     const insertResult = await db.collection("users").insertOne(user);
+//     console.log("Inserted user:", insertResult.insertedId);
+//     return res.redirect("/login");
+//   } catch (error) {
+//     console.error("Error processing form:", error);
+//     return res.status(500).render("register", {
+//       errors: [{ msg: "Fout bij het registreren: probeer het later opnieuw" }],
+//     });
+//   }
+// });
+
+// Toon loginpagina
+// app.get("/login", (req, res) => {
+//   res.render("login", { errors: [] });
+// });
+
+// Verwerk login
+// app.post("/login", async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     const user = await db.collection("users").findOne({ email });
+//     if (!user) {
+//       return res.render("login", {
+//         errors: [{ msg: "Ongeldig e-mailadres of wachtwoord" }],
+//       });
+//     }
+//     const isMatch = await compareData(password, user.password);
+//     if (!isMatch) {
+//       return res.render("login", {
+//         errors: [{ msg: "Ongeldig e-mailadres of wachtwoord" }],
+//       });
+//     }
+//     return res.redirect("/dashboard");
+//   } catch (error) {
+//     console.error("Error processing login:", error);
+//     return res.status(500).render("login", {
+//       errors: [{ msg: "Fout bij het inloggen: probeer het later opnieuw" }],
+//     });
+//   }
+// });
+
+// Toon loginHome-pagina
+// app.get("/loginHome", (req, res) => {
+//   res.render("loginHome");
+// });
+
+// Dashboard
+// app.get("/dashboard", (req, res) => {
+//   res.send("<h1>Welkom op je dashboard</h1>");
+// });
+
+// --- PROFIEL --------------------------------------------------------------
+
+// Maak test-profiel
+// app.get("/create-test-profile", async (req, res) => {
+//   const userCollection = db.collection(collection);
+//   const newUser = {
+//     name: "Ivy",
+//     location: "Amsterdam",
+//     tags: ["Hiking", "Coffee"],
+//     languages: ["Dutch", "English"],
+//     bio: "Backpacking across Europe | Love local café’s, beach walks en andere dingen!",
+//   };
+//   const result = await userCollection.insertOne(newUser);
+//   res.send("Testprofiel gemaakt met ID: " + result.insertedId);
+// });
+
+// Profiel tonen
+// app.get("/profile/:id", async (req, res) => {
+//   try {
+//     const profile = await db
+//       .collection(collection)
+//       .findOne({ _id: new ObjectId(req.params.id) });
+//     const editing = req.query.edit === "true";
+//     res.render("profile", { profile, editing });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Fout bij ophalen profiel");
+//   }
+// });
+
+// Profiel bijwerken
+// app.post("/profile/:id", async (req, res) => {
+//   const updatedProfile = {
+//     name: req.body.name,
+//     location: req.body.location,
+//     tags: req.body.tags,
+//     languages: req.body.languages,
+//     bio: req.body.bio,
+//   };
+//   try {
+//     await db
+//       .collection(collection)
+//       .updateOne(
+//         { _id: new ObjectId(req.params.id) },
+//         { $set: updatedProfile }
+//       );
+//     res.redirect("/profile/" + req.params.id);
+//   } catch {
+//     console.log(error);
+//   }
+// });
+
+// function showRegister(req, res) {
+//   res.render("register.ejs", { errors: [] });
+// }
+
+// function showLogin(req, res) {
+//   res.render("login.ejs", { errors: [] });
+// }
+
+// function showLoginHome(req, res) {
+//   res.render("loginHome.ejs", { errors: [] });
+// }
+
+// const userRoutes = require("./routes/user");
+
+// app.use("/user", userRoutes);
+
+// --- NEW ROUTES FOR NEW VIEWS ---
+
+// All meets overview
+// app.get("/meets", async (req, res) => {
+//   try {
+//     const meets = await db.collection("meets").find({}).toArray();
+//     res.render("meets", { meets });
+//   } catch (error) {
+//     console.error("Error fetching meets:", error);
+//     res.status(500).send("Fout bij het ophalen van meets");
+//   }
+// });
+
+// Single meet overview
+// app.get("/meet/:id", async (req, res) => {
+//   try {
+//     const meet = await db
+//       .collection("meets")
+//       .findOne({ _id: new ObjectId(req.params.id) });
+//     if (!meet) return res.status(404).send("Meet not found");
+    // For now, isMember and userId are placeholders
+//     res.render("meet-overview", { meet, isMember: false, userId: null });
+//   } catch (error) {
+//     console.error("Error fetching meet:", error);
+//     res.status(500).send("Fout bij het ophalen van meet");
+//   }
+// });
+
+// app.get("/api/meets", async (req, res) => {
+//   const { location, category, date, keyword } = req.query;
+
+//   const query = {};
+
+//   if (location) query.location = location;
+//   if (category) query.category = category;
+//   if (date) query.date = date;
+
+//   if (keyword) {
+//     query.$or = [
+//       { meetingName: { $regex: keyword, $options: "i" } },
+//       { description: { $regex: keyword, $options: "i" } },
+//       { location: { $regex: keyword, $options: "i" } }
+//     ];
+//   }
+
+//   try {
+//     const meets = await db.collection("meets").find(query).toArray();
+//     res.json(meets);
+//   } catch (err) {
+//     res.status(500).json({ error: "Failed to fetch meets" });
+//   }
+// });
+
+
+
+
+    try {
+      if (!email || !password) {
+        return res.render("login.ejs", {
+          errors: [{ msg: "Vul zowel e-mailadres als wachtwoord in" }],
+        });
+      }
+
+      const user = await db.collection("users").findOne({ email });
+      if (!user) {
+        return res.render("login.ejs", {
+          errors: [{ msg: "Ongeldig e-mailadres of wachtwoord" }],
+        });
+      }
+
+      const isMatch = await compareData(password, user.password);
+      if (!isMatch) {
+        return res.render("login.ejs", {
+          errors: [{ msg: "Ongeldig e-mailadres of wachtwoord" }],
+        });
+      }
+
+      return res.redirect("/loginHome");
+    } catch (error) {
+      console.error("Error processing login:", error);
+      return res.status(500).render("login.ejs", {
+        errors: [{ msg: "Fout bij het inloggen: probeer het later opnieuw" }],
+      });
+    }
+  });
+
+// --- ROUTES --------------------------------------------------------------
+
+// Homepage
+app.get("/", async (req, res) => {
+  try {
+    const meets = await db.collection("meets").find({}).toArray();
+    res.render("homepage", { meets });
+  } catch (error) {
+    console.error("Error fetching meets:", error);
+    res.status(500).send("Fout bij het ophalen van meets");
+  }
+});
+
+// “More meets”
+app.get("/more-meets", (req, res) => {
+  res.render("more-meets");
+});
+
+// --- REGISTRATIE & LOGIN -------------------------------------------------
+
+// Toon registerpagina
+app.get("/register", (req, res) => {
+  res.render("register", { errors: [] });
+
 });
 // Verwerk registratie
+
 
 // Toon loginpagina
 app.get('/login', (req, res) => {
@@ -310,6 +605,7 @@ app.get('/login', (req, res) => {
     formData: { email: '' }
   });
 });
+
 
 
 
@@ -325,81 +621,70 @@ app.get("/dashboard", (req, res) => {
 });
 
 
+// homepage: 
+app.get('/home', (req, res) => {
+  const meetings = [
+    {
+      _id: '1',
+      title: 'Beach Walk',
+      username: 'jasprem_is_cool123',
+      time: new Date('2025-05-22T14:00:00'),
+      profileImage: '/static/images/profiel.svg'
+    },
+    {
+      _id: '2',
+      title: 'Mountain Hike',
+      username: 'kioko_mickey',
+      time: new Date('2025-05-22T16:30:00'),
+      profileImage: '/static/images/profiel.svg'
+    },
+    {
+      _id: '1',
+      title: 'Beach Walk',
+      username: 'jasprem_is_cool123',
+      time: new Date('2025-05-22T14:00:00'),
+      profileImage: '/static/images/profiel.svg'
+    },
+    {
+      _id: '2',
+      title: 'Mountain Hike',
+      username: 'kioko_mickey',
+      time: new Date('2025-05-22T16:30:00'),
+      profileImage: '/static/images/profiel.svg'
+    },
+    {
+      _id: '1',
+      title: 'Beach Walk',
+      username: 'jasprem_is_cool123',
+      time: new Date('2025-05-22T14:00:00'),
+      profileImage: '/static/images/profiel.svg'
+    },
+    {
+      _id: '2',
+      title: 'Mountain Hike',
+      username: 'kioko_mickey',
+      time: new Date('2025-05-22T16:30:00'),
+      profileImage: '/static/images/profiel.svg'
+    }
+  ];
+
+  res.render('homepage', { meetings });
+});
+
 // --- PROFIEL --------------------------------------------------------------
-// multer voor foto uploaden en  stuff
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-   
-    cb(null, path.join(__dirname, 'uploads'));
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
-
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 2 * 1024 * 1024 },  // 2 MB
-  fileFilter: (_, file, cb) =>
-    file.mimetype.startsWith('image/')
-      ? cb(null, true)
-      : cb(new Error('Alleen afbeeldingen toegestaan'))
-});
-
-
-// Toon profiel (met ?edit=true voor bewerken)
-app.get('/profile/:id', requireLogin, async (req, res) => {
-  const profile = await db.collection(USERS)
-    .findOne({ _id: new ObjectId(req.params.id) });
-  if (!profile) return res.status(404).send('Profile not found');
-  res.render('profile', {
-    profile,
-    editing:    req.query.edit === 'true',
-    userId:     req.session.userId,
-    activePage: 'profile'
-  });
-});
-
-// Verwerk update + foto‐upload
-app.post(
-  '/profile/:id',
-  requireLogin,
-  upload.single('photo'),
-  async (req, res) => {
-    const id = req.params.id;
-    const tags      = (req.body.tags     || '').split(',').map(t => t.trim()).filter(Boolean);
-    const languages = (req.body.languages|| '').split(',').map(l => l.trim()).filter(Boolean);
-
-    const upd = {
-      name:      req.body.name,
-      location:  req.body.location,
-      tags,
-      languages,
-      bio:       req.body.bio
-    };
-    if (req.file) upd.photoUrl = '/uploads/' + req.file.filename;
-
-    await db.collection(USERS)
-      .updateOne({ _id: new ObjectId(id) }, { $set: upd });
-
-    res.redirect('/profile/' + id);
-  }
-);
-// (alleen voor testen, daarna kun je dit weghalen)
-app.get('/create-test-profile', async (req, res) => {
+// Maak test-profiel
+app.get("/create-test-profile", async (req, res) => {
+  const userCollection = db.collection(collection);
   const newUser = {
-    name: 'Testgebruiker',
-    location: 'Amsterdam',
-    tags: ['Test','Demo'],
-    languages: ['Nederlands','English'],
-    bio: 'Dit is een testprofiel',
+    name: "Ivy",
+    location: "Amsterdam",
+    tags: ["Hiking", "Coffee"],
+    languages: ["Dutch", "English"],
+    bio: "Backpacking across Europe | Love local café’s, beach walks en andere dingen!",
   };
-  const result = await db.collection(USERS).insertOne(newUser);
-  res.send(`Testprofiel aangemaakt met ID: ${result.insertedId}`);
+  const result = await userCollection.insertOne(newUser);
+  res.send("Testprofiel gemaakt met ID: " + result.insertedId);
 });
 
 
@@ -413,19 +698,16 @@ app.get("/users", async (req, res) => {
       .toArray();
     res.render("users", { users });
   } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).send("Fout bij het ophalen van users");
+    console.error("Error updating setup-profile:", error);
+    res.status(500).send("Error saving profile");
   }
 });
 
-app.listen(3000);
-console.log("Server listening @ localhost:3000!");
-
-// Profiel tonen
-app.get("/profile/:id", async (req, res) => {
+// Meet overview page
+app.get("/meet/:id", async (req, res) => {
   try {
-    const profile = await db
-      .collection(collection)
+    const meet = await db
+      .collection("meets")
       .findOne({ _id: new ObjectId(req.params.id) });
     const editing = req.query.edit === "true";
     res.render("profile", { profile, editing });
@@ -435,19 +717,40 @@ app.get("/profile/:id", async (req, res) => {
   }
 });
 
-
-  function showRegister(req, res) {
-    res.render('register.ejs', { errors: [] });
+// Profiel bijwerken
+app.post("/profile/:id", async (req, res) => {
+  const updatedProfile = {
+    name: req.body.name,
+    location: req.body.location,
+    tags: req.body.tags,
+    languages: req.body.languages,
+    bio: req.body.bio,
+  };
+  try {
+    await db
+      .collection(collection)
+      .updateOne(
+        { _id: new ObjectId(req.params.id) },
+        { $set: updatedProfile }
+      );
+    res.redirect("/profile/" + req.params.id);
+  } catch {
+    console.log(error);
   }
+});
 
-  function showLogin(req, res) {
-    res.render('login.ejs', { errors: [] });
-  }
 
-  function showLoginHome(req, res) {
-    res.render('loginHome.ejs', { errors: [] });
-  }
+function showRegister(req, res) {
+  res.render("register.ejs", { errors: [] });
+}
 
+function showLogin(req, res) {
+  res.render("login.ejs", { errors: [] });
+}
+
+function showLoginHome(req, res) {
+  res.render("loginHome.ejs", { errors: [] });
+}
 
 const userRoutes = require("./routes/user");
 
@@ -484,13 +787,14 @@ app.get("/meet/:id", async (req, res) => {
       Array.isArray(meet.members) && meet.members.some((m) => m.id === user.id);
     res.render("meet-overview", {
       meet,
+      userId,
+      user,
       isMember,
-      userId: user.id,
-      userName: user.name,
+      userMatches, // Only joined users, sorted by match
     });
   } catch (error) {
-    console.error("Error fetching meet:", error);
-    res.status(500).send("Fout bij het ophalen van meet");
+    console.error("Error loading meet overview:", error);
+    res.status(500).send("Error loading meet overview");
   }
 });
 
@@ -583,4 +887,4 @@ http://localhost:3000/profile/:id
 
 Other:
 http://localhost:3000/form
-*/ 
+*/}) 
