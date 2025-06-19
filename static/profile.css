@@ -21,13 +21,17 @@
 }
 body, html {
   height: 100%;
-  background: var(--bg);
   font-family: var(--font-base);
   color: var(--fg);
   line-height: 1.5;
 }
-a { color: inherit; text-decoration: none; }
-button { font-family: var(--font-base); }
+a { 
+  color: inherit; 
+  text-decoration: none; 
+}
+button { 
+  font-family: var(--font-base); 
+}
 
 /*── PROFILE CARD ───────────────────────────────────────────────────*/
 .profile-container {

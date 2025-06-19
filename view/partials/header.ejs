@@ -5,24 +5,7 @@
     <div class="nav-left">
       <a href="/"><img src="/static/images/logo.svg" alt="Travel Link logo" class="logo" /></a>
     </div>
-
-    <div class="nav-search">
-      <input type="text"
-             placeholder="Beach walk, 'party', 'relaxing'"
-             class="search-input"
-             name="keyword"
-             id="searchInput" />
-    </div>
     
-  <div class="nav-links">
-    <a data-active="home" href="/home"            class="nav-link">Home</a>
-    <a data-active="location" href="/"       class="nav-link">Location</a>
-    <a href="/user/create-meet"    class="nav-link nav-button">Create Meet</a>
-    <a href="/meets"               class="nav-link nav-button">Manage Meets</a>
-    <a data-active="noti" href="/notifications" class="nav-link"><img src="/static/images/mdi_bell.svg" alt="Notifications" class="icon-notif"></a>
-    <a data-active="profile" href="/profile/<%= userId %>"class="nav-link"><img src="/static/images/profile.svg" alt="Profile"></a>
-</div>
-</nav>
     <form action="/more-meets" method="GET" class="search-form">
       <input
         type="text"
@@ -33,7 +16,16 @@
 
       />
     </form>
-
+    
+  <div class="nav-links">
+    <a data-active="home" href="/home"            class="nav-link">Home</a>
+    <a data-active="location" href="/"       class="nav-link">Location</a>
+    <a href="/user/create-meet"    class="nav-link nav-button">Create Meet</a>
+    <a href="/meets"               class="nav-link nav-button">Manage Meets</a>
+    <a data-active="noti" href="/notifications" class="nav-link"><img src="/static/images/mdi_bell.svg" alt="Notifications" class="icon-notif"></a>
+    <a data-active="profile" href="/profile/<%= userId %>"class="nav-link"><img src="/static/images/profile.svg" alt="Profile"></a>
+</div>
+</nav>
 
 
   
