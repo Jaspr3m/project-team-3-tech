@@ -1,53 +1,65 @@
-<nav>
-  <a href="/">
-    <img
-      src="/static/images/topleft-logo.png"
-      alt="TravelLink - Make friends around the world!"
-    />
-  </a>
-  <div id="pages"></div>
-  <input type="text" name="" id="" />
-  <div id="create-manage">
-    <a href="/users/create-meet"
-      ><button id="create-meet">Create Meet</button></a
-    >
-    <a href="/meets"><button id="manage-meets">Manage Meets</button></a>
-  </div>
-  <div id="profile" style="display: flex; flex-direction: column">
-    <% if (user && user._id) { %>
-    <a href="/profile/<%= user._id %>">
-      <img
-        src="<%= user.photoUrl ? user.photoUrl : '/static/images/profile.png' %>"
-        alt="Profile Picture"
-        class="profile-pic"
-        style="
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 2px solid #ccc;
-        "
+
+
+<header>
+  <!-- Desktop navbar -->
+  <nav class="desktop-nav">
+    <div class="nav-left">
+      <a href="/"><img src="/static/images/logo.svg" alt="Travel Link logo" class="logo" /></a>
+    </div>
+    
+    <form action="/more-meets" method="GET" class="search-form">
+      <input
+        type="text"
+        name="keyword"
+        placeholder="Search meets..."
+        class="search-input"
+        value="<%= typeof keyword !== 'undefined' ? keyword : '' %>"
+
       />
-    </a>
-    <% if (user.firstName) { %>
-    <span style="font-size: 0.95em; white-space: nowrap; text-align: center">
-      <%= user.firstName %>
-    </span>
-    <% } %> <% } else { %>
-    <a href="/login">
-      <img
-        src="/static/images/profile.png"
-        alt="Profile Picture"
-        class="profile-pic"
-        style="
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 2px solid #ccc;
-        "
-      />
-    </a>
-    <% } %>
-  </div>
+    </form>
+    
+  <div class="nav-links">
+    <a data-active="home" href="/home"            class="nav-link">Home</a>
+    <a data-active="location" href="/"       class="nav-link">Location</a>
+    <a href="/user/create-meet"    class="nav-link nav-button">Create Meet</a>
+    <a href="/meets"               class="nav-link nav-button">Manage Meets</a>
+    <a data-active="noti" href="/notifications" class="nav-link"><img src="/static/images/mdi_bell.svg" alt="Notifications" class="icon-notif"></a>
+    <a data-active="profile" href="/profile/<%= userId %>"class="nav-link"><img src="/static/images/profile.svg" alt="Profile"></a>
+</div>
 </nav>
+
+
+  
+</header>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  
+    const path = window.location.pathname.toLowerCase();
+    document.querySelectorAll('.nav-link[data-active]').forEach(link => {
+      const key = link.dataset.active.toLowerCase();
+      if (path.includes(key)) {
+        link.classList.add('active');
+      }
+    });
+
+    // Search input handler
+    const searchInput = document.getElementById("searchInput");
+    if (!searchInput) return;
+
+    searchInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const keyword = e.target.value.trim();
+
+        if (keyword) {
+          
+          const currentPath = window.location.pathname;
+          const base = currentPath.includes('/more-meets') ? '/more-meets' : '/search';
+          window.location.href = `${base}?keyword=${encodeURIComponent(keyword)}`;
+        }
+      }
+    });
+  });
+</script>
+
+

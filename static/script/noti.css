@@ -1,0 +1,49 @@
+body, html {
+  margin: 0;
+  padding: 1rem;
+  font-family: 'Inter', sans-serif;
+  background: #F2F2F2;
+  color: #2B2B2B;
+}
+
+.notifications-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.notifications-container h1 {
+  margin-bottom: 1rem;
+  color: #F7A7A8;
+}
+
+.notif-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notif-item {
+  padding: 1rem;
+  border-bottom: 1px solid #E5E5E5;
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+}
+
+.notif-item.read {
+  opacity: 0.6;
+}
+
+.notif-item p {
+  margin: 0 0 0.5rem;
+}
+
+.notif-item time {
+  font-size: 0.85rem;
+  color: #A0A0A0;
+}

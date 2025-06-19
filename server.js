@@ -6,6 +6,8 @@ const { MongoClient, ObjectId } = require("mongodb");
 const bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
 const multer = require("multer");
+
+
 // const xss = require('xss');
 require("dotenv").config();
 
@@ -85,11 +87,11 @@ app.get("/register", (req, res) => {
 app.post(
   "/register",
   [
-    body("email").isEmail().withMessage("Fill in a valid E-mail adress"),
+    body("email").isEmail().withMessage("Fill in a valid E-mail address"),
     body("name").notEmpty().withMessage("Fill in your name"),
     body("password")
       .isLength({ min: 6 })
-      .withMessage("Password must contain at least 6 charachters"),
+      .withMessage("Password must contain at least 6 characters"),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -98,34 +100,32 @@ app.post(
     if (!errors.isEmpty()) {
       return res.status(400).render("register", {
         errors: errors.array(),
-        formData: { email, name, password },
+        formData: { email, name },
       });
     }
 
-    const hash = await bcrypt.hash(password, 10);
-    const result = await db.collection(process.env.USER_COLLECTION).insertOne({
-      email,
-      name,
-      password: hash,
-    });
     try {
-      const hashedPassword = await hashData(password);
-      const user = { email, name, password: hashedPassword };
-      const insertResult = await db.collection("users").insertOne(user);
-      console.log("Inserted user:", insertResult.insertedId);
-      // Redirect to setup-profile after registration
-      req.session.userId = insertResult.insertedId;
-      return res.redirect("/setup-profile");
+
+      const hashedPw = await bcrypt.hash(password, saltRounds);
+      const result = await db
+        .collection(process.env.USER_COLLECTION)
+        .insertOne({ email, name, password: hashedPw });
+
+      // log de gebruiker in
+      req.session.userId = result.insertedId;
+
+      // redirect naar de bestaande `/profile/:id` route
+      return res.redirect(`/profile/${result.insertedId}`);
+
     } catch (error) {
-      console.error("Error creating user:", error);
+      console.error("Error registering user:", error);
       return res.status(500).render("register", {
-        errors: [{ msg: "Something went wrong with registering your account" }],
-        formData: { email, name, password },
+        errors: [{ msg: "Something went wrong, please try again later." }],
+        formData: { email, name },
       });
     }
   }
 );
-
 // Show login form
 app.get("/login", (req, res) => {
   res.render("login", { errors: [], formData: {} });
@@ -266,6 +266,8 @@ app.get("/profile/:id", async (req, res) => {
     res.status(500).send("Error loading profile");
   }
 });
+
+
 
 // Handle profile update & photo upload
 app.post("/profile/:id", upload.single("photo"), async (req, res) => {
@@ -414,31 +416,96 @@ app.get("/more-meets", async (req, res) => {
   }
 });
 
-app.get("/api/meets", async (req, res) => {
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    res.redirect('/login');
+  });
+});
+
+
+// ─── MEETS API ──────────────────────────────────────────────────
+app.get('/api/meets', async (req, res) => {
   const { keyword, address, date } = req.query;
 
   const query = {};
 
   if (keyword) {
+    const regex = new RegExp(keyword, 'i');
     query.$or = [
-      { meetingName: new RegExp(keyword, "i") },
-      { description: new RegExp(keyword, "i") },
-      { address: new RegExp(keyword, "i") },
+      { meetingName: regex },
+      { description: regex },
+      { address:     regex },
     ];
   }
 
-  if (address) query.address = address;
-  if (date) query.date = date;
+  if (address) {
+    query.address = address;
+  }
+  if (date) {
+    query.date = date;
+  }
 
   try {
-    const meets = await db.collection("meets").find(query).toArray();
-    res.json(meets);
+    const meets = await db.collection('meets').find(query).toArray();
+    return res.json(meets);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: 'Server error' });
   }
 });
 
+
+// notifcications
+// ─── SOCKET.IO SETUP ──────────────────────────────────────────
+// const http     = require('http');
+// const socketio = require('socket.io');
+// const server   = http.createServer(app);
+// const io       = socketio(server);
+
+// io.on('connection', socket => {
+//   socket.on('joinMeetRoom', meetId => {
+//     socket.join(`meet_${meetId}`);
+//   });
+// });
+
+// // ─── NOTIFICATIONS ROUTE ───────────────────────────────────────
+// app.get('/notifications', async (req, res, next) => {
+//   try {
+//     if (!req.session.userId) return res.redirect('/login');
+
+//     const items = await Notification
+//       .find({ user: req.session.userId })
+//       .sort({ createdAt: -1 })
+//       .limit(50)
+//       .lean();
+
+//     await Notification.updateMany(
+//       { user: req.session.userId, isRead: false },
+//       { $set: { isRead: true } }
+//     );
+
+//     res.render('notifications', {
+//       notifications: items,
+//       userId: req.session.userId
+//     });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+
+// app.use(async (req, res, next) => {
+//   if (req.session.userId) {
+//     const user = await db.collection(process.env.USER_COLLECTION)
+//       .findOne({ _id: new ObjectId(req.session.userId) });
+//     res.locals.currentUser = user;
+//   } else {
+//     res.locals.currentUser = null;
+//   }
+//   next();
+// });
+// ─── 404 HANDLER ──────────────────────────────────────────────────
+
+=======
 app.get("/users/create-meet", (req, res) => {
   res.render("create-meet", {
     userId: req.session.userId || null,
@@ -634,6 +701,15 @@ app.use("/users", userRoutes);
 // 404 handler (should be last)
 app.use((_, res) => res.status(404).send("Not Found"));
 
-// Start server
+
+// ─── START SERVER ─────────────────────────────────────────────────
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+
+
+
+
+
+

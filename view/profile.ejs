@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile</title>
-    <link rel="stylesheet" href="/static/profile.css" />
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile</title>
+  <link rel="stylesheet" href="/static/profile.css" />
     <link rel="stylesheet" href="/static/header.css" />
-    <link rel="stylesheet" href="/static/css/style.css" />
-  </head>
-  <body>
-    <!-- <header>
-      <%- include('partials/header', { user: typeof user !== 'undefined' ? user
-      : null, userId: typeof userId !== 'undefined' ? userId : (profile &&
-      profile._id ? profile._id : null) }) %>
-    </header> -->
-    <header>
-      <%- include('partials/header') %>
-    </header>
-    <main class="profile-container">
-      <% if (!editing && profile) { %> <% if (profile.photoUrl) { %>
-      <img
-        src="<%= profile.photoUrl %>"
-        alt="Profile photo"
-        class="profile-pic"
-      />
+      <link rel="stylesheet" href="/static/footer.css" />
+
+ 
+
+</head>
+<body>
+  <header> 
+
+<%- include('partials/header') %>
+  </header>
+
+  <main class="profile-container">
+    <% if (!editing && profile) { %>
+      <% if (profile.photoUrl) { %>
+        <img src="<%= profile.photoUrl %>" alt="Profile photo" class="profile-pic"/>
+
       <% } %>
       <h1><%= profile.firstName %> <%= profile.lastName %>
         <% if (profile.dob) { %>
@@ -48,10 +47,17 @@
         <% }) %>
       </p>
 
-      <p><strong>Vibe:</strong> <%= profile.vibe || '-' %></p>
-      <p><strong>Preferred Gender:</strong> <%= profile.preferredGender === 'm' ? 'Male' : (profile.preferredGender === 'f' ? 'Female' : '-') %></p>
-      <p><strong>Age Range:</strong> <%= profile.ageRange ? profile.ageRange.min + ' - ' + profile.ageRange.max : '-' %></p>
-      <p><strong>Biography:</strong><br /><%= profile.bio || '-' %></p>
+
+      <p><strong>Bio:</strong><br><%= profile.bio %></p>
+
+<div class="button-row">
+  <a href="/profile/<%= profile._id %>?edit=true" class="edit-btn">Edit Profile</a>
+  <button class="logout-link"
+          onclick="if (confirm('Are you sure you want to log out?')) location.href='/logout'">
+    Logout
+  </button>
+</div>
+
 
       <a href="/profile/<%= profile._id %>?edit=true" class="edit-link"
         >Edit Profile</a
@@ -70,41 +76,17 @@
           <input type="text" name="lastName" placeholder="Last Name" value="<%= profile.lastName || '' %>" required />
         </div>
 
-        <label>Photo:</label>
-        <input type="file" name="photo" <%= profile.photoUrl ? '' : 'required' %> />
-        <% if (!profile.photoUrl) { %>
-        <div style="color: red; font-size: 0.9em;">* Profile photo is required</div>
-        <% } %>
 
-        <label>Tags (comma-separated):</label>
-        <input
-          type="text"
-          name="tags"
-          value="<%= (profile.tags||[]).join(',') %>"
-        />
+        <label>Picture:</label>
+        <input type="file" name="photo">
 
-        <label>Biography:</label>
-        <textarea name="bio" placeholder="Tell us about yourself" required><%= profile.bio || '' %></textarea>
+        <label>Tags:</label>
+        <input type="text" name="tags" value="<%= (profile.tags||[]).join(',') %>">
 
-        <label>Vibe:</label>
-        <select name="vibe" required>
-          <option value="">Select vibe</option>
-          <option value="Chill" <%= profile.vibe === 'Chill' ? 'selected' : '' %>>Chill</option>
-          <option value="Adventurous" <%= profile.vibe === 'Adventurous' ? 'selected' : '' %>>Adventurous</option>
-          <option value="Artsy" <%= profile.vibe === 'Artsy' ? 'selected' : '' %>>Artsy</option>
-          <option value="Party" <%= profile.vibe === 'Party' ? 'selected' : '' %>>Party</option>
-          <option value="Mindful" <%= profile.vibe === 'Mindful' ? 'selected' : '' %>>Mindful</option>
-          <option value="Foodie" <%= profile.vibe === 'Foodie' ? 'selected' : '' %>>Foodie</option>
-          <option value="Explorer" <%= profile.vibe === 'Explorer' ? 'selected' : '' %>>Explorer</option>
-          <option value="Sporty" <%= profile.vibe === 'Sporty' ? 'selected' : '' %>>Sporty</option>
-        </select>
+        <label>Languages:</label>
+        <input type="text" name="languages" value="<%= (profile.languages||[]).join(',') %>">
 
-        <label>Preferred Gender:</label>
-        <select name="preferredGender" required>
-          <option value="">Select gender</option>
-          <option value="m" <%= profile.preferredGender === 'm' ? 'selected' : '' %>>Male</option>
-          <option value="f" <%= profile.preferredGender === 'f' ? 'selected' : '' %>>Female</option>
-        </select>
+
 
         <label>Location:</label>
         <select name="location" required>
@@ -140,6 +122,7 @@
         </div>
 
         <button type="submit">Save</button>
+        <a href="/profile/<%= userId %>" class="cancel-btn">Cancel</a>
       </form>
       <form
         action="/logout"
@@ -151,32 +134,22 @@
 
       <% } else { %>
       <h2>No profile found.</h2>
-      <% } %>
-    </main>
-    <footer><%- include('partials/footer', { userId: userId }) %></footer>
-    <script>
-      // Update age range display
-      const minSlider = document.getElementById("ageMin");
-      const maxSlider = document.getElementById("ageMax");
-      const ageRangeValue = document.getElementById("ageRangeValue");
-      function updateAgeRange() {
-        let min = parseInt(minSlider.value);
-        let max = parseInt(maxSlider.value);
-        if (min > max) [min, max] = [max, min];
-        ageRangeValue.textContent = `${min} - ${max}`;
-      }
-      minSlider.addEventListener("input", updateAgeRange);
-      maxSlider.addEventListener("input", updateAgeRange);
-      updateAgeRange();
-    </script>
-    <style>
-      .side-by-side {
-        display: flex;
-        gap: 12px;
-      }
-      .side-by-side input {
-        flex: 1;
-      }
-    </style>
-  </body>
+
+    <% } %>
+
+
+  </main>
+  <footer>
+
+  <%- include('partials/footer', { userId: userId }) %>
+  </footer>
+
+<script>
+
+
+  
+</script>
+
+</body>
+
 </html>

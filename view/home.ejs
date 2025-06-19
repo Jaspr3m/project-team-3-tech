@@ -7,9 +7,19 @@
     <link rel="stylesheet" href="/static/profile.css" />
     <link rel="stylesheet" href="/static/header.css" />
     <link rel="stylesheet" href="/static/homepage.css" />
+     <link rel="stylesheet" href="/static/footer.css" />
   </head>
   <body>
-    <header><%- include('partials/header') %></header>
+
+<header>
+  <%- include('partials/header') %>
+  <nav>
+    <div class="mobile-actions">
+  <a href="/meets"            class="action-btn manage">Manage Meets</a>
+</div>
+  </nav>
+</header>
+
 
     <main>
       <section>
