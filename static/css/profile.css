@@ -1,293 +1,214 @@
-/*───────────────────────────────────────────────────────────────────
-  GLOBAL / BODY
-───────────────────────────────────────────────────────────────────*/
-
-body {
-  margin: 0;
-  padding-bottom: 64px;
-  /* ruimte voor mobiele footer */
-  background: #f9f9f9;
+:root {
+  /* Kleurenpalet */
+  --bg:             #F2F2F2;
+  --fg:             #2B2B2B;
+  --grey-light:     #E5E5E5;
+  --grey-mid:       #A0A0A0;
+  --accent-teal:    #087E8B;
+  --accent-coral:   #F7A7A8;
+  --radius:         12px;
+  --spacing:        1rem;
+  --shadow-light:   rgba(0,0,0,0.05);
+  --shadow-hover:   rgba(0,0,0,0.1);
+  --transition:     0.2s ease;
+  --font-base:      'Inter', sans-serif;
 }
 
-/*───────────────────────────────────────────────────────────────────
-  DESKTOP NAVBAR (bovenaan)
-───────────────────────────────────────────────────────────────────*/
-.desktop-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 24px;
-  background: #fff;
-  border-bottom: 1px solid #ccc;
-}
-
-.desktop-nav .logo {
-  height: 40px;
-}
-
-.desktop-nav .nav-links {
-  display: flex;
-  gap: 24px;
-}
-
-.desktop-nav .nav-link {
-  text-decoration: none;
-  color: #333;
-  font-weight: 500;
-  position: relative;
-  padding: 6px 0;
-  transition: color 0.2s ease;
-}
-
-.desktop-nav .nav-link:hover {
-  color: #0077ff;
-}
-
-.desktop-nav .nav-link.active {
-  color: #0077ff;
-}
-
-.desktop-nav .nav-link.active::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: #0077ff;
-  border-radius: 1px;
-}
-
-/* hide on mobile */
-@media (max-width: 767px) {
-  .desktop-nav {
-    display: none;
-  }
-}
-
-/*───────────────────────────────────────────────────────────────────
-  MOBILE HEADER (bovenaan op mobiel)
-───────────────────────────────────────────────────────────────────*/
-/* MOBILE HEADER (bovenaan op mobiel) */
-.mobile-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  /* remove justify-content: space-between so we can control spacing manually */
-  padding: 0 12px;
-  border-bottom: 1px solid #ddd;
-  z-index: 1000;
-}
-
-/* Logo always fits its natural size */
-.mobile-header .logo {
-  height: 36px;
-  flex-shrink: 0;
-}
-
-/* Center: let the search container grow to fill all leftover space */
-.mobile-header .header-center {
-  flex: 1;
-  /* take up all free space */
-  margin: 0 12px;
-  /* small gutters left/right */
-  display: flex;
-  /* so the input can stretch */
-  align-items: center;
-}
-
-/* Input itself: full width of its parent */
-.mobile-header .search-input {
-  width: 100%;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  font-size: 14px;
-  outline: none;
+/*── GLOBAL ─────────────────────────────────────────────────────────*/
+* {
   box-sizing: border-box;
+  margin: 0; padding: 0;
+}
+body, html {
+  height: 100%;
+  font-family: var(--font-base);
+  color: var(--fg);
+  line-height: 1.5;
+}
+a { 
+  color: inherit; 
+  text-decoration: none; 
+}
+button { 
+  font-family: var(--font-base); 
 }
 
-/* hide on desktop */
-@media (min-width: 768px) {
-  .mobile-header {
-    display: none;
-  }
-}
-
-/*───────────────────────────────────────────────────────────────────
-  MOBILE FOOTER NAVBAR (onderaan op mobiel)
-───────────────────────────────────────────────────────────────────*/
-.mobile-navbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
-  background: #F7A7A8;
-  border-top: 1px solid #ddd;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 1000;
-}
-
-.mobile-navbar .nav-icon {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 12px;
-  text-decoration: none;
-  color: #333;
-  transition: filter 0.2s ease;
-}
-
-.mobile-navbar .nav-icon img {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 2px;
-}
-
-.mobile-navbar .nav-icon:hover img,
-.mobile-navbar .nav-icon:hover span {
-  filter: brightness(0.6);
-}
-
-.mobile-navbar .nav-icon.active img {
-  filter: brightness(0.6);
-}
-
-.mobile-navbar .nav-icon.active span {
-  width: 100%;
-  height: 2px;
-  background: #333;
-  margin-top: 4px;
-  border-radius: 1px;
-}
-
-
-/* hide on desktop */
-@media (min-width: 768px) {
-  .mobile-navbar {
-    display: none;
-  }
-}
-
-
-/*───────────────────────────────────────────────────────────────────
-  MOBILE FOOTER NAVBAR ICON HOVER
-───────────────────────────────────────────────────────────────────*/
-.mobile-navbar .nav-icon img {
-  /* assume your SVGs are white by default — this makes them tintable */
-  filter: brightness(1);
-  transition: filter 0.2s ease;
-}
-
-.mobile-navbar .nav-icon span {
-  color: #ffffff;
-  font-size: 12px;
-  transition: color 0.2s ease;
-}
-
-.mobile-navbar .nav-icon:hover img {
-  /* brightness(0) → pure black; close enough to #3C3C3C */
-  filter: brightness(0);
-}
-
-.mobile-navbar .nav-icon:hover span {
-  color: #3C3C3C;
-}
-
-/*───────────────────────────────────────────────────────────────────
-  DESKTOP NAVBAR ICON HOVER
-───────────────────────────────────────────────────────────────────*/
-.desktop-nav .nav-link img {
-  filter: brightness(1);
-  transition: filter 0.2s ease;
-}
-
-.desktop-nav .nav-link:hover img {
-  filter: brightness(0);
-}
-
-.desktop-nav .nav-link {
-  color: #333;
-  transition: color 0.2s ease;
-}
-
-.desktop-nav .nav-link:hover {
-  color: #3C3C3C;
-}
-
-
-/*───────────────────────────────────────────────────────────────────
-  PROFILE CONTAINER
-───────────────────────────────────────────────────────────────────*/
+/*── PROFILE CARD ───────────────────────────────────────────────────*/
 .profile-container {
   max-width: 600px;
-  margin: 80px auto 100px;
-  /* ruimte voor header/footer */
-  padding: 24px;
+  margin: 2rem auto;
   background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  text-align: center;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px var(--shadow-light);
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.profile-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--shadow-hover);
 }
 
+/*── PROFILE IMAGE ─────────────────────────────────────────────────*/
 .profile-pic {
-  width: 120px;
-  height: 120px;
+  width: 100%;
+  max-height: 300px;
   object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid #000;
-  /* margin-bottom: 20px; */
+  display: block;
 }
 
+/*── HEADER TEXT ───────────────────────────────────────────────────*/
 .profile-container h1 {
-  margin-bottom: 8px;
+  font-size: 1.75rem;
+  margin: var(--spacing) var(--spacing) 0.25rem;
 }
-
 .profile-container .location {
-  color: #555;
-  margin-bottom: 16px;
+  font-size: 1rem;
+  color: var(--grey-mid);
+  margin: 0  var(--spacing) var(--spacing);
 }
 
-.profile-container .box {
+/*── TAGS, LANGUAGES & BIO ─────────────────────────────────────────*/
+.profile-container p {
+  margin: 0 var(--spacing) var(--spacing);
+  font-size: 1rem;
+}
+.profile-container p strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--accent-teal);
+  font-weight: 600;
+}
+
+/* Pill-style box */
+.box {
   display: inline-block;
-  background: #e0e0e0;
-  padding: 6px 10px;
-  margin: 4px;
-  border-radius: 8px;
+  background: var(--grey-light);
+  color: var(--fg);
+  padding: 0.4rem 0.8rem;
+  margin: 0 0.4rem 0.6rem 0;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  transition: background var(--transition);
+}
+.box:hover {
+  background: var(--grey-mid);
 }
 
+/*── BUTTON ROW (VIEW MODE) ────────────────────────────────────────*/
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: var(--spacing) var(--spacing) calc(var(--spacing)*1.5);
+}
+.edit-btn {
+
+  background: var(--accent-coral);
+  color: #fff;
+  padding: 0.75rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), transform 0.1s ease;
+}
+.edit-btn:hover {
+  background: var(--accent-teal);
+  transform: translateY(-2px);
+}
+.logout-link {
+  background: transparent;
+  border: none;
+  color: var(--accent-coral);
+  text-decoration: underline;
+  font-size: 1rem;
+  align-self: center;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+.logout-link:hover {
+  color: var(--grey-mid);
+}
+
+/*── EDIT MODE FORM ────────────────────────────────────────────────*/
 .profile-container form {
   display: grid;
-  gap: 12px;
-  text-align: left;
+  gap: 1rem;
+  padding: var(--spacing) var(--spacing) calc(var(--spacing)*1.5);
 }
-
-.profile-container input,
-.profile-container textarea {
+.profile-container form label {
+  font-weight: 600;
+  color: var(--fg);
+}
+.profile-container form input,
+.profile-container form textarea {
   width: 100%;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--grey-light);
+  border-radius: var(--radius);
+  transition: border-color var(--transition), box-shadow var(--transition);
 }
-
-.profile-container button {
-  padding: 10px 16px;
-  background: #000;
+.profile-container form input:focus,
+.profile-container form textarea:focus {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 0 4px rgba(8,126,139,0.2);
+  outline: none;
+}
+.profile-container form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+.profile-container form button[type="submit"] {
+  background: var(--accent-coral);
   color: #fff;
+  padding: 0.75rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background var(--transition), transform 0.1s ease;
+}
+.profile-container form button[type="submit"]:hover {
+  background: var(--accent-teal);
+  transform: translateY(-2px);
+}
+.profile-container form .cancel-btn {
+  background: transparent;
+  border: 1px solid var(--grey-mid);
+  color: var(--fg);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  text-align: center;
+  transition: background var(--transition), color var(--transition);
+}
+.profile-container form .cancel-btn:hover {
+  background: var(--accent-coral);
+  color: #fff;
 }
 
-.profile-container button:hover {
-  background: #444;
+/*── RESPONSIVE ─────────────────────────────────────────────────────*/
+@media (max-width: 480px) {
+  .profile-container h1 {
+    margin: var(--spacing) var(--spacing) 0.25rem;
+    font-size: 1.5rem;
+  }
+  .profile-container .location,
+  .profile-container p {
+    margin: 0 var(--spacing) var(--spacing);
+  }
+  .button-row {
+    flex-direction: column;
+    padding: var(--spacing);
+  }
+  .edit-btn,
+  .logout-link,
+  .profile-container form button[type="submit"],
+  .profile-container form .cancel-btn {
+    width: 100%;
+    text-align: center;
+  }
 }

@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profile</title>
-  <link rel="stylesheet" href="/static/profile.css" />
-    <link rel="stylesheet" href="/static/header.css" />
-      <link rel="stylesheet" href="/static/footer.css" />
+  <link rel="stylesheet" href="/static/css/profile.css" />
+    <link rel="stylesheet" href="/static/css/header.css" />
+      <link rel="stylesheet" href="/static/css/footer.css" />
 
  
 
@@ -22,31 +21,21 @@
     <% if (!editing && profile) { %>
       <% if (profile.photoUrl) { %>
         <img src="<%= profile.photoUrl %>" alt="Profile photo" class="profile-pic"/>
-
       <% } %>
-      <h1><%= profile.firstName %> <%= profile.lastName %>
-        <% if (profile.dob) { %>
-          <span style="font-size:0.7em; color:#888;">(
-            <%= (() => {
-              const dob = new Date(profile.dob);
-              const today = new Date();
-              let age = today.getFullYear() - dob.getFullYear();
-              const m = today.getMonth() - dob.getMonth();
-              if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-              return age;
-            })() %> yrs)
-          </span>
-        <% } %>
-      </h1>
+      <h1><%= profile.name %></h1>
       <p class="location"><%= profile.location %></p>
 
-      <p>
-        <strong>Tags:</strong><br />
+      <p><strong>Tags:</strong><br>
         <% (profile.tags || []).forEach(tag => { %>
-        <span class="box"><%= tag %></span>
+          <span class="box"><%= tag %></span>
         <% }) %>
       </p>
 
+      <p><strong>Languages:</strong><br>
+        <% (profile.languages || []).forEach(lang => { %>
+          <span class="box"><%= lang %></span>
+        <% }) %>
+      </p>
 
       <p><strong>Bio:</strong><br><%= profile.bio %></p>
 
@@ -58,24 +47,14 @@
   </button>
 </div>
 
+    <% } else if (editing && profile) { %>
 
-      <a href="/profile/<%= profile._id %>?edit=true" class="edit-link"
-        >Edit Profile</a
-      >
+      <form action="/profile/<%= profile._id %>" method="POST" enctype="multipart/form-data">
+        <label>Name:</label>
+        <input type="text" name="name" value="<%= profile.name %>">
 
-      <% } else if (editing && profile) { %>
-
-      <form
-        action="/profile/<%= profile._id %>"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        <label>First & Last Name:</label>
-        <div class="side-by-side">
-          <input type="text" name="firstName" placeholder="First Name" value="<%= profile.firstName || '' %>" required />
-          <input type="text" name="lastName" placeholder="Last Name" value="<%= profile.lastName || '' %>" required />
-        </div>
-
+        <label>Location:</label>
+        <input type="text" name="location" value="<%= profile.location %>">
 
         <label>Picture:</label>
         <input type="file" name="photo">
@@ -86,55 +65,15 @@
         <label>Languages:</label>
         <input type="text" name="languages" value="<%= (profile.languages||[]).join(',') %>">
 
-
-
-        <label>Location:</label>
-        <select name="location" required>
-          <option value="">Select location</option>
-          <option value="Amsterdam" <%= profile.location === 'Amsterdam' ? 'selected' : '' %>>Amsterdam</option>
-          <option value="Den Haag" <%= profile.location === 'Den Haag' ? 'selected' : '' %>>Den Haag</option>
-          <option value="Rotterdam" <%= profile.location === 'Rotterdam' ? 'selected' : '' %>>Rotterdam</option>
-          <option value="Utrecht" <%= profile.location === 'Utrecht' ? 'selected' : '' %>>Utrecht</option>
-        </select>
-
-        <label>Age Range: <span id="ageRangeValue"><%= profile.ageRange ? profile.ageRange.min : 18 %> - <%= profile.ageRange ? profile.ageRange.max : 99 %></span></label>
-        <input
-          type="range"
-          name="ageMin"
-          min="18"
-          max="99"
-          value="<%= profile.ageRange ? profile.ageRange.min : 18 %>"
-          id="ageMin"
-          style="width: 48%"
-        />
-        <input
-          type="range"
-          name="ageMax"
-          min="18"
-          max="99"
-          value="<%= profile.ageRange ? profile.ageRange.max : 99 %>"
-          id="ageMax"
-          style="width: 48%"
-        />
-        <div class="slider-labels">
-          <span>18</span>
-          <span>99</span>
-        </div>
+        <label>Bio:</label>
+        <textarea name="bio"><%= profile.bio %></textarea>
 
         <button type="submit">Save</button>
         <a href="/profile/<%= userId %>" class="cancel-btn">Cancel</a>
       </form>
-      <form
-        action="/logout"
-        method="POST"
-        style="text-align: right; margin-bottom: 1em; margin-top: 1em;"
-      >
-        <button type="submit" class="logout-btn">Log Out</button>
-      </form>
 
-      <% } else { %>
+    <% } else { %>
       <h2>No profile found.</h2>
-
     <% } %>
 
 
@@ -151,5 +90,6 @@
 </script>
 
 </body>
-
 </html>
+
+

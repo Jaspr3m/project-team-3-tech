@@ -63,12 +63,10 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
   z-index: 1001;
 }
-.float-btn:hover {
-  transform: translate(-50%, -30px) scale(1.05);
-}
+
 .mobile-navbar .nav-icon.active img {
   /* remove any previous filters */
   filter: none;
