@@ -1,3 +1,4 @@
+
 :root {
   /* Kleurenpalet */
   --bg:             #F2F2F2;
@@ -132,6 +133,8 @@ button {
 }
 
 /*── EDIT MODE FORM ────────────────────────────────────────────────*/
+
+
 .profile-container form {
   display: grid;
   gap: 1rem;
@@ -141,8 +144,10 @@ button {
   font-weight: 600;
   color: var(--fg);
 }
+
 .profile-container form input,
 .profile-container form textarea {
+
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
@@ -160,8 +165,14 @@ button {
   min-height: 120px;
   resize: vertical;
 }
+
 .profile-container form button[type="submit"] {
   background: var(--accent-coral);
+
+.profile-container button {
+  padding: 10px 16px;
+  background: #000;
+
   color: #fff;
   padding: 0.75rem;
   border: none;
@@ -190,6 +201,7 @@ button {
   color: #fff;
 }
 
+
 /*── RESPONSIVE ─────────────────────────────────────────────────────*/
 @media (max-width: 480px) {
   .profile-container h1 {
@@ -212,3 +224,4 @@ button {
     text-align: center;
   }
 }
+

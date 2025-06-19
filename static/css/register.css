@@ -11,6 +11,7 @@ html, body {
 
 /* ACHTERGROND + CENTRERING */
 body {
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -60,12 +61,16 @@ h2 {
 }
 
 /* FORM */
+
+
 form {
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
+
 label {
+
   text-align: left;
   margin-bottom: 6px;
   font-size: 14px;
@@ -90,11 +95,16 @@ input:focus {
 .password-container {
   position: relative;
   margin-bottom: 20px;
+
 }
+
 .password-container input {
+
   width: 100%;
   padding-right: 45px;
+
 }
+
 .showPassword {
   position: absolute;
   right: 12px;
@@ -104,17 +114,19 @@ input:focus {
   border: none;
   cursor: pointer;
 }
+
 .showPassword svg {
   width: 24px;
   height: 24px;
   stroke: #888;
   transition: stroke 0.3s;
 }
+
 .showPassword:hover svg {
   stroke: #FF7A59;
 }
 
-/* SUBMIT BUTTON */
+
 button[type="submit"] {
   background-color: #F7A7A8;
   color: #fff;
@@ -127,7 +139,9 @@ button[type="submit"] {
   transition: background-color 0.3s ease, transform 0.2s ease;
   margin-top: 10px;
 }
+
 button[type="submit"]:hover {
+
   transform: scale(1.02);
 }
 
@@ -149,6 +163,7 @@ section > p {
 }
 
 /* ERROR LIST */
+
 .error-list {
   list-style: none;
   color: red;
@@ -157,9 +172,11 @@ section > p {
   text-align: left;
   padding-left: 20px;
 }
+
 .error-list li {
   margin-bottom: 5px;
 }
+
 
 /* FEEDBACK */
 .feedback {
@@ -193,3 +210,4 @@ section > p {
     font-size: 15px;
   }
 }
+
