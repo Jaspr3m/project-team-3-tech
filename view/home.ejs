@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/header.css" />
     <link rel="stylesheet" href="/static/homepage.css" />
      <link rel="stylesheet" href="/static/footer.css" />
+    <link rel="stylesheet" href="/static/reviews.css" />
   </head>
   <body>
 
@@ -22,36 +23,93 @@
 
 
     <main>
+
+      <section class="hero">
+        <div class="hero-content">
+          <h1>Welcome to TravelLink</h1>
+          <p>Discover meets, make friends, and explore together.</p>
+          <a href="/create-meet" class="cta-button">Create a Meet</a>
+        </div>
+      </section>
+      
+      
       <section>
         <h2>Find a meet near <em>you!</em></h2>
-        <a href="/more-meets">Explore More Meets</a>
+        <a href="/more-meets" class="more-meets">Explore More Meets</a>
         <div class="meet-row">
           <% meets.forEach(meet => { %> <%- include('partials/meet-card.ejs', {
           meet: meet }) %> <% }) %>
         </div>
+        
+        
       </section>
-      <!-- <section>
-        <h2>Discover meets near <em>you!</em></h2>
-        <div class="meet-row">
-          <% meets.forEach(meet => { %>
-          <div class="meet-card">
-            <h3><%= meet.meetingName %></h3>
-            <p><%= meet.location %></p>
-            <p><%= meet.description %></p>
-            <a href="/meet/<%= meet._id %>">View</a>
-          </div>
-          <% }) %>
-        </div>
-      </section>
-      <section>
-        <h2>View all nearby locations</h2>
-        <img
-          src="/static/images/map_placeholder.png"
-          alt="Map showing nearby locations"
-        />
-      </section> -->
+
     </main>
 
+    <%- include('partials/reviews.ejs') %>
+
     <footer><%- include('partials/footer', { userId: userId }) %></footer>
+
+
+    <script>
+      const testimonials = document.querySelectorAll('.testimonial');
+      const wrapper = document.querySelector('.testimonial-wrapper');
+      const nextBtn = document.querySelector('.carousel-btn.next');
+      const prevBtn = document.querySelector('.carousel-btn.prev');
+      const dots = document.querySelectorAll('.dot');
+    
+      let current = 0;
+      let interval;
+    
+      function updateCarousel() {
+        const total = testimonials.length;
+        wrapper.style.transform = `translateX(-${(current * 100)}%)`;
+        testimonials.forEach((t, i) => t.classList.toggle('active', i === current));
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+      }
+    
+      function showNext() {
+        current = (current + 1) % testimonials.length;
+        updateCarousel();
+      }
+    
+      function showPrev() {
+        current = (current - 1 + testimonials.length) % testimonials.length;
+        updateCarousel();
+      }
+    
+      function startAutoRotate() {
+        interval = setInterval(showNext, 5000);
+      }
+    
+      function stopAndRestartAutoRotate() {
+        clearInterval(interval);
+        startAutoRotate();
+      }
+    
+      nextBtn.addEventListener('click', () => {
+        showNext();
+        stopAndRestartAutoRotate();
+      });
+    
+      prevBtn.addEventListener('click', () => {
+        showPrev();
+        stopAndRestartAutoRotate();
+      });
+    
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          current = parseInt(dot.getAttribute('data-index'));
+          updateCarousel();
+          stopAndRestartAutoRotate();
+        });
+      });
+    
+      updateCarousel();
+      startAutoRotate();
+    </script>
+    
+    
+    
   </body>
 </html>

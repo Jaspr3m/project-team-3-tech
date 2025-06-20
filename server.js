@@ -379,7 +379,7 @@ function applyFilters(filters) {
   }
 
   if (filters.address) {
-    query.address = new RegExp(filters.address, "i");
+    query.address = new RegExp(filters.address, 'i');
   }
 
   if (filters.startDate || filters.endDate) {
@@ -586,6 +586,7 @@ app.post("/create-meet", upload.single("image"), async (req, res) => {
       time: req.body.time,
       location: req.body.location,
       category: req.body.category,
+      address: req.body.address,
       image: "/static/images/" + req.file.filename,
       members: userId ? [{ id: userId }] : [], // Automatically add creator as member
       creatorId: userId,

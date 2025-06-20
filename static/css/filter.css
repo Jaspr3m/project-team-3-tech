@@ -1,119 +1,198 @@
+/* Base styling */
 body {
   margin: 0;
   padding: 0;
-  background-color: #fafafa;
+  background-color: #f4f6f8;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
 main {
-  padding: 1rem;
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding: 2rem 1rem;
+  /* max-width: 1200px; */
+  margin: 0 auto;
 }
 
 #toggle-filters {
   margin-bottom: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #0096c7;
+  padding: 0.6rem 1.2rem;
+  background-color: #087E8B;
   color: white;
   border: none;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+#toggle-filters:hover {
+  background-color: #06626d;
 }
 
 .hidden {
   display: none;
 }
 
+/* Layout wrapper */
+.content-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+
+.scroll-hint {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* Filter Section */
 .filter-section {
-  background-color: #fff;
-  padding: 1rem;
-  margin-bottom: 2rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  flex: 0 0 280px;
+  position: sticky;
+  top: 2rem;
+
+  /* Fix for overflow */
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+}
+
+
+.filter-section h1 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: #222;
 }
 
 .filter-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
 }
 
 .filter-form label {
   display: flex;
   flex-direction: column;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
 }
 
-button[type="submit"] {
-  width: fit-content;
-  padding: 0.5rem 1rem;
-  background-color: #00b4d8;
-  border: none;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
+.filter-form input,
+.filter-form select {
+  margin-top: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fdfdfd;
+  transition: border-color 0.2s ease;
 }
 
-.clear-filters-btn {
-  width: fit-content;
-  padding: 0.5rem 1rem;
-  background-color: #FF5A5F;
-  border: none;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
+.filter-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
 }
 
+/* Buttons */
 .filter-buttons {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
   margin-top: 1rem;
 }
 
+button[type="submit"],
+.clear-filters-btn {
+  padding: 0.55rem 1.2rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+}
 
-/* .meet-card {
-    background-color: #ffffff;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .meet-card h3 {
-    margin: 0 0 0.5rem 0;
-  } */
+button[type="submit"] {
+  background-color: #00b4d8;
+  color: white;
+}
 
+button[type="submit"]:hover {
+  background-color: #0096c7;
+}
+
+.clear-filters-btn {
+  background-color: #FF5A5F;
+  color: white;
+}
+
+.clear-filters-btn:hover {
+  background-color: #e04b50;
+}
+
+/* Meet grid */
+.meet-row {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: flex-start;
+}
+
+/* Misc */
 .back-link {
   display: inline-block;
-  margin-top: 2rem;
+  margin-top: 3rem;
   color: #0077b6;
   text-decoration: none;
+  font-weight: 500;
 }
 
-.meet-row {
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
+.back-link:hover {
+  text-decoration: underline;
 }
 
-/* .meet-card {
-    max-width: 100%;
-    min-width: 0;
-    width: 100%;
-  } */
+
 
 /* Responsive adjustments */
-@media (min-width: 700px) {
-  .meet-row {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 1rem;
+
+@media (max-width: 800px) {
+  .filter-section {
+    width: 100%;
+    max-height: none;
+    position: static;
+    overflow-y: visible;
+  }
+  
+  .content-layout {
+    flex-direction: column;
   }
 
-  .meet-card {
-    max-width: 100%;
-    min-width: 0;
+  .meet-row {
+    justify-content: center;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+  }
+
+  #toggle-filters {
     width: 100%;
   }
 }
+

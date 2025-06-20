@@ -1,100 +1,110 @@
 .meet-card {
     display: flex;
     flex-direction: column;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    padding: 1rem 1.2rem;
+    background: #bbe0e5;
+    border-radius: 1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    padding: 1.2rem;
     width: 100%;
-    max-width: 260px;
+    max-width: 280px;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
     color: #333;
-}
+    overflow: hidden;
+    position: relative;
+    border-left: 6px solid #087E8B;
+    border-bottom: 6px solid #087E8B;
+    padding-left: 1rem;
 
-.meet-image {
-    max-width: 100%;
-    height: 140px;
+  }
+  
+  .meet-card:hover {
+    transform: translateY(-6px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  }
+  
+  .meet-image {
+    width: 100%;
+    height: 160px;
     object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 0.7rem;
-}
-
-.meet-title {
-    font-size: 1.2rem;
-    margin: 0 0 0.4rem;
-    font-weight: bold;
-}
-
-.meet-meta {
+    border-radius: 0.7rem;
+    margin-bottom: 0.9rem;
+  }
+  
+  .meet-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0 0 0.6rem;
+    color: #222;
+  }
+  
+  .meet-meta {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.5rem 1rem;
-    font-size: 0.9rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 1rem;
+    font-size: 0.88rem;
     color: #555;
-    margin-bottom: 0.5rem;
-}
-
-.meet-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1rem;
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 0.5rem;
-}
-
-.meet-meta p {
+    margin-bottom: 0.7rem;
+  }
+  
+  .meet-meta p {
     margin: 0;
     white-space: nowrap;
-    flex: 1 1 45%;
-    /* Makes items wrap nicely */
-}
-
-
-.meet-meta p {
+  }
+  
+  .meet-description {
     font-size: 0.9rem;
-    margin: 0.2rem 0;
-    color: #555;
-}
-
-.meet-description {
-    font-size: 0.9rem;
-    margin: 0.5rem 0;
     color: #666;
-}
-
-.meet-actions {
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+  
+  .meet-actions {
     display: flex;
     gap: 0.5rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-}
-
-.meet-actions a,
-.meet-actions button {
+    margin-top: auto;
+  }
+  
+  .meet-actions a,
+  .meet-actions button {
     flex: 1;
     text-align: center;
-    padding: 0.4rem 0.6rem;
-    font-weight: bold;
-    border-radius: 5px;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
     text-decoration: none;
     border: none;
     cursor: pointer;
-}
+    font-size: 0.9rem;
+    transition: background-color 0.25s ease;
+    position: relative;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+  }
+  
+  .meet-actions a:hover {
+    transform: scale(1.03);
+  }
 
-.view-btn {
+  .view-btn {
     background-color: #087E8B;
-    color: #fff;
-}
-
-.meet-row {
+    color: white;
+  }
+  
+  .view-btn:hover {
+    background-color: #06646d;
+  }
+  
+  .meet-row {
     display: flex;
     gap: 1rem;
     overflow-x: auto;
     padding-bottom: 1rem;
     scroll-snap-type: x mandatory;
-}
-
-.meet-card {
+  }
+  
+  .meet-card {
     flex: 0 0 auto;
     scroll-snap-align: start;
-}
+  }
+  
