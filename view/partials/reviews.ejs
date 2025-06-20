@@ -1,0 +1,33 @@
+<section class="testimonial-carousel">
+    <h3>Why People Love TravelLink</h3>
+  
+    <div class="carousel">
+      <% const testimonials = [
+        { text: "I met amazing buddies thanks to this app! 💖", author: "Kioko" },
+        { text: "Perfect for looking to connect with others!", author: "Ivy" },
+        { text: "TravelLink made my trip 10x more fun. Highly recommend!", author: "Ryan" },
+        { text: "Meeting locals and travelers in one place? Genius.", author: "Jasprem" },
+      ]; %>
+  
+      <div class="testimonial-wrapper">
+        <% testimonials.forEach((t, index) => { %>
+          <div class="testimonial <%= index === 0 ? 'active' : '' %>">
+            <p>"<%= t.text %>"</p>
+            <span>– <%= t.author %></span>
+          </div>
+        <% }) %>
+      </div>
+  
+      <!-- Navigation Arrows -->
+      <button class="carousel-btn prev">&#10094;</button>
+      <button class="carousel-btn next">&#10095;</button>
+  
+      <!-- Dots -->
+      <div class="dots">
+        <% testimonials.forEach((_, index) => { %>
+          <span class="dot <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>"></span>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+  
