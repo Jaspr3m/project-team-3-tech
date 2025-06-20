@@ -97,14 +97,6 @@ body {
   }
 }
 
-.meet-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  width: 100%;
-  max-width: 800px;
-}
-
 .meet-card {
   background: #fff;
   border: 1px solid #eee;
@@ -211,7 +203,7 @@ body {
 }
 
 .meets-main {
-  max-width: 900px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -304,5 +296,42 @@ body {
   .meet-cover {
     max-width: 100%;
     height: 100px;
+  }
+}
+
+.meet-grid-4, .meet-row.meet-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  overflow-x: hidden;
+  overflow-y: visible;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.meet-grid-4 > *, .meet-row.meet-grid-4 > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 1370px) {
+  .meet-grid-4, .meet-row.meet-grid-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1044px) {
+  .meet-grid-4, .meet-row.meet-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .meet-grid-4, .meet-row.meet-grid-4 {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: center;
   }
 }

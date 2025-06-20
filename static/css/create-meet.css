@@ -8,9 +8,6 @@ body {
 }
 /* create input field */
 .meet-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
         max-width: 600px;
         margin: 40px auto;
         padding: 32px;
