@@ -34,7 +34,7 @@
         <% if (created.length === 0) { %>
         <p class="meets-empty">You haven't created any meets yet.</p>
         <% } %>
-        <div class="meet-row meet-grid-4">
+        <div class="meet-grid-4">
           <% created.forEach(meet => { %> <%- include('partials/meet-card', {
           meet: meet }) %> <% }) %>
         </div>
