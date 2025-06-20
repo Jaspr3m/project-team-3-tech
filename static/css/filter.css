@@ -42,7 +42,7 @@ main {
 .scroll-hint {
   text-align: center;
   font-size: 0.85rem;
-  color: #666;
+  color: #C1839F;
   margin-bottom: 1rem;
   animation: pulse 2s infinite;
 }
