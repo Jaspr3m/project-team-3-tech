@@ -1,7 +1,7 @@
 body, html {
   margin: 0;
   padding: 0.5rem;
-  font-family: 'Inter', sans-serif;
+   font-family: 'Arial', sans-serif;
   
 
 }
@@ -26,7 +26,7 @@ body, html {
 }
 
 .desktop-nav .logo {
-  height: 40px;
+  height: 55px;
 }
 
 .desktop-nav .search-form {
@@ -34,17 +34,6 @@ body, html {
   margin: 0 1rem;
 }
 
-
-.desktop-nav .search-input {
-  width: 100%;
-  padding: 0.7rem 0.3rem;
-  border: 1px solid #E5E5E5;
-  border-radius: 12px;
-  font-size: 1rem;
-  color: #3c3c3c;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  font-style: italic;
-}
 
 .desktop-nav .search-input::placeholder {
   color: #A0A0A0;
@@ -69,14 +58,9 @@ body, html {
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.nav-link:hover {
-  color: #F7A7A8;
-  transform: translateY(-2px);
-}
-
 .nav-link.active {
-  color: #F7A7A8;
-  border-bottom: 2px solid #F7A7A8;
+  color: #3c3c3c;
+  border-bottom: 2px solid #f7a7a8;
 }
 
 .nav-button {
@@ -87,20 +71,17 @@ body, html {
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
+.navlink .nav-button.active {
+  background-color: #3c3c3c;
+  color: #FFFFFF;
+}
+
 .nav-button:hover {
   background: #E69A96;
 }
 
-.icon-notif {
-  width: 24px;
-  height: 24px;
-  filter: brightness(0) saturate(100%);
-  transition: filter 0.2s ease, transform 0.2s ease;
-}
 
-.nav-link[data-active="noti"].active .icon-notif {
-  filter: brightness(0) saturate(100%);
-}
+
 
 .nav-link[data-active="profile"] {
   padding: 0;
@@ -181,6 +162,17 @@ body, html {
   margin-top: 1.9rem;
 }
 
+.desktop-nav .search-input {
+  width: 80%;
+  padding: 0.7rem 1rem;
+  border: 1px solid #E5E5E5;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #3c3c3c;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+}
+
 }
 
 @media (min-width: 769px) {
@@ -194,6 +186,18 @@ body, html {
   .desktop-nav .nav-links {
     display: flex;
   }
+
+.desktop-nav .search-input {
+  width: 60%;
+  margin-left: 2rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid #E5E5E5;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  color: #3c3c3c;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+}
 }
 
 

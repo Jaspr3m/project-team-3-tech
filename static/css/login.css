@@ -159,7 +159,20 @@ input[type="email"]:focus {
   line-height: 1.2;
   max-width: 600px;
 }
+/* SIGNUP LINK */
+.signup {
+  font-size: 14px;
+  margin-top: 30px;                
+  color: #444;
+}
+.signup a {
+  color: #F7A7A8;                 
 
+  text-decoration: none;
+}
+.signup a:hover {
+  text-decoration: underline;
+}
 /* Responsive design */
 @media (max-width: 992px) {
   .login-form-container {

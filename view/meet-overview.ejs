@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/header.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
     <link rel="stylesheet" href="/static/css/meet-overview.css" />
+    <link rel="stylesheet" href="/static/css/footer.css" />
   </head>
   <body>
     <header><%- include('partials/header') %></header>
@@ -73,6 +74,7 @@
       <h2>Who could you match with?</h2>
       <%- include('partials/user-match-list', { userMatches: userMatches }) %>
     </div>
+      <a href="/" class="back-link">← Back to Home</a>
     <footer> <%- include('partials/footer', { userId: userId }) %></footer>
     <script>
       // Attach event listeners to join/leave forms

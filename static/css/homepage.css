@@ -356,6 +356,9 @@ body {
   main{
   padding-bottom: 7.5rem; 
   }
+    .cta-button {
+    display :none;
+  }
 }
 
 @media (min-width: 768px) {

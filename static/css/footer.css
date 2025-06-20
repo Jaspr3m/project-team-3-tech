@@ -1,6 +1,10 @@
 /*───────────────────────────────────────────────────────────────────
   MOBILE NAVBAR (footer)
 ───────────────────────────────────────────────────────────────────*/
+
+body {
+    font-family: 'Arial', sans-serif;
+}
 .mobile-navbar {
   position: fixed;
   bottom: 0;
