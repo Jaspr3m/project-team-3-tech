@@ -1,53 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TravelLink</title>
-    <link rel="stylesheet" href="/static/css/profile.css" />
-    <link rel="stylesheet" href="/static/css/header.css" />
-    <link rel="stylesheet" href="/static/css/homepage.css" />
-     <link rel="stylesheet" href="/static/css/footer.css" />
-    <link rel="stylesheet" href="/static/css/reviews.css" />
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TravelLink</title>
+  <link rel="stylesheet" href="/static/css/header.css" />
+  <link rel="stylesheet" href="/static/css/homepage.css" />
+  <link rel="stylesheet" href="/static/css/footer.css" />
+  <link rel="stylesheet" href="/static/css/reviews.css" />
+</head>
+<body>
 
-<header>
-  <%- include('partials/header') %>
-  <nav>
-    <div class="mobile-actions">
-  <a href="/meets"            class="action-btn manage">Manage Meets</a>
-</div>
-  </nav>
-</header>
-<div class="popup-tooltip">Create your own meet?</div>
+  <header>
+    <%- include('partials/header') %>
+    <nav>
+      <div class="mobile-actions">
+        <a href="/meets" class="action-btn manage">Manage Meets</a>
+      </div>
+    </nav>
+  </header>
 
-    <main>
+  <div class="popup-tooltip">Create your own meet?</div>
+  <a href="/create-meet" class="float-btn">+</a>
 
-      <section class="hero">
-        <div class="hero-content">
-          <h1>Welcome to TravelLink</h1>
-          <p>Discover meets, make friends, and explore together.</p>
-          <a href="/create-meet" class="cta-button">Create a Meet</a>
-        </div>
-      </section>
-      
-      
-      <section>
-        <h2>Find a meet near <em>you!</em></h2>
-        <a href="/more-meets" class="more-meets">Explore More Meets</a>
-        <div class="meet-row">
-          <% meets.forEach(meet => { %> <%- include('partials/meet-card.ejs', {
-          meet: meet }) %> <% }) %>
-        </div>
-        
-        
-      </section>
-    </main>
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Welcome to TravelLink</h1>
+        <p>Discover meets, make friends, and explore together.</p>
+        <a href="/create-meet" class="cta-button">Create a Meet</a>
+      </div>
+    </section>
 
-    <%- include('partials/reviews.ejs') %>
+    <section>
+      <h2>Find a meet near <em>you!</em></h2>
+      <a href="/more-meets" class="more-meets">Explore More Meets</a>
+      <div class="meet-row">
+        <% meets.forEach(meet => { %>
+          <%- include('partials/meet-card', { meet: meet }) %>
+        <% }) %>
+      </div>
+    </section>
+  </main>
 
-    <footer><%- include('partials/footer', { userId: userId }) %></footer>
+  <%- include('partials/reviews') %>
+
+  <!-- Één enkele footer-include, pad relatief aan views/ -->
+  <!-- <%- include('partials/footer', { userId: userId }) %> -->
+
+
+
+  
 
 
     <script>
