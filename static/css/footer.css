@@ -52,31 +52,38 @@
 }
 
 
-
-/*───────────────────────────────────────────────────────────────────
-  FLOAT BUTTON (Create Meet?)
-───────────────────────────────────────────────────────────────────*/
+/* ─── Float-knop ────────────────────────────────────────────────── */
 .float-btn {
   position: fixed;
-  right: 1rem;             
-  bottom: 5.3rem;          
-  width: 3.5rem;
-  height: 3.4rem;
-  background: #3c3c3c;      
-  color: #fff;
+  bottom: 72px;         /* 60px navbar + 12px margin */
+  right: 20px;
+  width: 60px; height: 60px;
+  background: #948A8A;
+  color: #F5F5F5;
   font-size: 2rem;
-  line-height: 3.2rem;       /* verticaal centreren van het “+” */
-  text-align: center;
-  border-radius: 50%;      
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  z-index: 1001;           
+  line-height: 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 1001;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.float-btn:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+
+
+.mobile-navbar .nav-icon.active img {
+  /* remove any previous filters */
+  filter: none;
+ 
+  fill: #3c3c3c;
+}
+
+.mobile-navbar .nav-icon.active img {
+  filter: brightness(50%);
 }
 
 /*───────────────────────────────────────────────────────────────────

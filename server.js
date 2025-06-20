@@ -509,55 +509,8 @@ app.get('/api/meets', async (req, res) => {
 });
 
 
-// notifcications
-// ─── SOCKET.IO SETUP ──────────────────────────────────────────
-// const http     = require('http');
-// const socketio = require('socket.io');
-// const server   = http.createServer(app);
-// const io       = socketio(server);
 
-// io.on('connection', socket => {
-//   socket.on('joinMeetRoom', meetId => {
-//     socket.join(`meet_${meetId}`);
-//   });
-// });
-
-// // ─── NOTIFICATIONS ROUTE ───────────────────────────────────────
-// app.get('/notifications', async (req, res, next) => {
-//   try {
-//     if (!req.session.userId) return res.redirect('/login');
-
-//     const items = await Notification
-//       .find({ user: req.session.userId })
-//       .sort({ createdAt: -1 })
-//       .limit(50)
-//       .lean();
-
-//     await Notification.updateMany(
-//       { user: req.session.userId, isRead: false },
-//       { $set: { isRead: true } }
-//     );
-
-//     res.render('notifications', {
-//       notifications: items,
-//       userId: req.session.userId
-//     });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
-
-// app.use(async (req, res, next) => {
-//   if (req.session.userId) {
-//     const user = await db.collection(process.env.USER_COLLECTION)
-//       .findOne({ _id: new ObjectId(req.session.userId) });
-//     res.locals.currentUser = user;
-//   } else {
-//     res.locals.currentUser = null;
-//   }
-//   next();
-// });
-// CREAT MEETS
+// CREATA MEETS
 
 app.get("/create-meet", (req, res) => {
   res.render("create-meet", {

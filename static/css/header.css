@@ -2,11 +2,10 @@ body, html {
   margin: 0;
   padding: 0.5rem;
   font-family: 'Inter', sans-serif;
+  
+
 }
 
-.nav-links > a {
-  text-decoration: none;
-}
 
 .desktop-nav {
   display: flex;
@@ -15,7 +14,12 @@ body, html {
   padding: 1rem 2rem;
   background: #FFFFFF;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+   
 }
+.nav-links > a {
+    text-decoration: none;
+}
+
 
 .desktop-nav .nav-left {
   flex: 0 0 auto;
@@ -33,7 +37,7 @@ body, html {
 
 .desktop-nav .search-input {
   width: 100%;
-  padding: 0.5rem 0.4rem;
+  padding: 0.7rem 0.3rem;
   border: 1px solid #E5E5E5;
   border-radius: 12px;
   font-size: 1rem;

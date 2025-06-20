@@ -148,7 +148,6 @@ body {
   transition: background 0.2s ease;
 }
 
-/* primaire knop */
 
 
 /* secundaire knop */
@@ -156,29 +155,72 @@ body {
   background: #e14f53;
 }
 
+/* pop up */
 
-/* verberg op desktop */
+.popup-tooltip {
+  position: fixed;
+  right: 20px;
+  bottom: 145px;        /* 60px navbar + 60px knop + 25px margin */
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+
+  opacity: 0;
+  transform: translateY(10px);
+  animation: popupFade 6s ease-in-out forwards;
+
+  display: none;       /* standaard niet tonen */
+  z-index: 1000;
+}
+
+/* Keyframes: fade in → hold → fade out */
+@keyframes popupFade {
+  0%   { opacity: 0; transform: translateY(10px); }
+  10%  { opacity: 1; transform: translateY(0); }
+  80%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(10px); }
+}
+
+/* ─── MOBIEL: tooltip zichtbaar maken ───────────────────────────────── */
+@media (max-width: 767px) {
+  .popup-tooltip {
+    display: block;    /* nu wél tonen op mobiel */
+  }
+  main{
+    padding-bottom: 120px; 
+  }
+  main.profile-container {
+    padding-bottom: 0;
+  }
+
+}
+
+/* ─── DESKTOP: tooltip altijd verbergen ──────────────────────────────── */
 @media (min-width: 768px) {
-  .mobile-actions {
+  .popup-tooltip {
+    display: none !important;
+  }
+  .float-btn {
+    display: none;     
+  }
+    .mobile-actions {
     display: none;
   }
     .float-btn {
     display: none;
   }
-
 }
 
-@media (max-width: 767px) {
-  main{
-    padding-bottom: 120px; 
-  }
+.popup-tooltip {
+  pointer-events: none;  /* pakt geen muisevents, laat scrollen gaan */
 }
 
-/* Desktop: automatisch geen extra padding */
-@media (min-width: 768px) {
-  main.profile-container {
-    padding-bottom: 0;
-  }
+.float-btn {
+  pointer-events: auto;  /* knop blijft wel klikbaar */
 }
 
 /*───────────────────────────────────────────────────────────────────

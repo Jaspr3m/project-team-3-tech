@@ -1,10 +1,13 @@
 <nav class="mobile-navbar">
   <a data-active="home"     href="/home" class="nav-icon"><img src="/static/images/home.svg" alt="Home"><span></span></a>
-  <a href="/create-meet" class="float-btn">+</a>
-  <a data-active="manage meets"     href="/meets"   class="nav-icon"><img src="/static/images/managemeet.svg" alt="manage meets"><span></span></a>
+
+
+  <a href="/create-meet" class="nav-icon float-btn">+</a>
+  <a data-active="manage meets"     href="/meets"   class="nav-icon"><img src="/static/images/managemeeticon.svg" alt="Notifications"><span></span></a>
   <a data-active="profile"  href="/profile/<%= userId %>" class="nav-icon"><img src="/static/images/profile.svg" alt="Profile"><span></span></a>
 
 </nav>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
