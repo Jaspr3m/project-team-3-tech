@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/css/header.css" />
     <link rel="stylesheet" href="/static/css/manage-meets.css" />
-    <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/footer.css" />
+  
     <title>Manage Meets</title>
   </head>
   <body>
@@ -57,6 +58,8 @@
         joinedBtn.classList.remove("active");
       });
     </script>
-    <!-- <footer><%- include('partials/footer') %></footer> -->
+    <footer> 
+  <%- include('partials/footer', { userId: userId }) %>
+  </footer>
   </body>
 </html>

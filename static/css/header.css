@@ -4,6 +4,10 @@ body, html {
   font-family: 'Inter', sans-serif;
 }
 
+.nav-links > a {
+  text-decoration: none;
+}
+
 .desktop-nav {
   display: flex;
   align-items: center;
@@ -26,9 +30,10 @@ body, html {
   margin: 0 1rem;
 }
 
+
 .desktop-nav .search-input {
   width: 100%;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.4rem;
   border: 1px solid #E5E5E5;
   border-radius: 12px;
   font-size: 1rem;
@@ -142,6 +147,7 @@ body, html {
   color: #2B2B2B;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   box-shadow: none;
+
 }
 
 .mobile-header .search-input::placeholder {

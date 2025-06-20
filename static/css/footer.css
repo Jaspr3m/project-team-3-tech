@@ -1,4 +1,6 @@
-
+/*───────────────────────────────────────────────────────────────────
+  MOBILE NAVBAR (footer)
+───────────────────────────────────────────────────────────────────*/
 .mobile-navbar {
   position: fixed;
   bottom: 0;
@@ -7,7 +9,7 @@
   width: calc(100% - 2rem);
   max-width: 500px;
   height: 60px;
-  background: #F7A7A8;           
+  background: #F7A7A8;
   border-radius: 30px 30px 0 0;
   display: flex;
   justify-content: space-around;
@@ -16,77 +18,84 @@
   z-index: 1000;
 }
 
-
+/* Verberg op desktop */
 @media (min-width: 768px) {
   .mobile-navbar {
     display: none;
   }
 }
 
-
-.nav-icon {
-  flex: 1;
-  text-align: center;
-  position: relative;
-}
+/*───────────────────────────────────────────────────────────────────
+  NAV ICONS
+───────────────────────────────────────────────────────────────────*/
+/* Standaard: wit (invert 100%) */
 .nav-icon img {
   width: 24px;
   height: 24px;
-  filter: brightness(0) invert(1); 
-  transition: transform 0.2s ease;
+  transition: filter 0.2s ease, transform 0.2s ease;
 }
+
+/* Hover: licht grijs */
 .nav-icon:hover img {
+  filter: invert(85%); /* iets donkerder */
   transform: translateY(-2px);
 }
 
-/* actieve icon = donkergrijs */
+/* Actief: exact #3C3C3C */
 .nav-icon.active img {
- 
-  filter: none;
+  /* zet de icon *echt* op #3C3C3C */
+  filter: invert(23%) sepia(100%) saturate(0%) brightness(50%);
+  /* de stappen: 
+     - invert(23%) approximates #3C3C3C 
+     - sepia + saturate(0%) zorgt voor grijstoon 
+  */
 }
 
 
+
+/*───────────────────────────────────────────────────────────────────
+  FLOAT BUTTON (Create Meet?)
+───────────────────────────────────────────────────────────────────*/
 .float-btn {
-  position: absolute;
-  top: -38px;                  
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
-  background: #F7A7A8;            
+  position: fixed;
+  right: 1rem;             
+  bottom: 5.3rem;          
+  width: 3.5rem;
+  height: 3.4rem;
+  background: #3c3c3c;      
   color: #fff;
-  font-size: 1.8rem;
-  line-height: 1;
+  font-size: 2rem;
+  line-height: 3.2rem;       /* verticaal centreren van het “+” */
   text-align: center;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  transition: transform 0.3s ease;
-  z-index: 1001;
+  border-radius: 50%;      
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1001;           
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.mobile-navbar .nav-icon.active img {
-  /* remove any previous filters */
-  filter: none;
- 
-  fill: #3c3c3c;
+.float-btn:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
 }
 
-.mobile-navbar .nav-icon.active img {
-  filter: brightness(50%);
-}
-
+/*───────────────────────────────────────────────────────────────────
+  PAGE PADDING COMPENSATIE
+───────────────────────────────────────────────────────────────────*/
+/* Houd extra onder-padding op mobiel, zodat content niet achter navbar valt */
 @media (max-width: 767px) {
-  main.profile-container {
-    padding-bottom: 120px; 
+  main.profile-container,
+  main.meet-grid,
+  main {
+    padding-bottom: 140px; /* navbar (60) + float-btn (60) + marge */
   }
 }
 
-/* Desktop: automatisch geen extra padding */
+/* Op desktop geen extra padding */
 @media (min-width: 768px) {
-  main.profile-container {
+  main.profile-container,
+  main.meet-grid,
+  main {
     padding-bottom: 0;
   }
 }
