@@ -48,8 +48,10 @@
 
 .meet-meta p {
   margin: 0;
-  white-space: nowrap;
+  word-break: break-word; /* allows long strings to break */
+  overflow-wrap: anywhere; /* handles long words or URLs */
 }
+
 
 .meet-description {
   font-size: 0.9rem;
