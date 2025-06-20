@@ -26,60 +26,7 @@ body {
     font-style: italic;
     font-weight: 700;
   }
-  
-  /* ul {
-    list-style: none;
-    display: flex;
-    gap: 1rem;
-    overflow-x: auto;
-    padding: 0 1rem 1rem;
-  }
-  
-
-  
-  li img {
-    width: 80%;
-    object-fit: cover;
-    margin-bottom: 0.5rem;
-  }
-  
-  li h3 {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #222;
-    margin-bottom: 0.25rem;
-  }
-  
-  li p {
-    font-size: 0.8rem;
-    color: rgba(0, 0, 0, 0.7);
-    margin-bottom: 0.5rem;
-  }
-  
-  li time {
-    font-weight: bold;
-    color: #111;
-  }
-  
-  ul a {
-    display: block;
-    text-align: center;
-    background-color: #ff5a5f;
-    color: white;
-    padding: 1rem;
-    margin: 1rem auto;
-    border-radius: 8px;
-    font-weight: bold;
-    text-decoration: none;
-    width: 90%;
-    height: 50%;
-    transition: transform 0.2s ease;
-  }
-  
-  ul a:hover {
-    transform: scale(1.05);
-  } */
-  
+    
   section img[src*="map"] {
     display: block;
     margin: auto;
@@ -88,20 +35,7 @@ body {
     border-radius: 8px;
   }
   
-  /* .meet-row {
-    display: flex;
-    gap: 1rem;
-    overflow-x: auto;
-    padding-bottom: 1rem;
-    scroll-snap-type: x mandatory;
-  }
-  
-  .meet-card {
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-  } */
-  
-
+ 
 /* Map placeholder in the last section */
 .map-placeholder {
   width: 100%;
@@ -110,18 +44,6 @@ body {
   margin: 1rem auto;
 }
 
-/* Responsive adjustments */
-/* @media (max-width: 700px) {
-  .meet-row {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .meet-card {
-    max-width: 100%;
-    min-width: 0;
-    width: 100%;
-  }
-}
 
 /* buttons mobile */
 
@@ -149,11 +71,31 @@ body {
 }
 
 
-
 /* secundaire knop */
 .mobile-actions .action-btn.manage {
   background: #e14f53;
 }
+
+.float-btn {
+  position: fixed;
+  bottom: 72px;         /* 60px navbar + 12px margin */
+  right: 20px;
+  width: 60px; height: 60px;
+  background: #948A8A;
+  color: #F5F5F5;
+  font-size: 2rem;
+  line-height: 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 1001;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
 
 /* pop up */
 
@@ -189,9 +131,6 @@ body {
 @media (max-width: 767px) {
   .popup-tooltip {
     display: block;    /* nu wél tonen op mobiel */
-  }
-  main{
-    padding-bottom: 120px; 
   }
   main.profile-container {
     padding-bottom: 0;

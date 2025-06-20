@@ -43,12 +43,9 @@
 
 /* Actief: exact #3C3C3C */
 .nav-icon.active img {
-  /* zet de icon *echt* op #3C3C3C */
+
   filter: invert(23%) sepia(100%) saturate(0%) brightness(50%);
-  /* de stappen: 
-     - invert(23%) approximates #3C3C3C 
-     - sepia + saturate(0%) zorgt voor grijstoon 
-  */
+
 }
 
 

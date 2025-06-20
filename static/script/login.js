@@ -8,6 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // ——————————————————————————————
   // Cache DOM elements
   // ——————————————————————————————
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', () => {
+      sessionStorage.removeItem('currentUser');
+    });
+  }
+  
   const emailInput       = document.querySelector('.email');
   const emailFeedback    = document.querySelector('.emailFeedback');
   const passwordInput    = document.querySelector('.password');

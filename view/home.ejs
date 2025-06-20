@@ -21,7 +21,6 @@
   </header>
 
   <div class="popup-tooltip">Create your own meet?</div>
-  <a href="/create-meet" class="float-btn">+</a>
 
   <main>
     <section class="hero">
@@ -44,13 +43,8 @@
   </main>
 
   <%- include('partials/reviews') %>
+<footer>  <%- include('partials/footer', { userId: userId }) %></footer>
 
-  <!-- Één enkele footer-include, pad relatief aan views/ -->
-  <!-- <%- include('partials/footer', { userId: userId }) %> -->
-
-
-
-  
 
 
     <script>
