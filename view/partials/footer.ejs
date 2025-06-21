@@ -7,7 +7,28 @@
   <a data-active="profile"  href="/profile/<%= userId %>" class="nav-icon"><img src="/static/images/profile.svg" alt="Profile"><span></span></a>
 
 </nav>
+<!-- pop up ryan -->
+<!-- Guest-only Modal -->
+<div class="guest-modal-backdrop">
+  <div class="guest-modal">
+    <!-- ✕ close icon -->
+    <button class="guest-modal__close" id="guest-modal-close-x" aria-label="Close">&times;</button>
 
+    <h2 class="guest-modal__title">Almost there!</h2>
+    <p class="guest-modal__message">You need an account to use this function.</p>
+    <div class="guest-modal__actions">
+            <a href=/login><button class="guest-modal__btn guest-modal__btn--secondary"">
+        Login
+      </button>
+    </a>
+    <a href="/register">
+      <button class="guest-modal__btn guest-modal__btn--primary">
+          Create account
+      </button>
+      </a>
+    </div>
+  </div>
+</div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -18,5 +39,6 @@
       }
     });
   });
+
 </script>
 

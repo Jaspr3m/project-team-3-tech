@@ -20,11 +20,11 @@
     
   <div class="nav-links">
     <a data-active="home" href="/home"            class="nav-link">Home</a>
-    <a data-active="create" href="/create-meet"    class="nav-link nav-button">Create Meet</a>
-    <a data-active="manage" href="/meets"               class="nav-link nav-button">Manage Meets</a>
+    
+    <a href="/create-meet"    class="nav-link nav-button">Create Meet</a>
+    <a href="/meets"               class="nav-link nav-button">Manage Meets</a>
     <a data-active="profile" href="/profile/<%= userId %>"class="nav-link"><img src="/static/images/profile.svg" alt="Profile"></a>
 </div>
-
 </nav>
 
 <!-- Guest-only Modal -->
@@ -53,13 +53,17 @@
   
 </header>
 <script>
+  // Ryans pop up
+    // Ryans pop up
 document.addEventListener('DOMContentLoaded', () => {
   const currentUser = sessionStorage.getItem('currentUser');
   const gatedLinks = document.querySelectorAll(`
   a.nav-button[href="/create-meet"],
   a.nav-button[href="/meets"],
-  a.nav-link[href="/notifications"],
-  a.nav-link[href="/profile/"]
+  a.nav-link[href="/profile/"], 
+  .mobile-navbar .nav-icon[href="/create-meet"],
+  .mobile-navbar .nav-icon[href="/meets"],
+  .mobile-navbar .nav-icon[href^="/profile/"]
 `
   );
   const backdrop   = document.querySelector('.guest-modal-backdrop');
@@ -88,13 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-
-
-
-
-// ivy .active highlight navbar
-
-
+// ivy navbar highlight // 
   document.addEventListener('DOMContentLoaded', () => {
   
     const path = window.location.pathname.toLowerCase();
@@ -124,5 +122,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 </script>
-
 

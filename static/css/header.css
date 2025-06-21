@@ -12,7 +12,12 @@ body, html {
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
-  background: #FFFFFF;
+  background: linear-gradient(
+    180deg,
+    #ffe6e7 0%,    /* lichtroze */
+    #fff0f1 66%,   /* nog lichter */
+    #ffe6e7 100%   /* bijna wit-roze */
+  );
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
    
 }
@@ -201,31 +206,41 @@ body, html {
 }
 
 
-/*-----------------------------
-/* Backdrop covers the screen, hidden by default */
+/*───────────────────────────────────────────────────────────────────
+  BACKDROP (standaard verborgen)
+───────────────────────────────────────────────────────────────────*/
 .guest-modal-backdrop {
-  display: none;                  /* shown via JS by toggling to flex */
+  display: none;                /* toon door .active toe te voegen */
   position: fixed;
-  inset: 0;                       /* shorthand for top/right/bottom/left: 0 */
+  inset: 0;                     /* top/right/bottom/left: 0 */
   background: rgba(0, 0, 0, 0.6);
   align-items: center;
   justify-content: center;
-  z-index: 1000;                  /* above your header/nav */
+  z-index: 1000;                /* boven header/nav */
 }
 
-/* Modal container */
+/* Zodra je .active toevoegt */
+.guest-modal-backdrop.active {
+  display: flex;
+}
+
+/*───────────────────────────────────────────────────────────────────
+  MODAL CONTAINER
+───────────────────────────────────────────────────────────────────*/
 .guest-modal {
-  position: relative;            /* for the close icon */
+  position: relative;          /* voor de close-knop */
   background: #fff;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   max-width: 320px;
-  width: 90%;                    /* responsive */
+  width: 90%;                  /* responsive */
   text-align: center;
 }
 
-/* Close “×” in the corner */
+/*───────────────────────────────────────────────────────────────────
+  CLOSE “×” KNOP
+───────────────────────────────────────────────────────────────────*/
 .guest-modal__close {
   position: absolute;
   top: 0.5rem;
@@ -236,42 +251,46 @@ body, html {
   line-height: 1;
   cursor: pointer;
   color: #666;
-  transition: color 0.2s;
+  transition: color 0.2s ease;
+  
 }
 .guest-modal__close:hover {
   color: #000;
 }
 
-/* Title and message */
+/*───────────────────────────────────────────────────────────────────
+  TITEL & BOODSCHAP
+───────────────────────────────────────────────────────────────────*/
 .guest-modal__title {
   margin: 0 0 0.5rem;
   font-size: 1.5rem;
 }
-
 .guest-modal__message {
   margin: 0 0 1.5rem;
   font-size: 1rem;
   color: #444;
 }
 
-/* Button container */
+/*───────────────────────────────────────────────────────────────────
+  KNOPPENBALK
+───────────────────────────────────────────────────────────────────*/
 .guest-modal__actions {
   display: flex;
   justify-content: center;
   gap: 0.75rem;
 }
 
-/* Base button styles */
+/* Basisstijl voor alle acties */
 .guest-modal__btn {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 6px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s ease;
 }
 
-/* Default (Close/X) button look */
+/* Default (Close) knop */
 .guest-modal__btn:not(.guest-modal__btn--primary):not(.guest-modal__btn--secondary) {
   background: #e0e0e0;
   color: #222;
@@ -280,21 +299,21 @@ body, html {
   background: #d5d5d5;
 }
 
-/* Primary (Register) button style */
+/* Primaire (Register) knop */
 .guest-modal__btn--primary {
-  background: #007bff;
+  background: #087E8B;
   color: #fff;
 }
 .guest-modal__btn--primary:hover {
-  background: #006ae0;
+
+  color: #3c3c3c;
 }
 
-/* Secondary (Login) button style */
+/* Secundaire (Login) knop */
 .guest-modal__btn--secondary {
-  background: #28a745;
-  color: #fff;
+  background: #F7A7A8;
+  color: #f5f5f5;
 }
 .guest-modal__btn--secondary:hover {
-  background: #218838;
+  background: #FF5A5F;
 }
-

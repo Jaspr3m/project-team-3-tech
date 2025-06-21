@@ -102,7 +102,6 @@ button {
   padding: var(--spacing) var(--spacing) calc(var(--spacing)*1.5);
 }
 .edit-btn {
-
   background: var(--accent-coral);
   color: #fff;
   padding: 0.75rem;
@@ -142,7 +141,8 @@ button {
   color: var(--fg);
 }
 .profile-container form input,
-.profile-container form textarea {
+.profile-container form textarea,
+.profile-container form select {
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
@@ -151,7 +151,8 @@ button {
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 .profile-container form input:focus,
-.profile-container form textarea:focus {
+.profile-container form textarea:focus,
+.profile-container form select:focus {
   border-color: var(--accent-teal);
   box-shadow: 0 0 0 4px rgba(8,126,139,0.2);
   outline: none;
@@ -160,6 +161,17 @@ button {
   min-height: 120px;
   resize: vertical;
 }
+
+/*── EXTRA FIELD LAYOUT ────────────────────────────────────────────*/
+.side-by-side {
+  display: flex;
+  gap: 0.5rem;
+}
+.side-by-side input {
+  flex: 1;
+}
+
+/*── FORM BUTTONS ──────────────────────────────────────────────────*/
 .profile-container form button[type="submit"] {
   background: var(--accent-coral);
   color: #fff;
@@ -211,4 +223,126 @@ button {
     width: 100%;
     text-align: center;
   }
+}
+
+/*─────────────────────────────────────────────────────────────────────────
+  FORCEER FULL-WIDTH DROPDOWNS & FLEX-STACK
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Altijd 100% breedte voor alle dropdowns */
+.profile-container form select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--grey-light);
+  border-radius: var(--radius);
+  background: #fff;
+  appearance: none;           /* verberg browser-pijltje */
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A0A0A0' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  box-sizing: border-box;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+/* Focus-state voor dropdowns */
+.profile-container form select:focus {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 0 4px rgba(8,126,139,0.2);
+  outline: none;
+}
+
+/* Zorg dat side-by-side velden flexibel krimpen en wrappen */
+.side-by-side {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Elk direct kind (input of select) groeit evenredig */
+.side-by-side > * {
+  flex: 1 1 0;
+  min-width: 0; /* belangrijk zodat items niet buiten container breken */
+}
+
+/* OP MOBIELE SCHERMEN: pak side-by-side en zet onder elkaar */
+@media (max-width: 600px) {
+  .side-by-side {
+    flex-direction: column;
+  }
+  .side-by-side > * {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    flex: none;
+  }
+}
+
+
+/* log out pop up */
+
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2000;
+}
+
+/* Modal box */
+/* modal-overlay standaard onzichtbaar */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  place-items: center;
+}
+
+/* zodra we ‘m actief maken: show grid */
+.modal-overlay.active {
+  display: grid;
+}
+
+/* Modal box styling (zelfde als eerder) */
+.modal {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 8px 24px var(--shadow-hover);
+  text-align: center;
+}
+.modal h2 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: var(--fg);
+}
+.modal p {
+  margin-bottom: 1.5rem;
+  color: var(--grey-mid);
+}
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.btn-danger {
+  background: #087E8B;
+  color: #fff;
+}
+.btn-secondary {
+  background: var(--grey-light);
+  color: var(--fg);
 }

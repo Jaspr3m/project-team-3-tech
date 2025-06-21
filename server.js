@@ -279,8 +279,7 @@ app.post("/profile/:id", upload.single("photo"), async (req, res) => {
       .filter(Boolean);
     // Add support for vibe, preferredGender, and age range
     const updateData = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      name: req.body.name,
       bio: req.body.bio,
       tags,
       vibe: req.body.vibe,
