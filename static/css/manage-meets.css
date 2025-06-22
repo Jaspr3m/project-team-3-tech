@@ -132,7 +132,7 @@ body {
 
 .meet-card a {
   margin-top: 0.5rem;
-  color: #087E8B;          /* accentkleur voor links */
+  color: #f5f5f5;       
   text-decoration: underline;
   font-weight: bold;
   cursor: pointer;
@@ -333,5 +333,19 @@ body {
     gap: 1.5rem;
     align-items: center;
     justify-content: center;
+  }
+}
+
+/* Houd extra onder-padding op mobiel, zodat content niet achter navbar valt */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: 170px; 
+  }
+}
+
+/* Op desktop geen extra padding */
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0px;
   }
 }
