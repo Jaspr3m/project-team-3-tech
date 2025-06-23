@@ -77,6 +77,30 @@
             <option value="Food">Food</option>
           </select>
 
+          <label for="ageMin">Preferred Age Range:</label>
+          <div class="side-by-side">
+            <input
+              type="number"
+              id="ageMin"
+              name="ageMin"
+              min="18"
+              max="99"
+              value="18"
+              placeholder="Min Age"
+              required
+            />
+            <input
+              type="number"
+              id="ageMax"
+              name="ageMax"
+              min="18"
+              max="99"
+              value="99"
+              placeholder="Max Age"
+              required
+            />
+          </div>
+
           <label for="image">Cover Image:</label>
           <input
             type="file"

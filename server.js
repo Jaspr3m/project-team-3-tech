@@ -598,6 +598,8 @@ app.post("/create-meet", upload.single("image"), async (req, res) => {
       members: userId ? [{ id: userId }] : [], // Automatically add creator as member
       creatorId: userId,
       createdAt: new Date(),
+      ageMin: req.body.ageMin ? parseInt(req.body.ageMin, 10) : undefined,
+      ageMax: req.body.ageMax ? parseInt(req.body.ageMax, 10) : undefined,
     };
     await db.collection("meets").insertOne(meet);
     res.redirect("/meets");
@@ -871,6 +873,8 @@ app.post("/edit-meet/:id", requireLogin, upload.single("image"), async (req, res
       location: req.body.location,
       category: req.body.category,
       address: req.body.address,
+      ageMin: req.body.ageMin ? parseInt(req.body.ageMin, 10) : undefined,
+      ageMax: req.body.ageMax ? parseInt(req.body.ageMax, 10) : undefined,
     };
     if (req.file) {
       updateData.image = "/uploads/" + req.file.filename;
