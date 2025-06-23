@@ -10,6 +10,7 @@
   </head>
   <body>
     <header><%- include('partials/header') %></header>
+         <a href="/" class="back-link">← Back to Home</a>
     <div class="meet-grid">
       <div class="meet-image">
         <img
@@ -73,7 +74,6 @@
       <h2>Who could you match with?</h2>
       <%- include('partials/user-match-list', { userMatches: userMatches }) %>
     </div>
-      <a href="/" class="back-link">← Back to Home</a>
     <footer> <%- include('partials/footer', { userId: userId }) %></footer>
     <script>
       // Attach event listeners to join/leave forms

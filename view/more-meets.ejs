@@ -15,7 +15,9 @@
 <body>
   <%- include('partials/header') %>
 
+  <a href="/" class="back-link">← Back to Home</a>
   <main>
+ 
     <button id="toggle-filters">Show/Hide Filters</button>
 
     <div class="content-layout">
@@ -91,8 +93,6 @@
         <% } %>
       </section>
     </div>
-
-    <a href="/" class="back-link">← Back to Home</a>
    
   </main>
       <footer>  <%- include('partials/footer', { userId: userId }) %> </footer>
