@@ -356,6 +356,56 @@ function applyFilters(filters) {
   return query;
 }
 
+// ─── SETUP PROFILE FLOW ───────────────────────────────────────────────
+
+// Show setup profile form
+app.get("/setup-profile", requireLogin, async (req, res) => {
+  res.render("setup-profile", { userId: req.session.userId, error: null });
+});
+
+// Handle setup profile form submission
+app.post(
+  "/setup-profile",
+  requireLogin,
+  upload.single("photo"),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).render("setup-profile", {
+          userId: req.session.userId,
+          error: "Profile picture is required.",
+        });
+      }
+      const id = req.session.userId;
+      const tags = (req.body.tags || "")
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+      const updateData = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        bio: req.body.bio,
+        tags,
+        vibe: req.body.vibe,
+        preferredGender: req.body.preferredGender,
+        ageRange: {
+          min: parseInt(req.body.ageMin, 10),
+          max: parseInt(req.body.ageMax, 10),
+        },
+        photoUrl: "/uploads/" + req.file.filename,
+        location: req.body.location, // Save location from dropdown
+      };
+      await req.app.locals.db
+        .collection(process.env.USER_COLLECTION)
+        .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
+      res.redirect("/home");
+    } catch (error) {
+      console.error("Error updating setup profile:", error);
+      res.status(500).send("Error saving profile setup");
+    }
+  }
+);
+
 //------------------------ MORE MEETS ------------------------ 
 function applyFilters(filters) {
   const query = {};
@@ -468,6 +518,7 @@ app.get("/api/meets", async (req, res) => {
   }
 });
 
+// log out in profile
 
 app.get('/logout', (req, res) => {
   req.session.destroy(err => {
