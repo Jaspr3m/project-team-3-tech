@@ -71,6 +71,7 @@ async function compareData(plainText, hashed) {
 }
 
 // ─── MIDDLEWARE: Require Login ─────────────────────────────
+// jasprem
 function requireLogin(req, res, next) {
   if (!req.session.userId) {
     return res.redirect('/login');
@@ -104,7 +105,7 @@ app.post(
     if (!errors.isEmpty()) {
       return res.status(400).render("register", {
         errors: errors.array(),
-        formData: { email, name },
+        formData: { email, name, password},
       });
     }
 
@@ -130,22 +131,25 @@ app.post(
     }
   }
 );
+
+// Show login form
+// ryan
 // Show login form
 app.get("/login", (req, res) => {
   res.render("login", { errors: [], formData: {} });
 });
-
+ 
 // Handle login
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
+ 
   if (!email || !password) {
     return res.render("login", {
       errors: [{ msg: "Please provide your email and password" }],
       formData: { email, password },
     });
   }
-
+ 
   try {
     const user = await db
       .collection(process.env.USER_COLLECTION)
@@ -153,18 +157,18 @@ app.post("/login", async (req, res) => {
     if (!user) {
       return res.render("login", {
         errors: [{ msg: "Invalid email or password" }],
-        formData: { email },
+        formData: { email, password },
       });
     }
-
+ 
     const isMatch = await compareData(password, user.password);
     if (!isMatch) {
       return res.render("login", {
         errors: [{ msg: "Invalid email or password" }],
-        formData: { email },
+        formData: { email, password },
       });
     }
-
+ 
     // Log the user in
     req.session.userId = user._id;
     res.redirect("/home");

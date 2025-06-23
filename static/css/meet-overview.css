@@ -161,3 +161,55 @@ body {
     padding-bottom: 0px;
   }
 }
+
+/* buttons edit & delete */
+/* Buttons */
+.join-leave-form button,
+.cancel-btn,
+.edit-meet-btn,
+#delete-meet-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.join-leave-form button {
+  background-color: #007bff;
+  color: white;
+    padding: 8px 16px;
+}
+
+.cancel-btn {
+  background-color: #d9534f;
+  color: white;
+  padding: 8px 16px;
+}
+
+.edit-meet-btn {
+  background-color: #087E8B;
+  color: white;
+}
+
+#delete-meet-btn {
+  background-color: #FF5a5f;
+  color: white;
+}
+
+/* Alert message */
+#is-member h3 {
+  color: green;
+  font-weight: bold;
+  margin-top: 2rem;
+}
+
+
+/* Meet actions container */
+.meet-actions {
+  margin-top: 1rem;
+}
+

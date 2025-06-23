@@ -76,15 +76,16 @@
           </form>
           <% } %>
           <% if (userId && String(userId) === String(meet.creatorId)) { %>
-            <a href="/edit-meet/<%= meet._id %>" class="edit-meet-btn" style="margin-left: 1rem; background: #087E8B; color: #fff; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: bold;">Edit Meet</a>
-            <button id="delete-meet-btn" style="margin-left: 1rem; background: #d9534f; color: #fff; padding: 8px 16px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;">Delete Meet</button>
+           <a href="/edit-meet/<%= meet._id %>" class="edit-meet-btn">Edit Meet</a>
+            <!-- Delete Meet button -->
+           <button id="delete-meet-btn">Delete Meet</button>
           <% } %>
         </div>
-        <div id="is-member" style="margin-top: 2rem">
-          <% if (isMember) { %>
-            <h3 style="color: green; font-weight: bold;">You are already a part of the meet.</h3>
-          <% } %>
-        </div>
+      <div id="is-member">
+         <% if (isMember) { %>
+         <h3>You are already a part of the meet.</h3>
+  <% } %>
+</div>
       </div>
     </div>
     <div class="user-match-list-section">
