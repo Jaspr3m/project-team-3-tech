@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/register.css" />
+    <title>Create Account</title>
+
+  </head>
+  <body>
+    <div class="login-flex-container">
+      <div class="login-bg"></div>
+      <div class="login-content">
+        <section>
+          <h2>Create account</h2>
+          <form id="registerForm" method="POST" action="/register">
+            <label for="email">E-mail:</label>
+            <input
+              type="email"
+              class="email"
+              name="email"
+              required
+              value="<%= formData && formData.email ? formData.email : '' %>"
+            />
+            <div class="feedback emailFeedback"></div>
+            <label for="name">Name:</label>
+            <input
+              type="text"
+              class="name"
+              name="name"
+              required
+              value="<%= formData && formData.name ? formData.name : '' %>"
+            />
+            <label for="password">Password:</label>
+            <div class="password-container">
+              <input
+                type="password"
+                class="password"
+                name="password"
+                required
+                value="<%= formData && formData.password ? formData.password : '' %>"
+              />
+              <button
+                type="button"
+                class="showPassword"
+                aria-label="Toggle password visibility"
+              >
+                <!-- SVG show/hide icons… -->
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <title>Show password</title>
+                  <path
+                    d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12"
+                    stroke="#000"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M1 12C1 12 5 20 12 20C19 20 23 12 23 12"
+                    stroke="#000"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                    stroke="#000"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="feedback passwordFeedback"></div>
+            <button type="submit">Create account</button>
+          </form>
+          Have an account? <a href="/login">Log in</a>
+          <% if (errors && errors.length) { %>
+          <ul class="error-list">
+            <% errors.forEach(error => { %>
+            <li><%= error.msg %></li>
+            <% }) %>
+          </ul>
+          <% } %>
+        </section>
+      </div>
+    </div>
+    <script src="/static/script/register.js"></script>
+  </body>
+</html>

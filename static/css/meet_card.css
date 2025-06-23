@@ -1,0 +1,109 @@
+.meet-card {
+  display: flex;
+  flex-direction: column;
+  background: #bbe0e5;
+  border-radius: 1rem;
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.08);
+  padding: 1.2rem;
+  width: 100%;
+  max-width: 17.5rem;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  color: #333;
+  overflow: hidden;
+  position: relative;
+  border-left: 0.375rem solid #087E8B;
+  border-bottom: 0.375rem solid #087E8B;
+  padding-left: 1rem;
+}
+
+.meet-card:hover {
+  transform: translateY(-0.375rem);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0.375rem 1.5rem rgba(0, 0, 0, 0.12);
+}
+
+.meet-image {
+  width: 100%;
+  height: 10rem;
+  object-fit: cover;
+  border-radius: 0.7rem;
+  margin-bottom: 0.9rem;
+}
+
+.meet-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 0.6rem;
+  color: #222;
+}
+
+.meet-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem 1rem;
+  font-size: 0.88rem;
+  color: #555;
+  margin-bottom: 0.7rem;
+}
+
+.meet-meta p {
+  margin: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+
+.meet-description {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.meet-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.meet-actions a,
+.meet-actions button {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.25s ease;
+  position: relative;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.meet-actions a:hover {
+  transform: scale(1.03);
+}
+
+.view-btn {
+  background-color: #087E8B;
+  color: white;
+}
+
+.view-btn:hover {
+  background-color: #06646d;
+}
+
+.meet-row {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scroll-snap-type: x mandatory;
+}
+
+.meet-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}

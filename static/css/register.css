@@ -1,0 +1,215 @@
+/* ─── RESET & BASIS ───────────────────────────────────────────────── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+html, body {
+  height: 100%;
+}
+
+/* ─── ACHTERGROND + OVERLAY ───────────────────────────────────────── */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('/static/images/meetspicture.png') no-repeat center/cover;
+  position: relative;
+}
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 0;
+}
+
+/* ─── WRAPPER VOOR CENTRERING ──────────────────────────────────────── */
+.login-flex-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+/* ─── FORM SECTION ─────────────────────────────────────────────────── */
+.login-flex-container section {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 30px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  text-align: center;
+  animation: fadeIn 1s ease-out forwards;
+  opacity: 0;
+}
+
+/* ANIMATIE */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── TITELS ───────────────────────────────────────────────────────── */
+.login-flex-container h1 {
+  font-size: 24px;
+  color: #F7A7A8;
+  margin-bottom: 10px;
+}
+.login-flex-container h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* ─── FORMULIER ───────────────────────────────────────────────────── */
+.login-flex-container form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.login-flex-container label {
+  text-align: left;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #555;
+}
+
+.login-flex-container input[type="email"],
+.login-flex-container input[type="text"],
+.login-flex-container .password-container input {
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.login-flex-container input:focus {
+  outline: none;
+  border-color: #F7A7A8;
+}
+
+/* ─── PASSWORD TOGGLE ──────────────────────────────────────────────── */
+.password-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 45px;
+}
+
+.showPassword {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.showPassword svg {
+  width: 20px;
+  height: 30px;
+  stroke: #888;
+  transition: stroke 0.3s;
+  margin-bottom: 1rem;
+}
+
+.showPassword:hover svg {
+  stroke: #FF7A59;
+}
+
+/* ─── SUBMIT KNOP ─────────────────────────────────────────────────── */
+button[type="submit"] {
+  background-color: #F7A7A8;
+  color: #fff;
+  padding: 15px;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  margin-top: 10px;
+  margin-bottom: 1rem;
+}
+
+button[type="submit"]:hover {
+  transform: scale(1.02);
+  background-color: #e69a96;
+}
+
+/* ─── LINKS ONDERIN ───────────────────────────────────────────────── */
+section > a,
+section > p > a {
+  color: #F7A7A8;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+section > a:hover,
+section > p > a:hover {
+  text-decoration: underline;
+}
+
+section > p {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #444;
+}
+
+/* ─── FOUTMELDINGEN ───────────────────────────────────────────────── */
+.error-list {
+  list-style: none;
+  color: red;
+  font-size: 14px;
+  margin-top: 20px;
+  text-align: left;
+  padding-left: 20px;
+}
+
+.error-list li {
+  margin-bottom: 5px;
+}
+
+/* ─── FEEDBACK BIJ VALIDATIE ──────────────────────────────────────── */
+.feedback {
+  font-size: 13px;
+  height: 18px;
+  margin-top: -15px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.feedback.invalid { color: red; }
+.feedback.valid   { color: green; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .login-flex-container section {
+    padding: 30px 20px;
+    border-radius: 24px;
+  }
+  .login-flex-container h1 { font-size: 22px; }
+  .login-flex-container h2 { font-size: 18px; }
+}
+
+@media (max-width: 480px) {
+  .login-flex-container section {
+    padding: 20px 15px;
+    border-radius: 20px;
+  }
+  .login-flex-container h1 { font-size: 20px; }
+  .login-flex-container h2 { font-size: 16px; }
+  button[type="submit"] {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+

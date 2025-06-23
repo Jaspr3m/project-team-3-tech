@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile</title>
+  <link rel="stylesheet" href="/static/css/profile.css" />
+    <link rel="stylesheet" href="/static/css/header.css" />
+      <link rel="stylesheet" href="/static/css/footer.css" />
+
+ 
+
+</head>
+<body>
+  <header> 
+
+<%- include('partials/header') %>
+  </header>
+
+  <main class="profile-container">
+    <% if (!editing && profile) { %>
+      <% if (profile.photoUrl) { %>
+        <img src="<%= profile.photoUrl %>" alt="Profile photo" class="profile-pic"/>
+      <% } %>
+      <h1><%= profile.name %></h1>
+      <p class="location"><%= profile.location %></p>
+
+      <p><strong>Tags:</strong><br>
+        <% (profile.tags || []).forEach(tag => { %>
+          <span class="box"><%= tag %></span>
+        <% }) %>
+      </p>
+
+      <p><strong>Languages:</strong><br>
+        <% (profile.languages || []).forEach(lang => { %>
+          <span class="box"><%= lang %></span>
+        <% }) %>
+      </p>
+
+      <p><strong>Bio:</strong><br><%= profile.bio %></p>
+
+          <% if (profile.vibe) { %>
+      <p><strong>Vibe:</strong><br><%= profile.vibe %></p>
+    <% } %>
+
+    <% if (profile.preferredGender) { %>
+      <p><strong>Gender:</strong><br>
+        <%= profile.preferredGender === 'm' ? 'Male' : 'Female' %>
+      </p>
+    <% } %>
+
+    <% if (profile.ageMin != null && profile.ageMax != null) { %>
+      <p><strong>Age Range:</strong><br>
+        <%= profile.ageMin %> – <%= profile.ageMax %> years
+      </p>
+    <% } %>
+    <% if (userId && profile._id && userId.toString() === profile._id.toString()) { %>
+    <div class="button-row">
+      <a href="/profile/<%= profile._id %>?edit=true" class="edit-btn">Edit Profile</a>
+      <button id="logoutBtn" class="logout-link">Logout</button>
+      <div id="logoutModal" class="modal-overlay" hidden>
+        <div class="modal">
+          <h2>Confirm Logout</h2>
+          <p>Are you sure you want to log out?</p>
+          <div class="modal-actions">
+            <button id="confirmLogout" class="btn btn-danger">Yes, log me out</button>
+            <button id="cancelLogout" class="btn btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <% } else if (editing && profile) { %>
+
+      <form action="/profile/<%= profile._id %>" method="POST" enctype="multipart/form-data">
+        <label>Name:</label>
+        <input type="text" name="name" value="<%= profile.name %>">
+
+        <label>Profile picture:</label>
+        <input type="file" name="photo">
+
+        <label>Tags:</label>
+        <input type="text" name="tags" value="<%= (profile.tags||[]).join(',') %>">
+
+        <label>Languages:</label>
+        <input type="text" name="languages" value="<%= (profile.languages||[]).join(',') %>">
+
+        <label>Bio:</label>
+        <textarea name="bio"><%= profile.bio %></textarea>
+        <label>Vibe:</label>
+        <select name="vibe" required>
+          <option value="">Select vibe</option>
+          <option value="Chill">Chill</option>
+          <option value="Adventurous">Adventurous</option>
+          <option value="Artsy">Artsy</option>
+          <option value="Party">Party</option>
+          <option value="Mindful">Mindful</option>
+          <option value="Foodie">Foodie</option>
+          <option value="Explorer">Explorer</option>
+          <option value="Sporty">Sporty</option>
+        </select>
+
+        <label>Preferred Gender: </label>
+        <select name="preferredGender" required>
+          <option value="">Select gender</option>
+          <option value="m">Male</option>
+          <option value="f">Female</option>
+        </select>
+
+        <label>Date of Birth:</label>
+        <input
+          type="date"
+          name="dob"
+          required
+          max="<%= new Date(Date.now() - 568025136000).toISOString().split('T')[0] %>"
+        />
+
+        <label>Preferred Age Range:</label>
+        <div class="side-by-side">
+          <input
+            type="number"
+            name="ageMin"
+            min="18"
+            max="99"
+            value="18"
+            placeholder="Min Age"
+            required
+          />
+          <input
+            type="number"
+            name="ageMax"
+            min="18"
+            max="99"
+            value="99"
+            placeholder="Max Age"
+            required
+          />
+        </div>
+
+        <label>Location:</label>
+        <select name="location" required>
+          <option value="">Select location</option>
+          <option value="Amsterdam">Amsterdam</option>
+          <option value="Den Haag">Den Haag</option>
+          <option value="Rotterdam">Rotterdam</option>
+          <option value="Utrecht">Utrecht</option>
+        </select>
+
+          <button type="submit">Save</button>
+        <a href="/profile/<%= userId %>" class="cancel-btn">Cancel</a>
+      </form>
+       
+    <% } else { %>
+      <h2>No profile found.</h2>
+    <% } %>
+
+
+  </main>
+  <footer>
+
+  <%- include('partials/footer', { userId: userId }) %>
+  </footer>
+
+<script>
+
+// log out //
+document.addEventListener('DOMContentLoaded', () => {
+    const logoutBtn    = document.getElementById('logoutBtn');
+    const logoutModal  = document.getElementById('logoutModal');
+    const confirmBtn   = document.getElementById('confirmLogout');
+    const cancelBtn    = document.getElementById('cancelLogout');
+
+    // Open modal
+    logoutBtn.addEventListener('click', () => {
+      logoutModal.classList.add('active');
+    });
+
+    // Cancel
+    cancelBtn.addEventListener('click', () => {
+      logoutModal.classList.remove('active');
+    });
+
+    // Confirm: redirect to /logout
+    confirmBtn.addEventListener('click', () => {
+      window.location.href = '/logout';
+    });
+
+    // Click buiten modal sluit ‘m ook
+    logoutModal.addEventListener('click', e => {
+      if (e.target === logoutModal) {
+        logoutModal.classList.remove('active');
+      }
+    });
+  });
+
+
+  
+</script>
+
+</body>
+</html>
+
+

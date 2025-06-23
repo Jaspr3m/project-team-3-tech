@@ -1,0 +1,125 @@
+
+
+<header>
+  <!-- Desktop navbar -->
+  <nav class="desktop-nav">
+    <div class="nav-left">
+      <a href="/"><img src="/static/images/logo.svg" alt="Travel Link logo" class="logo" /></a>
+    </div>
+    
+    <form action="/more-meets" method="GET" class="search-form">
+      <input
+        type="text"
+        name="keyword"
+        placeholder="Search meets..."
+        class="search-input"
+        value="<%= typeof keyword !== 'undefined' ? keyword : '' %>"
+
+      />
+    </form>
+    
+  <div class="nav-links">
+    <a data-active="home" href="/home"            class="nav-link">Home</a>
+    
+    <a href="/create-meet"    class="nav-link nav-button">Create Meet</a>
+    <a href="/meets"               class="nav-link nav-button">Manage Meets</a>
+    <a data-active="profile" href="/profile/<%= userId %>"class="nav-link"><img src="/static/images/profile.svg" alt="Profile"></a>
+</div>
+</nav>
+
+<!-- Guest-only Modal -->
+<div class="guest-modal-backdrop">
+  <div class="guest-modal">
+    <!-- ✕ close icon -->
+    <button class="guest-modal__close" id="guest-modal-close-x" aria-label="Close">&times;</button>
+
+    <h2 class="guest-modal__title">Almost there!</h2>
+    <p class="guest-modal__message">You need an account to use this function.</p>
+    <div class="guest-modal__actions">
+            <a href=/login><button class="guest-modal__btn guest-modal__btn--secondary"">
+        Login
+      </button>
+    </a>
+    <a href="/register">
+      <button class="guest-modal__btn guest-modal__btn--primary">
+          Create account
+      </button>
+      </a>
+    </div>
+  </div>
+</div>
+
+
+  
+</header>
+<script>
+  // Ryans pop up
+document.addEventListener('DOMContentLoaded', () => {
+  const currentUser = sessionStorage.getItem('currentUser');
+  const gatedLinks = document.querySelectorAll(`
+  a.nav-button[href="/create-meet"],
+  a.nav-button[href="/meets"],
+  a.nav-link[href="/profile/"], 
+  .mobile-navbar .nav-icon[href="/create-meet"],
+  .mobile-navbar .nav-icon[href="/meets"],
+  .mobile-navbar .nav-icon[href^="/profile/"]
+  
+`
+  );
+  const backdrop   = document.querySelector('.guest-modal-backdrop');
+  const btnCloseX  = document.getElementById('guest-modal-close-x');
+
+  // Only block for guests
+  if (currentUser === 'guest') {
+    gatedLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        backdrop.style.display = 'flex';
+      });
+    });
+  }
+
+  // Close via “×”
+  btnCloseX.addEventListener('click', () => {
+    backdrop.style.display = 'none';
+  });
+
+  // Click outside to close
+  backdrop.addEventListener('click', e => {
+    if (e.target === backdrop) {
+      backdrop.style.display = 'none';
+    }
+  });
+});
+
+// ivy navbar highlight // 
+  document.addEventListener('DOMContentLoaded', () => {
+  
+    const path = window.location.pathname.toLowerCase();
+    document.querySelectorAll('.nav-link[data-active]').forEach(link => {
+      const key = link.dataset.active.toLowerCase();
+      if (path.includes(key)) {
+        link.classList.add('active');
+      }
+    });
+
+    // Search input handler kioko
+    const searchInput = document.getElementById("searchInput");
+    if (!searchInput) return;
+
+    searchInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const keyword = e.target.value.trim();
+
+        if (keyword) {
+          
+          const currentPath = window.location.pathname;
+          const base = currentPath.includes('/more-meets') ? '/more-meets' : '/search';
+          window.location.href = `${base}?keyword=${encodeURIComponent(keyword)}`;
+        }
+      }
+    });
+  });
+</script>
+

@@ -1,0 +1,34 @@
+<div class="user-match-list">
+  <% if (userMatches && userMatches.length > 0) { %> <%
+  userMatches.forEach(function(match, idx) { %>
+  <div class="user-match <%= idx === 0 ? 'top-match' : '' %>">
+    <div class="user-info">
+      <img
+        src="<%= match.user.photoUrl || '/static/images/profile.png' %>"
+        alt="Profile"
+        class="user-photo"
+      />
+      <div>
+        <a href="/profile/<%= match.user._id %>">
+          <strong>
+            <%= match.user.firstName || match.user.name %> <%= match.user.lastName || '' %>
+          </strong>
+        </a>
+        <% if (idx === 0) { %>
+        <span class="your-match-label">BEST MATCH</span>
+        <% } %>
+        <div class="match-score">Match: <%= match.matchScore %>%</div>
+        <div class="user-vibe">Vibe: <%= match.user.vibe || 'N/A' %></div>
+        <div class="user-gender">
+          Preferred Gender: <%= match.user.preferredGender || 'N/A' %>
+        </div>
+        <div class="user-age-range">
+          Age Range: <%= match.user.ageMin || '?' %> - <%= match.user.ageMax || '?' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% }); %> <% } else { %>
+  <div>No matches found.</div>
+  <% } %>
+</div>

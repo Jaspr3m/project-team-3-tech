@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/header.css" />
+    <link rel="stylesheet" href="/static/css/manage-meets.css" />
+    <link rel="stylesheet" href="/static/css/footer.css" />
+  
+    <title>Manage Meets</title>
+  </head>
+  <body>
+    <header><%- include('partials/header') %></header>
+    <main class="meets-main">
+      <% var joined = typeof joinedMeets !== 'undefined' ? joinedMeets : []; %>
+      <% var created = typeof createdMeets !== 'undefined' ? createdMeets : [];
+      %>
+      <div class="meets-tab-btns">
+        <button id="joinedTabBtn" class="tab-btn">Joined Meets</button>
+        <button id="createdTabBtn" class="tab-btn">Created Meets</button>
+      </div>
+      <div id="joinedMeetsSection">
+        <h1>Joined Meets</h1>
+        <% if (joined.length === 0) { %>
+        <p class="meets-empty">You haven't joined any meets yet.</p>
+        <% } %>
+        <div class="meet-grid-4">
+          <% joined.forEach(meet => { %> <%- include('partials/meet-card', {
+          meet: meet }) %> <% }) %>
+        </div>
+      </div>
+      <div id="createdMeetsSection" style="display: none">
+        <h1>Created Meets</h1>
+        <% if (created.length === 0) { %>
+        <p class="meets-empty">You haven't created any meets yet.</p>
+        <% } %>
+        <div>
+          <% created.forEach(meet => { %> <%- include('partials/meet-card', {
+          meet: meet }) %> <% }) %>
+        </div>
+      </div>
+    </main>
+    <script>
+      const joinedBtn = document.getElementById("joinedTabBtn");
+      const createdBtn = document.getElementById("createdTabBtn");
+      const joinedSection = document.getElementById("joinedMeetsSection");
+      const createdSection = document.getElementById("createdMeetsSection");
+      joinedBtn.addEventListener("click", function () {
+        joinedSection.style.display = "";
+        createdSection.style.display = "none";
+        joinedBtn.classList.add("active");
+        createdBtn.classList.remove("active");
+      });
+      createdBtn.addEventListener("click", function () {
+        joinedSection.style.display = "none";
+        createdSection.style.display = "";
+        createdBtn.classList.add("active");
+        joinedBtn.classList.remove("active");
+      });
+    </script>
+    <footer> 
+  <%- include('partials/footer', { userId: userId }) %>
+  </footer>
+  </body>
+</html>

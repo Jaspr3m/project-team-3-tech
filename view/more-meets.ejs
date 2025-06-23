@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/static/css/profile.css" />
+  <link rel="stylesheet" href="/static/css/header.css" />
+  <link rel="stylesheet" href="/static/css/homepage.css" />
+  <link rel="stylesheet" href="/static/css/filter.css" />
+   <link rel="stylesheet" href="/static/css/footer.css" />
+  <title>More Meets</title>
+</head>
+
+<body>
+  <%- include('partials/header') %>
+
+  <a href="/" class="back-link">← Back to Home</a>
+  <main>
+ 
+    <button id="toggle-filters">Show/Hide Filters</button>
+
+    <div class="content-layout">
+      <section id="filter-container" class="filter-section <%= keyword ? 'hidden' : '' %>">
+        <h1>Filter Meets</h1>
+        <p class="scroll-hint"><strong>↓ Scroll for more filters ↓</strong></p>
+
+        <form id="filter-form" class="filter-form" method="GET" action="/more-meets">
+          <div class="filter-group">
+            <label>City:</label>
+            <select name="location">
+              <option value="">Any</option>
+              <option value="Amsterdam" <%=location==='Amsterdam' ? 'selected' : '' %>>Amsterdam</option>
+              <option value="Rotterdam" <%=location==='Rotterdam' ? 'selected' : '' %>>Rotterdam</option>
+              <option value="Utrecht" <%=location==='Utrecht' ? 'selected' : '' %>>Utrecht</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Category:</label>
+            <select name="category">
+              <option value="">Any</option>
+              <option value="Party" <%=category==='Party' ? 'selected' : '' %>>Party</option>
+              <option value="Study" <%=category==='Study' ? 'selected' : '' %>>Study</option>
+              <option value="Walk" <%=category==='Walk' ? 'selected' : '' %>>Walk</option>
+              <option value="Food" <%=category==='Food' ? 'selected' : '' %>>Food</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Date:</label>
+            <input type="date" name="startDate" value="<%= startDate || '' %>" />
+            <input type="date" name="endDate" value="<%= endDate || '' %>" />
+          </div>
+
+          <div class="filter-group">
+            <label>Max People:</label>
+            <input type="number" name="minPeople" min="1" value="<%= minPeople || '' %>" placeholder="Min" />
+            <input type="number" name="maxPeople" min="1" value="<%= maxPeople || '' %>" placeholder="Max" />
+          </div>
+
+          <div class="filter-group">
+            <label>Address:</label>
+            <input type="text" name="address" placeholder="Streetname" value="<%= address || '' %>" />
+          </div>
+
+          <div class="filter-group">
+            <label>Sort by:</label>
+            <select name="sort">
+              <option value="">-- choose --</option>
+              <option value="date_asc" <%=sort==='date_asc' ? 'selected' : '' %>>Date (newest)</option>
+              <option value="date_desc" <%=sort==='date_desc' ? 'selected' : '' %>>Date (oldest)</option>
+              <option value="title_asc" <%=sort==='title_asc' ? 'selected' : '' %>>Title (A-Z)</option>
+              <option value="title_desc" <%=sort==='title_desc' ? 'selected' : '' %>>Title (Z-A)</option>
+            </select>
+          </div>
+          <div class="filter-buttons">
+            <button type="submit" form="filter-form">Apply Filters</button>
+            <button type="button" onclick="window.location.href='/more-meets'" class="clear-filters-btn">Clear All</button>
+          </div>
+        </form>
+
+       
+      </section>
+
+      <section class="meet-row">
+        <% if (!meets.length) { %>
+          <p>No meets found.</p>
+        <% } else { %>
+          <% meets.forEach(meet => { %>
+            <%- include('partials/meet-card.ejs', { meet: meet }) %>
+          <% }) %>
+        <% } %>
+      </section>
+    </div>
+   
+  </main>
+      <footer>  <%- include('partials/footer', { userId: userId }) %> </footer>
+
+    <script>
+      const toggleBtn = document.getElementById("toggle-filters");
+      const filterContainer = document.getElementById("filter-container");
+      toggleBtn.addEventListener("click", () => filterContainer.classList.toggle("hidden"));
+    </script>
+
+</body>
+
+</html>

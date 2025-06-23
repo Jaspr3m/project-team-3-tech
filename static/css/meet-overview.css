@@ -1,0 +1,215 @@
+/* ─── Bestaande styling ─────────────────────────────────────────── */
+body {
+  background-color: #f5f5f5;
+  color: #111;
+  line-height: 1.5;
+  margin: 0 auto;
+}
+
+.meet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 900px;
+  margin: 40px auto 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 2rem;
+}
+
+.meet-image {
+  text-align: center;
+}
+
+.meet-image img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.meet-info h1 {
+  margin-bottom: 0.5rem;
+}
+
+.meet-info p {
+  margin: 0.5rem 0;
+}
+
+.meet-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-start;
+  gap: 1.5rem;
+}
+
+.meet-actions button {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #53b8d7;
+  color: #fff;
+  transition: background 0.2s;
+}
+
+.meet-actions .cancel-btn {
+  background: #e0e0e0;
+  color: #222;
+}
+
+/* ─── Back-link knop ─────────────────────────────────────────────── */
+
+.back-link {
+  display: inline-block;
+  margin-left: 2em;
+  margin-top: 2em;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 2px solid #53b8d7;
+  border-radius: 8px;
+  color: #53b8d7;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.back-link:hover {
+  background: #53b8d7;
+  color: #fff;
+}
+
+/* ─── User-match lijst blijft ongewijzigd ───────────────────────── */
+.user-match-list-section {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 2rem;
+}
+
+.user-match-list .user-match {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.user-match-list .user-match:last-child {
+  border-bottom: none;
+}
+
+.user-photo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.your-match-label {
+  background: #53b8d7;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.2em 0.7em;
+  font-size: 0.9em;
+  margin-left: 0.7em;
+}
+
+.match-score {
+  font-weight: bold;
+  color: #53b8d7;
+  margin-top: 0.2em;
+}
+
+/* ─── MOBIELE LAY-OUT (SMALLER THAN 768px) ───────────────────────── */
+@media (max-width: 767px) {
+  .meet-grid {
+    /* switch van twee kolommen naar één kolom */
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  .meet-image img {
+    width: 100%;
+    height: auto;
+    max-height: none;
+  }
+  .meet-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* Houd extra onder-padding op mobiel, zodat content niet achter navbar valt */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: 170px; 
+  }
+}
+
+/* Op desktop geen extra padding */
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0px;
+  }
+}
+
+/* buttons edit & delete */
+/* Buttons */
+.join-leave-form button,
+.cancel-btn,
+.edit-meet-btn,
+#delete-meet-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.join-leave-form button {
+  background-color: #007bff;
+  color: white;
+    padding: 8px 16px;
+}
+
+.cancel-btn {
+  background-color: #d9534f;
+  color: white;
+  padding: 8px 16px;
+}
+
+.edit-meet-btn {
+  background-color: #087E8B;
+  color: white;
+}
+
+#delete-meet-btn {
+  background-color: #FF5a5f;
+  color: white;
+}
+
+/* Alert message */
+#is-member h3 {
+  color: green;
+  font-weight: bold;
+  margin-top: 2rem;
+}
+
+
+/* Meet actions container */
+.meet-actions {
+  margin-top: 1rem;
+}
+

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TravelLink</title>
+  <link rel="stylesheet" href="/static/css/header.css" />
+  <link rel="stylesheet" href="/static/css/homepage.css" />
+  <link rel="stylesheet" href="/static/css/footer.css" />
+  <link rel="stylesheet" href="/static/css/reviews.css" />
+</head>
+<body>
+
+  <header>
+    <%- include('partials/header') %>
+   
+  </header>
+
+  <div class="popup-tooltip">Create your own meet?</div>
+
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Welcome to TravelLink</h1>
+        <p>Discover meets, make friends, and explore together.</p>
+        <a href="/create-meet" class="cta-button">Create a Meet</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>Find a meet near <em>you!</em></h2>
+      <a href="/more-meets" class="more-meets">Explore More Meets</a>
+      <div class="meet-row">
+        <% meets.forEach(meet => { %>
+          <%- include('partials/meet-card', { meet: meet }) %>
+        <% }) %>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/reviews') %>
+<footer>  <%- include('partials/footer', { userId: userId }) %></footer>
+
+
+
+    <script>
+      const testimonials = document.querySelectorAll('.testimonial');
+      const wrapper = document.querySelector('.testimonial-wrapper');
+      const nextBtn = document.querySelector('.carousel-btn.next');
+      const prevBtn = document.querySelector('.carousel-btn.prev');
+      const dots = document.querySelectorAll('.dot');
+    
+      let current = 0;
+      let interval;
+    
+      function updateCarousel() {
+        const total = testimonials.length;
+        wrapper.style.transform = `translateX(-${(current * 100)}%)`;
+        testimonials.forEach((t, i) => t.classList.toggle('active', i === current));
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+      }
+    
+      function showNext() {
+        current = (current + 1) % testimonials.length;
+        updateCarousel();
+      }
+    
+      function showPrev() {
+        current = (current - 1 + testimonials.length) % testimonials.length;
+        updateCarousel();
+      }
+    
+      function startAutoRotate() {
+        interval = setInterval(showNext, 5000);
+      }
+    
+      function stopAndRestartAutoRotate() {
+        clearInterval(interval);
+        startAutoRotate();
+      }
+    
+      nextBtn.addEventListener('click', () => {
+        showNext();
+        stopAndRestartAutoRotate();
+      });
+    
+      prevBtn.addEventListener('click', () => {
+        showPrev();
+        stopAndRestartAutoRotate();
+      });
+    
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          current = parseInt(dot.getAttribute('data-index'));
+          updateCarousel();
+          stopAndRestartAutoRotate();
+        });
+      });
+    
+      updateCarousel();
+      startAutoRotate();
+    </script>
+    
+    
+    
+  </body>
+</html> 
