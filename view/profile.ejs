@@ -54,20 +54,22 @@
         <%= profile.ageMin %> – <%= profile.ageMax %> years
       </p>
     <% } %>
+    <% if (userId && profile._id && userId.toString() === profile._id.toString()) { %>
     <div class="button-row">
-  <a href="/profile/<%= profile._id %>?edit=true" class="edit-btn">Edit Profile</a>
-  <button id="logoutBtn" class="logout-link">Logout</button>
-  <div id="logoutModal" class="modal-overlay" hidden>
-  <div class="modal">
-    <h2>Confirm Logout</h2>
-    <p>Are you sure you want to log out?</p>
-    <div class="modal-actions">
-      <button id="confirmLogout" class="btn btn-danger">Yes, log me out</button>
-      <button id="cancelLogout" class="btn btn-secondary">Cancel</button>
+      <a href="/profile/<%= profile._id %>?edit=true" class="edit-btn">Edit Profile</a>
+      <button id="logoutBtn" class="logout-link">Logout</button>
+      <div id="logoutModal" class="modal-overlay" hidden>
+        <div class="modal">
+          <h2>Confirm Logout</h2>
+          <p>Are you sure you want to log out?</p>
+          <div class="modal-actions">
+            <button id="confirmLogout" class="btn btn-danger">Yes, log me out</button>
+            <button id="cancelLogout" class="btn btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</div>
+    <% } %>
 
     <% } else if (editing && profile) { %>
 
