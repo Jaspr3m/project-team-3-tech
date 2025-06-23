@@ -239,8 +239,9 @@ button {
   border: 1px solid var(--grey-light);
   border-radius: var(--radius);
   background: #fff;
-  appearance: none;           /* verberg browser-pijltje */
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A0A0A0' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  appearance: none;           
+  background-image: url("data:image/svg+xml,%3Csvg%20width%3D%2227%22%20height%3D%2226%22%20viewBox%3D%220%200%2027%2026%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%3Cpath%20d%3D%22M12.804%2018C12.596%2018%2012.432%2017.868%2012.312%2017.604L9.348%2010.584C9.288%2010.444%209.272%2010.32%209.3%2010.212C9.328%2010.1%209.42%2010.008%209.576%209.936C9.904%209.772%2010.136%209.856%2010.272%2010.188L13.074%2016.824H12.726L15.456%2010.188C15.588%209.86%2015.82%209.776%2016.152%209.936C16.292%2010.008%2016.378%2010.1%2016.41%2010.212C16.446%2010.32%2016.436%2010.444%2016.38%2010.584L13.392%2017.604C13.268%2017.868%2013.088%2018%2012.852%2018H12.804Z%22%20fill%3D%22black%22/%3E%0A%3C/svg%3E%0A");
+  /*bron: https://chatgpt.com/share/6858bbab-6500-8000-bec5-6f350cc0e8db */
   background-repeat: no-repeat;
   background-position: right 1rem center;
   box-sizing: border-box;
@@ -254,20 +255,18 @@ button {
   outline: none;
 }
 
-/* Zorg dat side-by-side velden flexibel krimpen en wrappen */
 .side-by-side {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
 }
 
-/* Elk direct kind (input of select) groeit evenredig */
 .side-by-side > * {
   flex: 1 1 0;
-  min-width: 0; /* belangrijk zodat items niet buiten container breken */
+  min-width: 0; 
 }
 
-/* OP MOBIELE SCHERMEN: pak side-by-side en zet onder elkaar */
+/* OP MOBIELE SCHERMEN: */
 @media (max-width: 600px) {
   .side-by-side {
     flex-direction: column;
@@ -282,17 +281,6 @@ button {
 
 /* log out pop up */
 
-/* Overlay */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  z-index: 2000;
-}
-
-/* Modal box */
-/* modal-overlay standaard onzichtbaar */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -302,12 +290,11 @@ button {
   place-items: center;
 }
 
-/* zodra we ‘m actief maken: show grid */
 .modal-overlay.active {
   display: grid;
 }
 
-/* Modal box styling (zelfde als eerder) */
+
 .modal {
   background: #fff;
   border-radius: var(--radius);

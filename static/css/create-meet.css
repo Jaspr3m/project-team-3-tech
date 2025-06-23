@@ -60,11 +60,11 @@ body {
       }
 
 .meet-actions {
-        grid-column: 1 / -1;        /* onder het hele grid */
+        grid-column: 1 / -1;        
         display: flex;
         justify-content: flex-end;
         gap: 12px;
-        margin-top: 16px;           /* ruimte boven de knoppen */
+        margin-top: 16px;         
         position: static;           /* niet meer absoluut */
 }
 

@@ -193,7 +193,7 @@ body {
 }
 
 #joinedTabBtn {
-  background: #087E8B;     /* accentkleur voor actieve tab */
+  background: #087E8B;    
   color: #fff;
 }
 
@@ -272,7 +272,7 @@ body {
 
 .view-btn {
   margin-top: 1rem;
-  background: #087E8B;      /* accentkleur voor view-knop */
+  background: #087E8B;     
   color: #fff;
   padding: 0.5rem 1.2rem;
   border: none;
@@ -285,7 +285,7 @@ body {
 }
 
 .view-btn:hover {
-  background: #065a61;      /* iets donkerder bij hover */
+  background: #065a61;     
 }
 
 @media (max-width: 700px) {

@@ -94,7 +94,7 @@ body, html {
 
 .nav-link[data-active="profile"] img {
   width: 30px;
-   filter: brightness(0) saturate(100%);
+  filter: brightness(0) saturate(100%);
   height: 22px;
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
@@ -210,13 +210,13 @@ body, html {
   BACKDROP (standaard verborgen)
 ───────────────────────────────────────────────────────────────────*/
 .guest-modal-backdrop {
-  display: none;                /* toon door .active toe te voegen */
+  display: none;               
   position: fixed;
-  inset: 0;                     /* top/right/bottom/left: 0 */
+  inset: 0;                     
   background: rgba(0, 0, 0, 0.6);
   align-items: center;
   justify-content: center;
-  z-index: 1000;                /* boven header/nav */
+  z-index: 1000;           
 }
 
 /* Zodra je .active toevoegt */
@@ -234,7 +234,7 @@ body, html {
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   max-width: 320px;
-  width: 90%;                  /* responsive */
+  width: 90%;                  
   text-align: center;
 }
 
