@@ -26,8 +26,26 @@
         <p><strong>Time:</strong> <%= meet.time %></p>
         <p><strong>Max People:</strong> <%= meet.maxPeople %></p>
         <p>
-          <strong>Age Range:</strong> <%= meet.ageMin || '?' %> - <%=
-          meet.ageMax || '?' %>
+          <strong>Age Range:</strong>
+          <% if (!meet.ageMin && !meet.ageMax) { %>
+            Any
+          <% } else if (meet.ageMin && meet.ageMax) { %>
+            <%= meet.ageMin %> - <%= meet.ageMax %>
+          <% } else if (meet.ageMin) { %>
+            <%= meet.ageMin %>+
+          <% } else if (meet.ageMax) { %>
+            Up to <%= meet.ageMax %>
+          <% } %>
+        </p>
+        <p>
+          <strong>Created by:</strong>
+          <% if (userId && String(userId) === String(meet.creatorId)) { %>
+            You
+          <% } else { %>
+            <a href="/profile/<%= meet.creatorId %>">
+              <%= meet.creatorName || 'View Profile' %>
+            </a>
+          <% } %>
         </p>
         <div
           class="meet-actions"
@@ -125,6 +143,16 @@
           }
         });
       }
+      // Image size validation (for any file input with class 'img-upload')
+      document.querySelectorAll('input[type="file"].img-upload').forEach(input => {
+        input.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file && file.size > 5 * 1024 * 1024) {
+            alert('Image must be 5MB or less. Please choose a smaller file.');
+            e.target.value = '';
+          }
+        });
+      });
     </script>
   </body>
 </html>

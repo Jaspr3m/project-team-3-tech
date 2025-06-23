@@ -9,10 +9,11 @@
         class="user-photo"
       />
       <div>
-        <strong
-          ><%= match.user.firstName || match.user.name %> <%=
-          match.user.lastName || '' %></strong
-        >
+        <a href="/profile/<%= match.user._id %>">
+          <strong>
+            <%= match.user.firstName || match.user.name %> <%= match.user.lastName || '' %>
+          </strong>
+        </a>
         <% if (idx === 0) { %>
         <span class="your-match-label">BEST MATCH</span>
         <% } %>
@@ -22,8 +23,7 @@
           Preferred Gender: <%= match.user.preferredGender || 'N/A' %>
         </div>
         <div class="user-age-range">
-          Age Range: <%= match.user.ageMin || '?' %> - <%= match.user.ageMax ||
-          '?' %>
+          Age Range: <%= match.user.ageMin || '?' %> - <%= match.user.ageMax || '?' %>
         </div>
       </div>
     </div>
