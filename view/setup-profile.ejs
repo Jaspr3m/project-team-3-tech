@@ -1,3 +1,4 @@
+<!-- // --- setup profile --- -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -20,16 +21,16 @@
       <form action="/setup-profile" method="POST" enctype="multipart/form-data">
         <label>Name:</label>
         <input type="text" name="name" required />
-
+ 
         <label>Profile picture:</label>
         <input type="file" name="photo" required />
-
+ 
         <label>Tags:</label>
         <input type="text" name="tags" />
-
+ 
         <label>Languages:</label>
         <input type="text" name="languages" />
-
+ 
         <label>Bio:</label>
         <textarea name="bio"></textarea>
         <label>Vibe:</label>
@@ -44,14 +45,14 @@
           <option value="Explorer">Explorer</option>
           <option value="Sporty">Sporty</option>
         </select>
-
+ 
         <label>Preferred Gender: </label>
         <select name="preferredGender" required>
           <option value="">Select gender</option>
           <option value="m">Male</option>
           <option value="f">Female</option>
         </select>
-
+ 
         <label>Date of Birth:</label>
         <input
           type="date"
@@ -59,7 +60,7 @@
           required
           max="<%= new Date(Date.now() - 568025136000).toISOString().split('T')[0] %>"
         />
-
+ 
         <label>Preferred Age Range:</label>
         <div class="side-by-side">
           <input
@@ -81,7 +82,7 @@
             required
           />
         </div>
-
+ 
         <label>Location:</label>
         <select name="location" required>
           <option value="">Select location</option>
@@ -90,7 +91,7 @@
           <option value="Rotterdam">Rotterdam</option>
           <option value="Utrecht">Utrecht</option>
         </select>
-
+ 
         <button type="submit">Save & Continue</button>
       </form>
     </main>
@@ -99,3 +100,4 @@
     </footer>
   </body>
 </html>
+ 
