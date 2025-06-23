@@ -19,17 +19,12 @@
         />
       </div>
       <div class="meet-info">
-        <h1><%= meet.title %></h1>
+        <div><h1><%= meet.title %></h1></div>
         <p><strong>Description:</strong> <%= meet.description %></p>
         <p><strong>Location:</strong> <%= meet.location %></p>
         <p><strong>Date:</strong> <%= meet.date %></p>
         <p><strong>Time:</strong> <%= meet.time %></p>
         <p><strong>Max People:</strong> <%= meet.maxPeople %></p>
-        <p><strong>Vibe:</strong> <%= meet.vibe || 'N/A' %></p>
-        <p>
-          <strong>Preferred Gender:</strong> <%= meet.preferredGender || 'N/A'
-          %>
-        </p>
         <p>
           <strong>Age Range:</strong> <%= meet.ageMin || '?' %> - <%=
           meet.ageMax || '?' %>

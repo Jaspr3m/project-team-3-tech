@@ -25,7 +25,7 @@
           enctype="multipart/form-data"
         >
           <label for="title">Title</label>
-          <input type="text" id="title" name="title" value="<%= meet.meetingName %>" required />
+          <input type="text" id="title" name="title" value="<%= meet.title %>" required />
 
           <label for="description">Short Description:</label>
           <input
@@ -88,6 +88,30 @@
               <div style="font-size: 13px; color: #666;">Current cover image</div>
             </div>
           <% } %>
+
+          <label for="ageMin">Preferred Age Range:</label>
+          <div class="side-by-side">
+            <input
+              type="number"
+              id="ageMin"
+              name="ageMin"
+              min="18"
+              max="99"
+              value="<%= meet.ageMin || 18 %>"
+              placeholder="Min Age"
+              required
+            />
+            <input
+              type="number"
+              id="ageMax"
+              name="ageMax"
+              min="18"
+              max="99"
+              value="<%= meet.ageMax || 99 %>"
+              placeholder="Max Age"
+              required
+            />
+          </div>
 
           <div class="meet-actions">
             <button
