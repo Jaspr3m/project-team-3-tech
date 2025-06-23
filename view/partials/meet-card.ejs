@@ -1,5 +1,8 @@
 <head>
   <link rel="stylesheet" href="/static/css/meet_card.css" />
+  <link rel="stylesheet" href="/static/css/header.css" />
+  <link rel="stylesheet" href="/static/css/footer.css" />
+
 </head>
 
 <div class="meet-card" data-meet-id="<%= meet._id %>">
@@ -44,6 +47,29 @@
 
   <div class="meet-actions">
     <a href="/meet/<%= meet._id %>" class="view-btn">View</a>
+  </div>
+</div>
+
+<!-- // RYAN // -->
+<!-- Guest-only Modal -->
+<div class="guest-modal-backdrop">
+  <div class="guest-modal">
+    <!-- ✕ close icon -->
+    <button class="guest-modal__close" id="guest-modal-close-x" aria-label="Close">&times;</button>
+ 
+    <h2 class="guest-modal__title">Almost there!</h2>
+    <p class="guest-modal__message">You need an account to use this function.</p>
+    <div class="guest-modal__actions">
+            <a href=/login><button class="guest-modal__btn guest-modal__btn--secondary"">
+        Login
+      </button>
+    </a>
+    <a href="/register">
+      <button class="guest-modal__btn guest-modal__btn--primary">
+          Create account
+      </button>
+      </a>
+    </div>
   </div>
 </div>
 
@@ -92,4 +118,38 @@
 
   // Initial attach for all join/leave forms
   attachJoinLeaveListeners();
+
+  // Ryan
+  
+  document.addEventListener('DOMContentLoaded', () => {
+  const currentUser = sessionStorage.getItem('currentUser');
+  const gatedLinks = document.querySelectorAll('.view-btn'
+  );
+  const backdrop   = document.querySelector('.guest-modal-backdrop');
+  const btnCloseX  = document.getElementById('guest-modal-close-x');
+ 
+  // Only block for guests
+  if (currentUser === 'guest') {
+    gatedLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        backdrop.style.display = 'flex';
+      });
+    });
+  }
+ 
+  // Close via “×”
+  btnCloseX.addEventListener('click', () => {
+    backdrop.style.display = 'none';
+  });
+ 
+  // Click outside to close
+  backdrop.addEventListener('click', e => {
+    if (e.target === backdrop) {
+      backdrop.style.display = 'none';
+    }
+  });
+});
+  
+  
 </script>

@@ -81,7 +81,7 @@ TravelLink is a web application for spontaneous meetups and real connections. Us
    ```sh
    npm run dev
    ```
-   The app will be available at `http://localhost:3000` (default).
+   The app will be available at `http://localhost:8000` (default).
 
 ---
 
