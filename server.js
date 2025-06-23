@@ -18,6 +18,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 
+
 // Body parser, static files & sessions
 app.use(express.urlencoded({ extended: true }));
 app.use("/static", express.static(path.join(__dirname, "static")));
