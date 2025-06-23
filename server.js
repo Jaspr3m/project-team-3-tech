@@ -14,6 +14,10 @@ require("dotenv").config();
 const app = express();
 const saltRounds = 10;
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+
 // Body parser, static files & sessions
 app.use(express.urlencoded({ extended: true }));
 app.use("/static", express.static(path.join(__dirname, "static")));
@@ -320,7 +324,7 @@ app.get("/create-test-profile", async (req, res) => {
   res.send(`Test profile created with ID: ${result.insertedId}`);
 });
 
-//MORE MEETS
+//MORE MEETS (KIOKO)//
 function applyFilters(filters) {
   const query = {};
 
@@ -334,7 +338,7 @@ function applyFilters(filters) {
   }
 
   if (filters.address) query.address = filters.address;
-  // if (filters.category) query.category = filters.category;
+
   if (filters.date) query.date = filters.date;
 
   if (filters.minPeople || filters.maxPeople) {
@@ -370,7 +374,7 @@ function applyFilters(filters) {
   }
 
   if (filters.location) {
-    query.location = filters.location; // ✅ fix here
+    query.location = filters.location;
   }
 
   if (filters.category) {
@@ -539,7 +543,7 @@ app.post("/create-meet", upload.single("image"), async (req, res) => {
       location: req.body.location,
       category: req.body.category,
       address: req.body.address,
-      image: "/static/images/" + req.file.filename,
+      image: "/uploads/" + req.file.filename,
       members: userId ? [{ id: userId }] : [], // Automatically add creator as member
       creatorId: userId,
       createdAt: new Date(),
@@ -780,6 +784,8 @@ app.use("/users", userRoutes);
 
 // 404 handler (should be last)
 app.use((_, res) => res.status(404).send("Not Found"));
+
+
 
 
 // ─── START SERVER ─────────────────────────────────────────────────
