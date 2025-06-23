@@ -48,8 +48,8 @@
 
 .meet-meta p {
   margin: 0;
-  word-break: break-word; /* allows long strings to break */
-  overflow-wrap: anywhere; /* handles long words or URLs */
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 

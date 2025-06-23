@@ -17,12 +17,10 @@
           </div>
         <% }) %>
       </div>
-  
-      <!-- Navigation Arrows -->
+      
       <button class="carousel-btn prev">&#10094;</button>
       <button class="carousel-btn next">&#10095;</button>
   
-      <!-- Dots -->
       <div class="dots">
         <% testimonials.forEach((_, index) => { %>
           <span class="dot <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>"></span>
