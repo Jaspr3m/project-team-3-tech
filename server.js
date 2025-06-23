@@ -829,6 +829,88 @@ app.post("/meet/:id/join", async (req, res) => {
   }
 });
 
+// ─── EDIT MEET ─────────────────────────────────────────────
+app.get("/edit-meet/:id", requireLogin, async (req, res) => {
+  try {
+    const meet = await db.collection("meets").findOne({ _id: new ObjectId(req.params.id) });
+    if (!meet) {
+      return res.status(404).send("Meet not found");
+    }
+    // Only the creator can edit
+    if (meet.creatorId !== req.session.userId.toString()) {
+      return res.status(403).send("You are not authorized to edit this meet.");
+    }
+    res.render("edit-meet", {
+      meet,
+      userId: req.session.userId || null,
+      user: req.session.user || null,
+      error: null
+    });
+  } catch (error) {
+    console.error("Error loading meet for edit:", error);
+    res.status(500).send("Error loading meet for edit");
+  }
+});
+
+app.post("/edit-meet/:id", requireLogin, upload.single("image"), async (req, res) => {
+  try {
+    const meet = await db.collection("meets").findOne({ _id: new ObjectId(req.params.id) });
+    if (!meet) {
+      return res.status(404).send("Meet not found");
+    }
+    if (meet.creatorId !== req.session.userId.toString()) {
+      return res.status(403).send("You are not authorized to edit this meet.");
+    }
+    // Prepare update data
+    const updateData = {
+      title: req.body.title,
+      description: req.body.description,
+      maxPeople: parseInt(req.body.maxPeople, 10),
+      date: req.body.date,
+      time: req.body.time,
+      location: req.body.location,
+      category: req.body.category,
+      address: req.body.address,
+    };
+    if (req.file) {
+      updateData.image = "/uploads/" + req.file.filename;
+    }
+    await db.collection("meets").updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: updateData }
+    );
+    res.redirect("/meet/" + req.params.id);
+  } catch (error) {
+    console.error("Error updating meet:", error);
+    res.status(500).render("edit-meet", {
+      meet: Object.assign({}, req.body, { _id: req.params.id }),
+      userId: req.session.userId || null,
+      user: req.session.user || null,
+      error: "Server error. Please try again later."
+    });
+  }
+});
+
+// ─── DELETE MEET ─────────────────────────────────────────────
+app.post("/delete-meet/:id", requireLogin, async (req, res) => {
+  try {
+    const meetId = req.params.id;
+    const userId = req.session.userId.toString();
+    const meet = await db.collection("meets").findOne({ _id: new ObjectId(meetId) });
+    if (!meet) {
+      return res.status(404).json({ error: "Meet not found" });
+    }
+    if (meet.creatorId !== userId) {
+      return res.status(403).json({ error: "You are not authorized to delete this meet." });
+    }
+    await db.collection("meets").deleteOne({ _id: new ObjectId(meetId) });
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting meet:", error);
+    res.status(500).json({ error: "Server error. Please try again later." });
+  }
+});
+
 // Mount user routes
 const userRoutes = require("./routes/user");
 app.use("/users", userRoutes);
