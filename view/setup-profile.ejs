@@ -4,49 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Setup Profile</title>
-    <!-- <link rel="stylesheet" href="/static/css/header.css" />
     <link rel="stylesheet" href="/static/css/profile.css" />
-    <link rel="stylesheet" href="/static/css/style.css" /> -->
-    <style>
-      .side-by-side {
-        display: flex;
-        gap: 12px;
-      }
-      .side-by-side input {
-        flex: 1;
-      }
-    </style>
+    <link rel="stylesheet" href="/static/css/header.css" />
+    <link rel="stylesheet" href="/static/css/footer.css" />
   </head>
   <body>
+    <header>
+      <%- include('partials/header') %>
+    </header>
     <main class="profile-container">
       <h1>Complete Your Profile</h1>
       <% if (typeof error !== 'undefined' && error) { %>
       <div style="color: red; margin-bottom: 1em"><%= error %></div>
       <% } %>
       <form action="/setup-profile" method="POST" enctype="multipart/form-data">
-        <label>Profile Picture:</label>
-        <input type="file" name="photo" accept="image/*" required />
-        <label>First & Last Name:</label>
-        <div class="side-by-side">
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            required
-          />
-          <input type="text" name="lastName" placeholder="Last Name" required />
-        </div>
+        <label>Name:</label>
+        <input type="text" name="name" required />
 
-        <label>Biography:</label>
-        <textarea
-          name="bio"
-          placeholder="Tell us about yourself"
-          required
-        ></textarea>
+        <label>Profile picture:</label>
+        <input type="file" name="photo" required />
 
-        <label>Tags (comma-separated):</label>
-        <input type="text" name="tags" placeholder="e.g. hiking, music, tech" />
+        <label>Tags:</label>
+        <input type="text" name="tags" />
 
+        <label>Languages:</label>
+        <input type="text" name="languages" />
+
+        <label>Bio:</label>
+        <textarea name="bio"></textarea>
         <label>Vibe:</label>
         <select name="vibe" required>
           <option value="">Select vibe</option>
@@ -60,7 +45,7 @@
           <option value="Sporty">Sporty</option>
         </select>
 
-        <label>Preferred Gender:</label>
+        <label>Preferred Gender: </label>
         <select name="preferredGender" required>
           <option value="">Select gender</option>
           <option value="m">Male</option>
@@ -109,6 +94,8 @@
         <button type="submit">Save & Continue</button>
       </form>
     </main>
-    <footer><%- include('partials/footer', { userId: userId }) %></footer>
+    <footer>
+      <%- include('partials/footer', { userId: userId }) %>
+    </footer>
   </body>
 </html>

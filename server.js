@@ -56,14 +56,6 @@ async function hashData(data) {
   }
 }
 
-// Middleware: protect routes
-// function requireLogin(req, res, next) {
-//   if (!req.session.userId) {
-//     return res.redirect('/login');
-//   }
-//   next();
-// }
-
 // Helper: compare plaintext to hashed data
 async function compareData(plainText, hashed) {
   try {
@@ -72,6 +64,14 @@ async function compareData(plainText, hashed) {
     console.error("Error comparing data:", err);
     throw err;
   }
+}
+
+// ─── MIDDLEWARE: Require Login ─────────────────────────────
+function requireLogin(req, res, next) {
+  if (!req.session.userId) {
+    return res.redirect('/login');
+  }
+  next();
 }
 
 // ─── AUTH: Register & Login ────────────────────────────────────────────
@@ -114,8 +114,8 @@ app.post(
       // log de gebruiker in
       req.session.userId = result.insertedId;
 
-      // redirect naar de bestaande `/profile/:id` route
-      return res.redirect(`/profile/${result.insertedId}`);
+      // redirect to setup-profile after registration
+      return res.redirect("/setup-profile");
 
     } catch (error) {
       console.error("Error registering user:", error);
@@ -395,7 +395,7 @@ app.post(
         photoUrl: "/uploads/" + req.file.filename,
         location: req.body.location, // Save location from dropdown
       };
-      await req.app.locals.db
+      await db
         .collection(process.env.USER_COLLECTION)
         .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
       res.redirect("/home");
