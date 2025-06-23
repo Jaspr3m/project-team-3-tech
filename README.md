@@ -25,6 +25,39 @@ TravelLink is a web application for spontaneous meetups and real connections. Us
 
 ---
 
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v14 or higher recommended)
+- npm (Node package manager)
+
+### Installation
+1. Clone the repository or download the project files.
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Start the server:
+   ```
+   node server.js
+   ```
+4. Open your browser and go to `http://localhost:3000` (or the port specified in your server.js).
+
+---
+
+## 📝 Profile Setup Flow
+1. **Register:** User fills out the registration form (`register.ejs`).
+2. **Redirect:** After successful registration, user is redirected to `/setup-profile` to complete their profile.
+3. **Profile Completion:** User fills out the profile form (`setup-profile.ejs`), which uses the same fields and styling as the profile edit page.
+4. **Homepage:** After submitting the profile setup form, the user's profile is updated and they are redirected to the homepage as a logged-in user.
+
+---
+
+## 🎨 Styling
+- Main profile and setup-profile forms use `static/css/profile.css` for consistent styling.
+
+---
+
 ## 🤝 Matching & Friend System
 
 - **Matching:**
@@ -39,7 +72,8 @@ TravelLink is a web application for spontaneous meetups and real connections. Us
 
 ---
 
-## 🛣️ Main API Routes
+## 📦 Customization
+- Update form fields or add new features by editing the EJS templates in `view/` and the corresponding routes in `server.js`.
 
 - **User & Auth:**
   - `POST /register` — Register a new account
@@ -105,3 +139,5 @@ TravelLink is a web application for spontaneous meetups and real connections. Us
 
 **Author:** Ivy Vo  
 **License:** ISC
+## 🪪 License
+MIT

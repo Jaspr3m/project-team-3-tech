@@ -1,4 +1,3 @@
-/* Base styling */
 body {
   margin: 0;
   padding: 0;
@@ -13,7 +12,7 @@ main {
 }
 
 #toggle-filters {
-  margin-bottom: 1rem 0.5rem;
+  margin: 1rem 0.5rem;
   padding: 0.7rem 1.2rem;
   background-color: #087E8B;
   color: white;
@@ -33,7 +32,6 @@ main {
   display: none;
 }
 
-/* Layout wrapper */
 .content-layout {
   display: flex;
   gap: 2rem;
@@ -43,7 +41,7 @@ main {
 .scroll-hint {
   text-align: center;
   font-size: 0.85rem;
-  color: #C1839F;
+  color: #c07b9a;
   margin-bottom: 1rem;
   animation: pulse 2s infinite;
 }
@@ -53,7 +51,6 @@ main {
   50% { opacity: 1; }
 }
 
-/* Filter Section */
 .filter-section {
   background-color: #ffffff;
   padding: 1.5rem;
@@ -63,8 +60,6 @@ main {
   flex: 0 0 17.5rem;
   position: sticky;
   top: 2rem;
-
-  /* Fix for overflow */
   max-height: calc(100vh - 4rem);
   overflow-y: auto;
 }
@@ -107,7 +102,6 @@ main {
   flex-direction: column;
 }
 
-/* Buttons */
 .filter-buttons {
   display: flex;
   flex-direction: column;
@@ -143,7 +137,6 @@ button[type="submit"]:hover {
   background-color: #e04b50;
 }
 
-/* Meet grid */
 .meet-row {
   flex: 1;
   display: flex;
@@ -152,7 +145,6 @@ button[type="submit"]:hover {
   justify-content: flex-start;
 }
 
-/* Misc */
 .back-link {
   display: inline-block;
   margin-left: 1rem;
@@ -172,8 +164,6 @@ button[type="submit"]:hover {
   color: #fff;
 }
 
-
-/* Responsive adjustments */
 
 @media (max-width: 768px) {
   .filter-section {
