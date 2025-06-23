@@ -87,10 +87,7 @@ TravelLink is a web application for spontaneous meetups and real connections. Us
   - `POST /meets/:id/edit` — Edit a meet
   - `POST /meets/:id/join` — Join a meet
   - `POST /meets/:id/leave` — Leave a meet
-- **Friends & Notifications:**
-  - `POST /users/add-friend` — Send friend request
-  - `POST /respond-friend-request` — Accept/decline friend request
-  - `GET /notifications` — View notifications
+
 
 ---
 
