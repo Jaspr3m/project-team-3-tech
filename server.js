@@ -7,16 +7,13 @@ const bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
 const multer = require("multer");
 
-
 // const xss = require('xss');
 require("dotenv").config();
 
 const app = express();
 const saltRounds = 10;
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Body parser, static files & sessions
 app.use(express.urlencoded({ extended: true }));
@@ -42,7 +39,7 @@ client
   .connect()
   .then(() => {
     db = client.db(process.env.DB_NAME);
-    console.log("✅ Database connected");
+    // console.log("✅ Database connected");
   })
   .catch((err) => {
     console.error("❌ Database connection error:", err);
@@ -74,7 +71,7 @@ async function compareData(plainText, hashed) {
 // jasprem
 function requireLogin(req, res, next) {
   if (!req.session.userId) {
-    return res.redirect('/login');
+    return res.redirect("/login");
   }
   next();
 }
@@ -105,12 +102,11 @@ app.post(
     if (!errors.isEmpty()) {
       return res.status(400).render("register", {
         errors: errors.array(),
-        formData: { email, name, password},
+        formData: { email, name, password },
       });
     }
 
     try {
-
       const hashedPw = await bcrypt.hash(password, saltRounds);
       const result = await db
         .collection(process.env.USER_COLLECTION)
@@ -121,7 +117,6 @@ app.post(
 
       // redirect to setup-profile after registration
       return res.redirect("/setup-profile");
-
     } catch (error) {
       console.error("Error registering user:", error);
       return res.status(500).render("register", {
@@ -138,18 +133,18 @@ app.post(
 app.get("/login", (req, res) => {
   res.render("login", { errors: [], formData: {} });
 });
- 
+
 // Handle login
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
- 
+
   if (!email || !password) {
     return res.render("login", {
       errors: [{ msg: "Please provide your email and password" }],
       formData: { email, password },
     });
   }
- 
+
   try {
     const user = await db
       .collection(process.env.USER_COLLECTION)
@@ -160,7 +155,7 @@ app.post("/login", async (req, res) => {
         formData: { email, password },
       });
     }
- 
+
     const isMatch = await compareData(password, user.password);
     if (!isMatch) {
       return res.render("login", {
@@ -168,7 +163,7 @@ app.post("/login", async (req, res) => {
         formData: { email, password },
       });
     }
- 
+
     // Log the user in
     req.session.userId = user._id;
     res.redirect("/home");
@@ -274,8 +269,6 @@ app.get("/profile/:id", async (req, res) => {
     res.status(500).send("Error loading profile");
   }
 });
-
-
 
 // Handle profile update & photo upload
 app.post("/profile/:id", upload.single("photo"), async (req, res) => {
@@ -414,7 +407,7 @@ app.post(
   }
 );
 
-//------------------------ MORE MEETS ------------------------ 
+//------------------------ MORE MEETS ------------------------
 function applyFilters(filters) {
   const query = {};
 
@@ -436,7 +429,7 @@ function applyFilters(filters) {
   }
 
   if (filters.address) {
-    query.address = new RegExp(filters.address, 'i');
+    query.address = new RegExp(filters.address, "i");
   }
 
   if (filters.startDate || filters.endDate) {
@@ -447,8 +440,10 @@ function applyFilters(filters) {
 
   if (filters.minPeople || filters.maxPeople) {
     query.maxPeople = {};
-    if (filters.minPeople) query.maxPeople.$gte = parseInt(filters.minPeople, 10);
-    if (filters.maxPeople) query.maxPeople.$lte = parseInt(filters.maxPeople, 10);
+    if (filters.minPeople)
+      query.maxPeople.$gte = parseInt(filters.minPeople, 10);
+    if (filters.maxPeople)
+      query.maxPeople.$lte = parseInt(filters.maxPeople, 10);
 
     if (Object.keys(query.maxPeople).length === 0) {
       delete query.maxPeople;
@@ -464,10 +459,8 @@ app.get("/more-meets", async (req, res) => {
   const filters = req.query;
   const { keyword, sort } = filters;
 
-
   const query = applyFilters(filters);
 
-  
   let sortOption = {};
   if (sort === "date_asc") sortOption.date = 1;
   else if (sort === "date_desc") sortOption.date = -1;
@@ -528,25 +521,24 @@ app.get("/api/meets", async (req, res) => {
 
 // log out in profile
 
-app.get('/logout', (req, res) => {
-  req.session.destroy(err => {
-    res.redirect('/loginHome');
+app.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    res.redirect("/loginHome");
   });
 });
 
-
 // ─── MEETS API ──────────────────────────────────────────────────
-app.get('/api/meets', async (req, res) => {
+app.get("/api/meets", async (req, res) => {
   const { keyword, address, date } = req.query;
 
   const query = {};
 
   if (keyword) {
-    const regex = new RegExp(keyword, 'i');
+    const regex = new RegExp(keyword, "i");
     query.$or = [
       { meetingName: regex },
       { description: regex },
-      { address:     regex },
+      { address: regex },
     ];
   }
 
@@ -558,15 +550,13 @@ app.get('/api/meets', async (req, res) => {
   }
 
   try {
-    const meets = await db.collection('meets').find(query).toArray();
+    const meets = await db.collection("meets").find(query).toArray();
     return res.json(meets);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: "Server error" });
   }
 });
-
-
 
 // CREATA MEETS
 
@@ -642,7 +632,9 @@ app.get("/meets", async (req, res) => {
 
 app.get("/meet/:id", async (req, res) => {
   try {
-    const meet = await db.collection("meets").findOne({ _id: new ObjectId(req.params.id) });
+    const meet = await db
+      .collection("meets")
+      .findOne({ _id: new ObjectId(req.params.id) });
     if (!meet) {
       return res.status(404).send("Meet not found");
     }
@@ -650,30 +642,55 @@ app.get("/meet/:id", async (req, res) => {
     let currentUser = null;
     if (req.session.userId) {
       isMember = (meet.members || []).some(
-        (m) => m === req.session.userId.toString() || (m.id && m.id === req.session.userId.toString())
+        (m) =>
+          m === req.session.userId.toString() ||
+          (m.id && m.id === req.session.userId.toString())
       );
-      currentUser = await db.collection(process.env.USER_COLLECTION).findOne({ _id: new ObjectId(req.session.userId) });
+      currentUser = await db
+        .collection(process.env.USER_COLLECTION)
+        .findOne({ _id: new ObjectId(req.session.userId) });
     }
     // Get all users who are members of this meet (except current user)
     const memberIds = (meet.members || [])
-      .map((m) => (typeof m === 'object' && m.id ? m.id : m.toString()))
-      .filter((id) => id && (!req.session.userId || id !== req.session.userId.toString()));
+      .map((m) => (typeof m === "object" && m.id ? m.id : m.toString()))
+      .filter(
+        (id) =>
+          id && (!req.session.userId || id !== req.session.userId.toString())
+      );
     let userMatches = [];
     if (memberIds.length > 0 && currentUser) {
-      const users = await db.collection(process.env.USER_COLLECTION).find({ _id: { $in: memberIds.map(id => new ObjectId(id)) } }).toArray();
+      const users = await db
+        .collection(process.env.USER_COLLECTION)
+        .find({ _id: { $in: memberIds.map((id) => new ObjectId(id)) } })
+        .toArray();
       // Matching algorithm
-      userMatches = users.map(user => {
+      userMatches = users.map((user) => {
         let matchScore = 0;
         // Vibe match
-        if (user.vibe && currentUser.vibe && user.vibe === currentUser.vibe) matchScore += 40;
+        if (user.vibe && currentUser.vibe && user.vibe === currentUser.vibe)
+          matchScore += 40;
         // Preferred Gender match
         if (
-          (!user.preferredGender || user.preferredGender === 'any' || user.preferredGender === currentUser.preferredGender) &&
-          (!currentUser.preferredGender || currentUser.preferredGender === 'any' || currentUser.preferredGender === user.preferredGender)
-        ) matchScore += 30;
+          (!user.preferredGender ||
+            user.preferredGender === "any" ||
+            user.preferredGender === currentUser.preferredGender) &&
+          (!currentUser.preferredGender ||
+            currentUser.preferredGender === "any" ||
+            currentUser.preferredGender === user.preferredGender)
+        )
+          matchScore += 30;
         // Age range overlap
-        if (user.ageMin && user.ageMax && currentUser.ageMin && currentUser.ageMax) {
-          const overlap = Math.max(0, Math.min(user.ageMax, currentUser.ageMax) - Math.max(user.ageMin, currentUser.ageMin));
+        if (
+          user.ageMin &&
+          user.ageMax &&
+          currentUser.ageMin &&
+          currentUser.ageMax
+        ) {
+          const overlap = Math.max(
+            0,
+            Math.min(user.ageMax, currentUser.ageMax) -
+              Math.max(user.ageMin, currentUser.ageMin)
+          );
           if (overlap > 0) matchScore += 30;
         }
         return { user, matchScore };
@@ -692,8 +709,6 @@ app.get("/meet/:id", async (req, res) => {
     res.status(500).send("Error loading meet detail");
   }
 });
-
-
 
 app.get("/create-meet", (req, res) => {
   res.render("create-meet", {
@@ -816,17 +831,21 @@ app.post("/meet/:id/join", async (req, res) => {
     }
     const meetId = req.params.id;
     const userId = req.session.userId.toString();
-    const meet = await db.collection("meets").findOne({ _id: new ObjectId(meetId) });
+    const meet = await db
+      .collection("meets")
+      .findOne({ _id: new ObjectId(meetId) });
     if (!meet) {
       return res.status(404).json({ error: "Meet not found" });
     }
     // Check if already a member
-    const alreadyMember = (meet.members || []).some(m => m.id === userId);
+    const alreadyMember = (meet.members || []).some((m) => m.id === userId);
     if (!alreadyMember) {
-      await db.collection("meets").updateOne(
-        { _id: new ObjectId(meetId) },
-        { $push: { members: { id: userId } } }
-      );
+      await db
+        .collection("meets")
+        .updateOne(
+          { _id: new ObjectId(meetId) },
+          { $push: { members: { id: userId } } }
+        );
     }
     res.json({ success: true });
   } catch (error) {
@@ -838,7 +857,9 @@ app.post("/meet/:id/join", async (req, res) => {
 // ─── EDIT MEET ─────────────────────────────────────────────
 app.get("/edit-meet/:id", requireLogin, async (req, res) => {
   try {
-    const meet = await db.collection("meets").findOne({ _id: new ObjectId(req.params.id) });
+    const meet = await db
+      .collection("meets")
+      .findOne({ _id: new ObjectId(req.params.id) });
     if (!meet) {
       return res.status(404).send("Meet not found");
     }
@@ -850,7 +871,7 @@ app.get("/edit-meet/:id", requireLogin, async (req, res) => {
       meet,
       userId: req.session.userId || null,
       user: req.session.user || null,
-      error: null
+      error: null,
     });
   } catch (error) {
     console.error("Error loading meet for edit:", error);
@@ -858,58 +879,70 @@ app.get("/edit-meet/:id", requireLogin, async (req, res) => {
   }
 });
 
-app.post("/edit-meet/:id", requireLogin, upload.single("image"), async (req, res) => {
-  try {
-    const meet = await db.collection("meets").findOne({ _id: new ObjectId(req.params.id) });
-    if (!meet) {
-      return res.status(404).send("Meet not found");
+app.post(
+  "/edit-meet/:id",
+  requireLogin,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const meet = await db
+        .collection("meets")
+        .findOne({ _id: new ObjectId(req.params.id) });
+      if (!meet) {
+        return res.status(404).send("Meet not found");
+      }
+      if (meet.creatorId !== req.session.userId.toString()) {
+        return res
+          .status(403)
+          .send("You are not authorized to edit this meet.");
+      }
+      // Prepare update data
+      const updateData = {
+        title: req.body.title,
+        description: req.body.description,
+        maxPeople: parseInt(req.body.maxPeople, 10),
+        date: req.body.date,
+        time: req.body.time,
+        location: req.body.location,
+        category: req.body.category,
+        address: req.body.address,
+        ageMin: req.body.ageMin ? parseInt(req.body.ageMin, 10) : undefined,
+        ageMax: req.body.ageMax ? parseInt(req.body.ageMax, 10) : undefined,
+      };
+      if (req.file) {
+        updateData.image = "/uploads/" + req.file.filename;
+      }
+      await db
+        .collection("meets")
+        .updateOne({ _id: new ObjectId(req.params.id) }, { $set: updateData });
+      res.redirect("/meet/" + req.params.id);
+    } catch (error) {
+      console.error("Error updating meet:", error);
+      res.status(500).render("edit-meet", {
+        meet: Object.assign({}, req.body, { _id: req.params.id }),
+        userId: req.session.userId || null,
+        user: req.session.user || null,
+        error: "Server error. Please try again later.",
+      });
     }
-    if (meet.creatorId !== req.session.userId.toString()) {
-      return res.status(403).send("You are not authorized to edit this meet.");
-    }
-    // Prepare update data
-    const updateData = {
-      title: req.body.title,
-      description: req.body.description,
-      maxPeople: parseInt(req.body.maxPeople, 10),
-      date: req.body.date,
-      time: req.body.time,
-      location: req.body.location,
-      category: req.body.category,
-      address: req.body.address,
-      ageMin: req.body.ageMin ? parseInt(req.body.ageMin, 10) : undefined,
-      ageMax: req.body.ageMax ? parseInt(req.body.ageMax, 10) : undefined,
-    };
-    if (req.file) {
-      updateData.image = "/uploads/" + req.file.filename;
-    }
-    await db.collection("meets").updateOne(
-      { _id: new ObjectId(req.params.id) },
-      { $set: updateData }
-    );
-    res.redirect("/meet/" + req.params.id);
-  } catch (error) {
-    console.error("Error updating meet:", error);
-    res.status(500).render("edit-meet", {
-      meet: Object.assign({}, req.body, { _id: req.params.id }),
-      userId: req.session.userId || null,
-      user: req.session.user || null,
-      error: "Server error. Please try again later."
-    });
   }
-});
+);
 
 // ─── DELETE MEET ─────────────────────────────────────────────
 app.post("/delete-meet/:id", requireLogin, async (req, res) => {
   try {
     const meetId = req.params.id;
     const userId = req.session.userId.toString();
-    const meet = await db.collection("meets").findOne({ _id: new ObjectId(meetId) });
+    const meet = await db
+      .collection("meets")
+      .findOne({ _id: new ObjectId(meetId) });
     if (!meet) {
       return res.status(404).json({ error: "Meet not found" });
     }
     if (meet.creatorId !== userId) {
-      return res.status(403).json({ error: "You are not authorized to delete this meet." });
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to delete this meet." });
     }
     await db.collection("meets").deleteOne({ _id: new ObjectId(meetId) });
     return res.json({ success: true });
@@ -926,17 +959,31 @@ app.use("/users", userRoutes);
 // 404 handler (should be last)
 app.use((_, res) => res.status(404).send("Not Found"));
 
-
-
-
 // ─── START SERVER ─────────────────────────────────────────────────
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  // console.log(`🚀 Server running on port ${PORT}`);
 });
 
+//////////////////////////////////////////////////////////
 
+/* 
+  Objective
+    Every combination of 3 numbers counts as the FPS that you have handwritten.
+    For example: 217, 199, etc.
+    Find out AVERAGE_FPS as well as the approximate DURATION of the video.
+*/
 
+/*
+  1. This means that a video cannot have the same duration or avg FPS as every video can be different.
+  2. AVERAGE_FPS needs to be stored in an array. DURATION = the length of AVERAGE_FPS array. 
+*/
 
+const bigNumber = 2171992212142292122132071812262142021962192342272312122362021842172122362022111982041972062031781932061771761541811731751892072222281992212002032031912092021751811791891791991891844160179179178190190162149151156191179145192197193188209154184111152162171160177189150;
+const smallerNumber = 1231233343213241
+let smallerString = smallerNumber.toString()
 
+let numObj = smallerString.split('')
+
+const loop = numObj.forEach()
 
