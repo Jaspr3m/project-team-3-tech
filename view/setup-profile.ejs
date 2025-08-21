@@ -15,9 +15,11 @@
     </header>
     <main class="profile-container">
       <h1>Complete Your Profile</h1>
+      <!-- question here -->
       <% if (typeof error !== 'undefined' && error) { %>
       <div style="color: red; margin-bottom: 1em"><%= error %></div>
       <% } %>
+      <!-- ///////////////// -->
       <form action="/setup-profile" method="POST" enctype="multipart/form-data">
         <label>Name:</label>
         <input type="text" name="name" required />
@@ -52,7 +54,7 @@
           <option value="m">Male</option>
           <option value="f">Female</option>
         </select>
- 
+        <!-- question here -->        
         <label>Date of Birth:</label>
         <input
           type="date"
@@ -60,7 +62,7 @@
           required
           max="<%= new Date(Date.now() - 568025136000).toISOString().split('T')[0] %>"
         />
- 
+        <!-- ///////////// -->
         <label>Preferred Age Range:</label>
         <div class="side-by-side">
           <input
@@ -95,9 +97,11 @@
         <button type="submit">Save & Continue</button>
       </form>
     </main>
+    <!-- question here -->
     <footer>
       <%- include('partials/footer', { userId: userId }) %>
     </footer>
+    <!-- ///////////// -->
   </body>
 </html>
  
