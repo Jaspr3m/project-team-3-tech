@@ -10,51 +10,40 @@
     <link rel="stylesheet" href="/static/css/footer.css" />
   </head>
   <body>
-    <header>
-      <%- include('partials/header') %>
-    </header>
+    <header><%- include('partials/header') %></header>
     <main class="profile-container">
       <h1>Complete Your Profile</h1>
-      <!-- question here -->
       <% if (typeof error !== 'undefined' && error) { %>
       <div style="color: red; margin-bottom: 1em"><%= error %></div>
       <% } %>
-      <!-- ///////////////// -->
       <form action="/setup-profile" method="POST" enctype="multipart/form-data">
-        <label>Name:</label>
-        <input type="text" name="name" required />
- 
         <label>Profile picture:</label>
         <input type="file" name="photo" required />
- 
-        <label>Tags:</label>
-        <input type="text" name="tags" />
- 
-        <label>Languages:</label>
-        <input type="text" name="languages" />
- 
-        <label>Bio:</label>
-        <textarea name="bio"></textarea>
-        <label>Vibe:</label>
-        <select name="vibe" required>
-          <option value="">Select vibe</option>
-          <option value="Chill">Chill</option>
-          <option value="Adventurous">Adventurous</option>
-          <option value="Artsy">Artsy</option>
-          <option value="Party">Party</option>
-          <option value="Mindful">Mindful</option>
-          <option value="Foodie">Foodie</option>
-          <option value="Explorer">Explorer</option>
-          <option value="Sporty">Sporty</option>
-        </select>
- 
-        <label>Preferred Gender: </label>
-        <select name="preferredGender" required>
+
+        <label>Full name</label>
+        <div class="side-by-side">
+          <input
+            placeholder="First name..."
+            type="text"
+            name="firstName"
+            required
+          />
+          <input
+            placeholder="Last name..."
+            type="text"
+            name="lastName"
+            required
+          />
+        </div>
+
+        <label>Gender: </label>
+        <select name="gender" required>
           <option value="">Select gender</option>
-          <option value="m">Male</option>
-          <option value="f">Female</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
         </select>
-        <!-- question here -->        
+
         <label>Date of Birth:</label>
         <input
           type="date"
@@ -62,46 +51,56 @@
           required
           max="<%= new Date(Date.now() - 568025136000).toISOString().split('T')[0] %>"
         />
-        <!-- ///////////// -->
-        <label>Preferred Age Range:</label>
-        <div class="side-by-side">
-          <input
-            type="number"
-            name="ageMin"
-            min="18"
-            max="99"
-            value="18"
-            placeholder="Min Age"
-            required
-          />
-          <input
-            type="number"
-            name="ageMax"
-            min="18"
-            max="99"
-            value="99"
-            placeholder="Max Age"
-            required
-          />
-        </div>
- 
-        <label>Location:</label>
-        <select name="location" required>
-          <option value="">Select location</option>
-          <option value="Amsterdam">Amsterdam</option>
-          <option value="Den Haag">Den Haag</option>
-          <option value="Rotterdam">Rotterdam</option>
-          <option value="Utrecht">Utrecht</option>
+
+        <label>Vibe:</label>
+        <select name="vibe" required>
+          <option value="">Select vibe</option>
+          <option value="Chill">Chill</option>
+          <option value="Adventurous">Adventurous</option>
+          <option value="Artsy">Artsy</option>
+          <option value="Partyganger">Partyganger</option>
+          <option value="Mindful">Mindful</option>
+          <option value="Foodie">Foodie</option>
+          <option value="Explorer">Explorer</option>
+          <option value="Sporty">Sporty</option>
         </select>
- 
+
+        <label>Preferred Gender: </label>
+        <select name="preferredGender" required>
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label>Favorite Food and Drink</label>
+        <div class="side-by-side">
+          <select name="favoriteFood" placeholder="food" required>
+            <option value="Sushi">Sushi</option>
+            <option value="Tacos">Tacos</option>
+            <option value="Spaghetti">Spaghetti Carbonara</option>
+            <option value="Falafel">Falafel</option>
+            <option value="Butter Chicken">Butter Chicken</option>
+            <option value="Caesar Salad">Caesar Salad</option>
+            <option value="Ramen">Ramen</option>
+            <option value="Grilled Salmon">Grilled Salmon</option>
+          </select>
+          <select name="favoriteDrink" placeholder="drink" required>
+            <option value="Iced Coffee">Iced Coffee</option>
+            <option value="Green Tea">Green Tea</option>
+            <option value="Mango Smoothie">Mango Smoothie</option>
+            <option value="Sparkling Water">Sparkling Water</option>
+            <option value="Mojito">Mojito</option>
+            <option value="Hot Chocolate">Hot Chocolate</option>
+            <option value="Fresh Lemonade">Fresh Lemonade</option>
+            <option value="Chai Latte">Chai Latte</option>
+          </select>
+        </div>
         <button type="submit">Save & Continue</button>
       </form>
     </main>
     <!-- question here -->
-    <footer>
-      <%- include('partials/footer', { userId: userId }) %>
-    </footer>
+    <footer><%- include('partials/footer', { userId: userId }) %></footer>
     <!-- ///////////// -->
   </body>
 </html>
- 

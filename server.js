@@ -27,6 +27,7 @@ app.use(
 );
 
 // View engine
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "view"));
 
@@ -44,17 +45,6 @@ client
     process.exit(1);
   });
 
-async function hashData(data) {
-  try {
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hashedData = await bcrypt.hash(data, salt);
-    return hashedData;
-  } catch (error) {
-    console.error("Error hashing data:", error);
-    throw error;
-  }
-}
-
 // Helper: compare plaintext to hashed data
 async function compareData(plainText, hashed) {
   try {
@@ -66,7 +56,7 @@ async function compareData(plainText, hashed) {
 }
 
 // ─── MIDDLEWARE: Require Login ─────────────────────────────
-// jasprem
+
 function requireLogin(req, res, next) {
   if (!req.session.userId) {
     return res.redirect("/login");
@@ -126,8 +116,6 @@ app.post(
 );
 
 // Show login form
-// ryan
-// Show login form
 app.get("/login", (req, res) => {
   res.render("login", { errors: [], formData: {} });
 });
@@ -164,6 +152,7 @@ app.post("/login", async (req, res) => {
 
     // Log the user in
     req.session.userId = user._id;
+
     res.redirect("/home");
   } catch (error) {
     console.error("Error processing login:", error);
@@ -177,18 +166,6 @@ app.post("/login", async (req, res) => {
 app.get("/loginHome", (req, res) => {
   res.render("loginHome.ejs");
 });
-
-// function showRegister(req, res) {
-//   res.render("register.ejs", { errors: [] });
-// }
-
-// function showLogin(req, res) {
-//   res.render("login.ejs", { errors: [] });
-// }
-
-// function showLoginHome(req, res) {
-//   res.render("loginHome.ejs", { errors: [] });
-// }
 
 // ─── HOMEPAGE ────────────────────────────────────────────────────────────
 
@@ -272,20 +249,15 @@ app.get("/profile/:id", async (req, res) => {
 app.post("/profile/:id", upload.single("photo"), async (req, res) => {
   try {
     const id = req.params.id;
-    const tags = (req.body.tags || "")
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
     // Add support for vibe, preferredGender, and age range
     const updateData = {
-      name: req.body.name,
-      bio: req.body.bio,
-      tags,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       vibe: req.body.vibe,
+      favoriteFood: req.body.favoriteFood,
+      favoriteDrink: req.body.favoriteDrink,
+      gender: req.body.gender,
       preferredGender: req.body.preferredGender,
-      location: req.body.location,
-      ageMin: req.body.ageMin ? parseInt(req.body.ageMin, 10) : undefined,
-      ageMax: req.body.ageMax ? parseInt(req.body.ageMax, 10) : undefined,
     };
     if (req.file) {
       updateData.photoUrl = "/uploads/" + req.file.filename;
@@ -302,21 +274,6 @@ app.post("/profile/:id", upload.single("photo"), async (req, res) => {
     console.error("Error updating profile:", error);
     res.status(500).send("Error updating profile");
   }
-});
-
-// (Optional) Test endpoint to create a profile
-app.get("/create-test-profile", async (req, res) => {
-  const testUser = {
-    name: "Test User",
-    location: "Amsterdam",
-    tags: ["Test", "Demo"],
-    languages: ["Dutch", "English"],
-    bio: "This is a test profile",
-  };
-  const result = await db
-    .collection(process.env.USER_COLLECTION)
-    .insertOne(testUser);
-  res.send(`Test profile created with ID: ${result.insertedId}`);
 });
 
 //MORE MEETS (KIOKO)//
@@ -375,28 +332,28 @@ app.post(
           error: "Profile picture is required.",
         });
       }
-      const id = req.session.userId;
-      const tags = (req.body.tags || "")
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean);
+      const userId = req.session.userId;
       const updateData = {
+        photoUrl: "/uploads/" + req.file.filename,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        bio: req.body.bio,
-        tags,
+        gender: req.body.gender,
+        dateOfBirth: req.body.dob,
         vibe: req.body.vibe,
         preferredGender: req.body.preferredGender,
-        ageRange: {
-          min: parseInt(req.body.ageMin, 10),
-          max: parseInt(req.body.ageMax, 10),
-        },
-        photoUrl: "/uploads/" + req.file.filename,
-        location: req.body.location, // Save location from dropdown
+        favoriteFood: req.body.favoriteFood,
+        favoriteDrink: req.body.favoriteDrink,
       };
       await db
         .collection(process.env.USER_COLLECTION)
-        .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
+        .updateOne({ _id: new ObjectId(userId) }, { $set: updateData });
+
+      let arrayData = Object.entries(updateData);
+      console.log("Account created:");
+      arrayData.forEach((item) => {
+        console.log(item);
+      });
+
       res.redirect("/home");
     } catch (error) {
       console.error("Error updating setup profile:", error);
@@ -607,7 +564,7 @@ app.post("/create-meet", upload.single("image"), async (req, res) => {
 
 app.get("/meets", async (req, res) => {
   try {
-    const userId = req.session.userId?.toString();
+    const userId = req.session.userId || null;
     const meets = await db.collection("meets").find({}).toArray();
     // Joined: user is in members array
     const joinedMeets = meets.filter(
@@ -629,83 +586,60 @@ app.get("/meets", async (req, res) => {
 });
 
 app.get("/meet/:id", async (req, res) => {
-  try {
-    const meet = await db
-      .collection("meets")
-      .findOne({ _id: new ObjectId(req.params.id) });
-    if (!meet) {
-      return res.status(404).send("Meet not found");
+  const meetId = req.params.id;
+  const meet = await db
+    .collection("meets")
+    .findOne({ _id: new ObjectId(meetId) });
+
+  const userId = req.session.userId;
+  const user = await db
+    .collection("users")
+    .findOne({ _id: new ObjectId(userId) });
+
+  let userMatches = [];
+  for (const member of meet.members) {
+    let matchingScore = 0;
+    const foundMember = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(member.id) });
+
+    if (foundMember.gender === user.preferredGender) {
+      matchingScore += 40;
     }
-    let isMember = false;
-    let currentUser = null;
-    if (req.session.userId) {
-      isMember = (meet.members || []).some(
-        (m) =>
-          m === req.session.userId.toString() ||
-          (m.id && m.id === req.session.userId.toString())
-      );
-      currentUser = await db
-        .collection(process.env.USER_COLLECTION)
-        .findOne({ _id: new ObjectId(req.session.userId) });
+    if (foundMember.vibe === user.vibe) {
+      matchingScore += 30;
     }
-    // Get all users who are members of this meet (except current user)
-    const memberIds = (meet.members || [])
-      .map((m) => (typeof m === "object" && m.id ? m.id : m.toString()))
-      .filter(
-        (id) =>
-          id && (!req.session.userId || id !== req.session.userId.toString())
-      );
-    let userMatches = [];
-    if (memberIds.length > 0 && currentUser) {
-      const users = await db
-        .collection(process.env.USER_COLLECTION)
-        .find({ _id: { $in: memberIds.map((id) => new ObjectId(id)) } })
-        .toArray();
-      // Matching algorithm
-      userMatches = users.map((user) => {
-        let matchScore = 0;
-        // Vibe match
-        if (user.vibe && currentUser.vibe && user.vibe === currentUser.vibe)
-          matchScore += 40;
-        // Preferred Gender match
-        if (
-          (!user.preferredGender ||
-            user.preferredGender === "any" ||
-            user.preferredGender === currentUser.preferredGender) &&
-          (!currentUser.preferredGender ||
-            currentUser.preferredGender === "any" ||
-            currentUser.preferredGender === user.preferredGender)
-        )
-          matchScore += 30;
-        // Age range overlap
-        if (
-          user.ageMin &&
-          user.ageMax &&
-          currentUser.ageMin &&
-          currentUser.ageMax
-        ) {
-          const overlap = Math.max(
-            0,
-            Math.min(user.ageMax, currentUser.ageMax) -
-              Math.max(user.ageMin, currentUser.ageMin)
-          );
-          if (overlap > 0) matchScore += 30;
-        }
-        return { user, matchScore };
-      });
-      // Sort by matchScore descending
-      userMatches.sort((a, b) => b.matchScore - a.matchScore);
+    if (foundMember.favoriteFood === user.favoriteFood) {
+      matchingScore += 15;
     }
-    res.render("meet-overview", {
-      meet,
-      userId: req.session.userId,
-      isMember,
-      userMatches,
-    });
-  } catch (error) {
-    console.error("Error loading meet detail:", error);
-    res.status(500).send("Error loading meet detail");
+    if (foundMember.favoriteDrink === user.favoriteDrink) {
+      matchingScore += 15;
+    }
+    userMatches.push({ user: foundMember, matchScore: matchingScore });
   }
+
+  // haal jezelf weg
+  userMatches = userMatches.filter(
+    (match) => match.user._id.toString() !== userId.toString()
+  );
+
+  // aflopend sorteren
+  userMatches.sort((a, b) => b.matchScore - a.matchScore);
+
+  // checken of je deel bent van de meet
+  let isMember = false;
+  if (req.session.userId) {
+    isMember = (meet.members || []).some(
+      (m) => m.id === req.session.userId.toString()
+    );
+  }
+
+  res.render("meet-overview", {
+    meet,
+    userId: req.session.userId,
+    isMember,
+    userMatches,
+  });
 });
 
 app.get("/create-meet", (req, res) => {
@@ -738,89 +672,6 @@ app.get("/meets", async (req, res) => {
   }
 });
 
-// Meet overview page
-app.get("/meet/:id", async (req, res) => {
-  try {
-    const meet = await db
-      .collection("meets")
-      .findOne({ _id: new ObjectId(req.params.id) });
-    if (!meet) {
-      return res.status(404).send("Meet not found");
-    }
-    let isMember = false;
-    if (req.session.userId) {
-      isMember = (meet.members || []).some(
-        (m) => m.toString() === req.session.userId.toString()
-      );
-    }
-
-    // Fetch only users who are members of this meet (not all users)
-    const memberIds = (meet.members || [])
-      .map((m) => m.id)
-      .filter(Boolean)
-      .map((id) => new ObjectId(id));
-
-    const joinedUsers = await db
-      .collection(process.env.USER_COLLECTION)
-      .find({ _id: { $in: memberIds } })
-      .toArray();
-
-    // Helper: calculate match score
-    function calculateMatchScore(userProfile, meet) {
-      let score = 0;
-      // Age range match (if available)
-      if (
-        userProfile.ageMin &&
-        userProfile.ageMax &&
-        meet.ageMin &&
-        meet.ageMax
-      ) {
-        // Overlap in age range
-        const overlap = Math.max(
-          0,
-          Math.min(userProfile.ageMax, meet.ageMax) -
-            Math.max(userProfile.ageMin, meet.ageMin)
-        );
-        if (overlap > 0) score += 40;
-      }
-      // Gender match (if available)
-      if (meet.preferredGender && userProfile.preferredGender) {
-        if (
-          meet.preferredGender === "any" ||
-          userProfile.preferredGender === "any" ||
-          meet.preferredGender === userProfile.preferredGender
-        ) {
-          score += 30;
-        }
-      }
-      // Vibe match (if available)
-      if (meet.vibe && userProfile.vibe && meet.vibe === userProfile.vibe) {
-        score += 30;
-      }
-      return score;
-    }
-
-    // Calculate and sort matches only among joined users
-    const userMatches = joinedUsers
-      .map((u) => ({
-        user: u,
-        matchScore: calculateMatchScore(u, meet),
-      }))
-      .sort((a, b) => b.matchScore - a.matchScore);
-
-    res.render("meet-overview", {
-      meet,
-      userId,
-      user,
-      isMember,
-      userMatches, // Only joined users, sorted by match
-    });
-  } catch (error) {
-    console.error("Error loading meet overview:", error);
-    res.status(500).send("Error loading meet overview");
-  }
-});
-
 // Join Meet (add user to members array)
 app.post("/meet/:id/join", async (req, res) => {
   try {
@@ -850,6 +701,27 @@ app.post("/meet/:id/join", async (req, res) => {
     console.error("Error joining meet:", error);
     res.status(500).json({ error: "Server error" });
   }
+});
+
+app.post("/meet/:id/leave", async (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: "Not logged in" });
+  }
+  const meetId = req.params.id;
+  const userId = req.session.userId.toString();
+  // Remove user from members array
+  await db
+    .collection("meets")
+    .updateOne(
+      { _id: new ObjectId(meetId) },
+      { $pull: { members: { id: userId } } }
+    );
+  // Check if user is still a member (should be false)
+  const meet = await db
+    .collection("meets")
+    .findOne({ _id: new ObjectId(meetId) });
+  const isMember = (meet.members || []).some((m) => m.id === userId);
+  res.json({ success: true, isMember });
 });
 
 // ─── EDIT MEET ─────────────────────────────────────────────
@@ -931,12 +803,16 @@ app.post("/delete-meet/:id", requireLogin, async (req, res) => {
   try {
     const meetId = req.params.id;
     const userId = req.session.userId.toString();
-    const meet = await db.collection("meets").findOne({ _id: new ObjectId(meetId) });
+    const meet = await db
+      .collection("meets")
+      .findOne({ _id: new ObjectId(meetId) });
     if (!meet) {
       return res.status(404).json({ error: "Meet not found" });
     }
     if (meet.creatorId !== userId) {
-      return res.status(403).json({ error: "You are not authorized to delete this meet." });
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to delete this meet." });
     }
     await db.collection("meets").deleteOne({ _id: new ObjectId(meetId) });
     return res.json({ success: true });
@@ -958,4 +834,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   // console.log(`🚀 Server running on port ${PORT}`);
 });
-

@@ -1,0 +1,19 @@
+<!-- current user -->
+
+<% if (userId) { %>
+<h1>req.session.userId = <%= userId %></h1>
+<% } else { %>
+<h1>no user</h1>
+<% } %>
+
+<h1><%= meet.title %></h1>
+
+<ul>
+  <% meet.members.forEach(member => 
+  { const scoreObj = memberScores
+    .find(s => s.id === member.id); %>
+  <li>
+    <%= member.id %> - Matching Score: <%= scoreObj ? scoreObj.score : 'N/A' %>
+  </li>
+  <% }) %>
+</ul>

@@ -10,7 +10,7 @@
   </head>
   <body>
     <header><%- include('partials/header') %></header>
-         <a href="/" class="back-link">← Back to Home</a>
+    <a href="/" class="back-link">← Back to Home</a>
     <div class="meet-grid">
       <div class="meet-image">
         <img
@@ -27,24 +27,18 @@
         <p><strong>Max People:</strong> <%= meet.maxPeople %></p>
         <p>
           <strong>Age Range:</strong>
-          <% if (!meet.ageMin && !meet.ageMax) { %>
-            Any
-          <% } else if (meet.ageMin && meet.ageMax) { %>
-            <%= meet.ageMin %> - <%= meet.ageMax %>
-          <% } else if (meet.ageMin) { %>
-            <%= meet.ageMin %>+
-          <% } else if (meet.ageMax) { %>
-            Up to <%= meet.ageMax %>
-          <% } %>
+          <% if (!meet.ageMin && !meet.ageMax) { %> Any <% } else if
+          (meet.ageMin && meet.ageMax) { %> <%= meet.ageMin %> - <%= meet.ageMax
+          %> <% } else if (meet.ageMin) { %> <%= meet.ageMin %>+ <% } else if
+          (meet.ageMax) { %> Up to <%= meet.ageMax %> <% } %>
         </p>
         <p>
           <strong>Created by:</strong>
-          <% if (userId && String(userId) === String(meet.creatorId)) { %>
-            You
+          <% if (userId && String(userId) === String(meet.creatorId)) { %> You
           <% } else { %>
-            <a href="/profile/<%= meet.creatorId %>">
-              <%= meet.creatorName || 'View Profile' %>
-            </a>
+          <a href="/profile/<%= meet.creatorId %>">
+            <%= meet.creatorName || 'View Profile' %>
+          </a>
           <% } %>
         </p>
         <div
@@ -74,62 +68,41 @@
             <input type="hidden" name="userId" value="<%= userId || '' %>" />
             <button type="submit" class="cancel-btn">Leave Meet</button>
           </form>
-          <% } %>
-          <% if (userId && String(userId) === String(meet.creatorId)) { %>
-           <a href="/edit-meet/<%= meet._id %>" class="edit-meet-btn">Edit Meet</a>
-            <!-- Delete Meet button -->
-           <button id="delete-meet-btn">Delete Meet</button>
+          <% } %> <% if (userId && String(userId) === String(meet.creatorId)) {
+          %>
+          <a href="/edit-meet/<%= meet._id %>" class="edit-meet-btn"
+            >Edit Meet</a
+          >
+          <button id="delete-meet-btn">Delete Meet</button>
           <% } %>
         </div>
-      <div id="is-member">
-         <% if (isMember) { %>
-         <h3>You are already a part of the meet.</h3>
-  <% } %>
-</div>
+        <div id="is-member">
+          <% if (isMember) { %>
+          <h3>You are already a part of the meet.</h3>
+          <% } %>
+        </div>
       </div>
     </div>
     <div class="user-match-list-section">
       <h2>Who could you match with?</h2>
       <%- include('partials/user-match-list', { userMatches: userMatches }) %>
     </div>
-    <footer> <%- include('partials/footer', { userId: userId }) %></footer>
+    <footer><%- include('partials/footer', { userId: userId }) %></footer>
     <script>
-      // Attach event listeners to join/leave forms
-      function attachJoinLeaveListeners() {
-        document.querySelectorAll(".join-leave-form").forEach((form) => {
-          if (!form.hasAttribute("data-listener")) {
-            form.setAttribute("data-listener", "true");
-            form.addEventListener("submit", async function (e) {
-              e.preventDefault();
-              const action = form.getAttribute("data-action");
-              const url = form.action;
-              const formData = new FormData(form);
-              await fetch(url, { method: "POST", body: formData });
-              if (action === "join") {
-                alert("You joined the meet!");
-                // Instantly swap to leave button
-                form.outerHTML = `<form method='POST' action='/meet/<%= meet._id %>/cancel' class='join-leave-form' data-action='leave'><input type='hidden' name='userId' value='<%= userId || '' %>' /><button type='submit' class='cancel-btn'>Leave Meet</button></form>`;
-              } else {
-                alert("You left the meet.");
-                // Instantly swap to join button
-                form.outerHTML = `<form method='POST' action='/meet/<%= meet._id %>/join' class='join-leave-form' data-action='join'><input type='hidden' name='userId' value='<%= userId || '' %>' /><button type='submit'>Join Meet</button></form>`;
-              }
-              attachJoinLeaveListeners();
-            });
-          }
-        });
-      }
-      attachJoinLeaveListeners();
       // Delete Meet button logic
       const deleteBtn = document.getElementById("delete-meet-btn");
       if (deleteBtn) {
         deleteBtn.addEventListener("click", async function () {
-          if (confirm("Are you sure you want to delete this meet? This action cannot be undone.")) {
+          if (
+            confirm(
+              "Are you sure you want to delete this meet? This action cannot be undone."
+            )
+          ) {
             try {
               const res = await fetch("/delete-meet/<%= meet._id %>", {
                 method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({})
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({}),
               });
               if (res.ok) {
                 alert("Meet deleted successfully.");
@@ -145,15 +118,17 @@
         });
       }
       // Image size validation (for any file input with class 'img-upload')
-      document.querySelectorAll('input[type="file"].img-upload').forEach(input => {
-        input.addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          if (file && file.size > 5 * 1024 * 1024) {
-            alert('Image must be 5MB or less. Please choose a smaller file.');
-            e.target.value = '';
-          }
+      document
+        .querySelectorAll('input[type="file"].img-upload')
+        .forEach((input) => {
+          input.addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (file && file.size > 5 * 1024 * 1024) {
+              alert("Image must be 5MB or less. Please choose a smaller file.");
+              e.target.value = "";
+            }
+          });
         });
-      });
     </script>
   </body>
 </html>
