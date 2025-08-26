@@ -590,53 +590,34 @@ app.get("/meet/:id", async (req, res) => {
   const meet = await db
     .collection("meets")
     .findOne({ _id: new ObjectId(meetId) });
-
-  const userId = req.session.userId;
-  const user = await db
-    .collection("users")
-    .findOne({ _id: new ObjectId(userId) });
-
-  let userMatches = [];
-  for (const member of meet.members) {
-    let matchingScore = 0;
-    const foundMember = await db
-      .collection("users")
-      .findOne({ _id: new ObjectId(member.id) });
-
-    if (foundMember.gender === user.preferredGender) {
-      matchingScore += 40;
-    }
-    if (foundMember.vibe === user.vibe) {
-      matchingScore += 30;
-    }
-    if (foundMember.favoriteFood === user.favoriteFood) {
-      matchingScore += 15;
-    }
-    if (foundMember.favoriteDrink === user.favoriteDrink) {
-      matchingScore += 15;
-    }
-    userMatches.push({ user: foundMember, matchScore: matchingScore });
-  }
-
-  // haal jezelf weg
-  userMatches = userMatches.filter(
-    (match) => match.user._id.toString() !== userId.toString()
-  );
-
-  // aflopend sorteren
-  userMatches.sort((a, b) => b.matchScore - a.matchScore);
-
-  // checken of je deel bent van de meet
+  let userId = req.session.userId ? req.session.userId.toString() : null;
   let isMember = false;
-  if (req.session.userId) {
-    isMember = (meet.members || []).some(
-      (m) => m.id === req.session.userId.toString()
-    );
+  if (userId && Array.isArray(meet.members)) {
+    isMember = meet.members.some((m) => m.id === userId);
   }
-
+  // Matching logic (unchanged, can be improved later)
+  let userMatches = [];
+  if (meet.members && userId) {
+    const user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(userId) });
+    for (const member of meet.members) {
+      if (member.id === userId) continue; // skip self
+      const foundMember = await db
+        .collection("users")
+        .findOne({ _id: new ObjectId(member.id) });
+      let matchingScore = 0;
+      if (foundMember.gender === user.preferredGender) matchingScore += 40;
+      if (foundMember.vibe === user.vibe) matchingScore += 30;
+      if (foundMember.favoriteFood === user.favoriteFood) matchingScore += 15;
+      if (foundMember.favoriteDrink === user.favoriteDrink) matchingScore += 15;
+      userMatches.push({ user: foundMember, matchScore: matchingScore });
+    }
+    userMatches.sort((a, b) => b.matchScore - a.matchScore);
+  }
   res.render("meet-overview", {
     meet,
-    userId: req.session.userId,
+    userId,
     isMember,
     userMatches,
   });
@@ -696,9 +677,30 @@ app.post("/meet/:id/join", async (req, res) => {
           { $push: { members: { id: userId } } }
         );
     }
-    res.json({ success: true });
+    res.redirect(`/meet/${meetId}`);
   } catch (error) {
     console.error("Error joining meet:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Leave Meet (remove user from members array)
+app.post("/meet/:id/leave", async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: "Not logged in" });
+    }
+    const meetId = req.params.id;
+    const userId = req.session.userId.toString();
+    await db
+      .collection("meets")
+      .updateOne(
+        { _id: new ObjectId(meetId) },
+        { $pull: { members: { id: userId } } }
+      );
+    res.redirect(`/meet/${meetId}`);
+  } catch (error) {
+    console.error("Error leaving meet:", error);
     res.status(500).json({ error: "Server error" });
   }
 });

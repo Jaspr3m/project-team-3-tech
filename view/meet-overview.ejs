@@ -46,7 +46,7 @@
           id="join-leave-form-container"
           data-meet-id="<%= meet._id %>"
         >
-          <% if (!isMember) { %>
+          <% if (userId) { %> <% if (!isMember) { %>
           <form
             method="POST"
             action="/meet/<%= meet._id %>/join"
@@ -54,22 +54,20 @@
             class="join-leave-form"
             data-action="join"
           >
-            <input type="hidden" name="userId" value="<%= userId || '' %>" />
             <button type="submit">Join Meet</button>
           </form>
           <% } else { %>
           <form
             method="POST"
-            action="/meet/<%= meet._id %>/cancel"
+            action="/meet/<%= meet._id %>/leave"
             style="display: inline"
             class="join-leave-form"
             data-action="leave"
           >
-            <input type="hidden" name="userId" value="<%= userId || '' %>" />
             <button type="submit" class="cancel-btn">Leave Meet</button>
           </form>
-          <% } %> <% if (userId && String(userId) === String(meet.creatorId)) {
-          %>
+          <% } %> <% } %> <% if (userId && String(userId) ===
+          String(meet.creatorId)) { %>
           <a href="/edit-meet/<%= meet._id %>" class="edit-meet-btn"
             >Edit Meet</a
           >
