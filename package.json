@@ -1,9 +1,9 @@
 {
   "name": "matching-app",
   "version": "1.0.0",
-  "description": "matching app over koeien",
+  "description": "matching app waarin mensen op vakantie andere vakantiegangers kunnen meeten",
   "license": "ISC",
-  "author": "Ivy Vo",
+  "author": "Jasprem Singh",
   "type": "commonjs",
   "main": "server.js",
   "scripts": {

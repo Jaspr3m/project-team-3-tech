@@ -23,7 +23,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 1 day
-  })
+  }),
 );
 
 // View engine
@@ -38,7 +38,7 @@ client
   .connect()
   .then(() => {
     db = client.db(process.env.DB_NAME);
-    // console.log("✅ Database connected");
+    console.log("✅ Database connected");
   })
   .catch((err) => {
     console.error("❌ Database connection error:", err);
@@ -112,7 +112,7 @@ app.post(
         formData: { email, name },
       });
     }
-  }
+  },
 );
 
 // Show login form
@@ -171,7 +171,7 @@ app.get("/loginHome", (req, res) => {
 
 // Redirect root to /home
 app.get("/", (req, res) => {
-  return res.redirect("/home");
+  return res.redirect("/login");
 });
 
 // Protected homepage
@@ -264,7 +264,7 @@ app.post("/profile/:id", upload.single("photo"), async (req, res) => {
     }
     // Remove undefined fields
     Object.keys(updateData).forEach(
-      (key) => updateData[key] === undefined && delete updateData[key]
+      (key) => updateData[key] === undefined && delete updateData[key],
     );
     await db
       .collection(process.env.USER_COLLECTION)
@@ -359,7 +359,7 @@ app.post(
       console.error("Error updating setup profile:", error);
       res.status(500).send("Error saving profile setup");
     }
-  }
+  },
 );
 
 //------------------------ MORE MEETS ------------------------
@@ -569,7 +569,8 @@ app.get("/meets", async (req, res) => {
     // Joined: user is in members array
     const joinedMeets = meets.filter(
       (meet) =>
-        Array.isArray(meet.members) && meet.members.some((m) => m.id === userId)
+        Array.isArray(meet.members) &&
+        meet.members.some((m) => m.id === userId),
     );
     // Created: user is the creator (assuming meet.creatorId is set)
     const createdMeets = meets.filter((meet) => meet.creatorId === userId);
@@ -637,7 +638,8 @@ app.get("/meets", async (req, res) => {
     // Joined: user is in members array
     const joinedMeets = meets.filter(
       (meet) =>
-        Array.isArray(meet.members) && meet.members.some((m) => m.id === userId)
+        Array.isArray(meet.members) &&
+        meet.members.some((m) => m.id === userId),
     );
     // Created: user is the creator (assuming meet.creatorId is set)
     const createdMeets = meets.filter((meet) => meet.creatorId === userId);
@@ -674,7 +676,7 @@ app.post("/meet/:id/join", async (req, res) => {
         .collection("meets")
         .updateOne(
           { _id: new ObjectId(meetId) },
-          { $push: { members: { id: userId } } }
+          { $push: { members: { id: userId } } },
         );
     }
     res.redirect(`/meet/${meetId}`);
@@ -696,7 +698,7 @@ app.post("/meet/:id/leave", async (req, res) => {
       .collection("meets")
       .updateOne(
         { _id: new ObjectId(meetId) },
-        { $pull: { members: { id: userId } } }
+        { $pull: { members: { id: userId } } },
       );
     res.redirect(`/meet/${meetId}`);
   } catch (error) {
@@ -716,7 +718,7 @@ app.post("/meet/:id/leave", async (req, res) => {
     .collection("meets")
     .updateOne(
       { _id: new ObjectId(meetId) },
-      { $pull: { members: { id: userId } } }
+      { $pull: { members: { id: userId } } },
     );
   // Check if user is still a member (should be false)
   const meet = await db
@@ -797,7 +799,7 @@ app.post(
         error: "Server error. Please try again later.",
       });
     }
-  }
+  },
 );
 
 // ─── DELETE MEET ─────────────────────────────────────────────
@@ -834,5 +836,5 @@ app.use((_, res) => res.status(404).send("Not Found"));
 // ─── START SERVER ─────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  // console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
