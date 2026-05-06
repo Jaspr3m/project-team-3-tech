@@ -171,7 +171,7 @@ app.get("/loginHome", (req, res) => {
 
 // Redirect root to /home
 app.get("/", (req, res) => {
-  return res.redirect("/login");
+  return res.redirect("/loginHome");
 });
 
 // Protected homepage
@@ -326,12 +326,6 @@ app.post(
   upload.single("photo"),
   async (req, res) => {
     try {
-      if (!req.file) {
-        return res.status(400).render("setup-profile", {
-          userId: req.session.userId,
-          error: "Profile picture is required.",
-        });
-      }
       const userId = req.session.userId;
       const updateData = {
         photoUrl: "/uploads/" + req.file.filename,
@@ -347,13 +341,6 @@ app.post(
       await db
         .collection(process.env.USER_COLLECTION)
         .updateOne({ _id: new ObjectId(userId) }, { $set: updateData });
-
-      let arrayData = Object.entries(updateData);
-      console.log("Account created:");
-      arrayData.forEach((item) => {
-        console.log(item);
-      });
-
       res.redirect("/home");
     } catch (error) {
       console.error("Error updating setup profile:", error);
@@ -513,8 +500,7 @@ app.get("/api/meets", async (req, res) => {
   }
 });
 
-// CREATA MEETS
-
+// CREATE MEET WEBPAGEß
 app.get("/create-meet", (req, res) => {
   res.render("create-meet", {
     userId: req.session.userId || null,
@@ -525,13 +511,6 @@ app.get("/create-meet", (req, res) => {
 // CREATE MEET (POST)
 app.post("/create-meet", upload.single("image"), async (req, res) => {
   try {
-    if (!req.file) {
-      return res.render("create-meet", {
-        error: "You must upload a cover image to create a meet.",
-        userId: req.session.userId || null,
-        user: req.session.user || null,
-      });
-    }
     // Save the meet to the database
     const userId = req.session.userId ? req.session.userId.toString() : null;
     const meet = {
@@ -562,30 +541,7 @@ app.post("/create-meet", upload.single("image"), async (req, res) => {
   }
 });
 
-app.get("/meets", async (req, res) => {
-  try {
-    const userId = req.session.userId || null;
-    const meets = await db.collection("meets").find({}).toArray();
-    // Joined: user is in members array
-    const joinedMeets = meets.filter(
-      (meet) =>
-        Array.isArray(meet.members) &&
-        meet.members.some((m) => m.id === userId),
-    );
-    // Created: user is the creator (assuming meet.creatorId is set)
-    const createdMeets = meets.filter((meet) => meet.creatorId === userId);
-    res.render("meets", {
-      joinedMeets,
-      createdMeets,
-      userId: req.session.userId || null,
-      user: req.session.user || null,
-    });
-  } catch (error) {
-    console.error("Error fetching meets for manage page:", error);
-    res.status(500).send("Error fetching meets");
-  }
-});
-
+// Meet by Id
 app.get("/meet/:id", async (req, res) => {
   const meetId = req.params.id;
   const meet = await db
@@ -624,13 +580,7 @@ app.get("/meet/:id", async (req, res) => {
   });
 });
 
-app.get("/create-meet", (req, res) => {
-  res.render("create-meet", {
-    userId: req.session.userId || null,
-    user: req.session.user || null,
-  });
-});
-
+// Manage Meets
 app.get("/meets", async (req, res) => {
   try {
     const userId = req.session.userId?.toString();
@@ -688,44 +638,28 @@ app.post("/meet/:id/join", async (req, res) => {
 
 // Leave Meet (remove user from members array)
 app.post("/meet/:id/leave", async (req, res) => {
-  try {
-    if (!req.session.userId) {
-      return res.status(401).json({ error: "Not logged in" });
-    }
-    const meetId = req.params.id;
-    const userId = req.session.userId.toString();
+  if (!req.session.userId) {
+    res.redirect("/login");
+  }
+  const meetId = req.params.id;
+  const meet = await db
+    .collection("meets")
+    .findOne({ _id: new ObjectId(meetId) });
+
+  const userId = req.session.userId.toString();
+  const creatorId = meet.creatorId.toString();
+
+  if (userId == creatorId) {
+    res.redirect("/meet/" + meetId.toString());
+  } else {
     await db
       .collection("meets")
       .updateOne(
         { _id: new ObjectId(meetId) },
         { $pull: { members: { id: userId } } },
       );
-    res.redirect(`/meet/${meetId}`);
-  } catch (error) {
-    console.error("Error leaving meet:", error);
-    res.status(500).json({ error: "Server error" });
+    res.redirect("/meets" + meetId.toString());
   }
-});
-
-app.post("/meet/:id/leave", async (req, res) => {
-  if (!req.session.userId) {
-    return res.status(401).json({ error: "Not logged in" });
-  }
-  const meetId = req.params.id;
-  const userId = req.session.userId.toString();
-  // Remove user from members array
-  await db
-    .collection("meets")
-    .updateOne(
-      { _id: new ObjectId(meetId) },
-      { $pull: { members: { id: userId } } },
-    );
-  // Check if user is still a member (should be false)
-  const meet = await db
-    .collection("meets")
-    .findOne({ _id: new ObjectId(meetId) });
-  const isMember = (meet.members || []).some((m) => m.id === userId);
-  res.json({ success: true, isMember });
 });
 
 // ─── EDIT MEET ─────────────────────────────────────────────
@@ -753,24 +687,13 @@ app.get("/edit-meet/:id", requireLogin, async (req, res) => {
   }
 });
 
-app.post(
-  "/edit-meet/:id",
-  requireLogin,
-  upload.single("image"),
+app.post("/edit-meet/:id", requireLogin, upload.single("image"),
   async (req, res) => {
     try {
+      const meetId = req.params.id
       const meet = await db
         .collection("meets")
-        .findOne({ _id: new ObjectId(req.params.id) });
-      if (!meet) {
-        return res.status(404).send("Meet not found");
-      }
-      if (meet.creatorId !== req.session.userId.toString()) {
-        return res
-          .status(403)
-          .send("You are not authorized to edit this meet.");
-      }
-      // Prepare update data
+        .findOne({ _id: new ObjectId(meetId) });
       const updateData = {
         title: req.body.title,
         description: req.body.description,
@@ -783,17 +706,18 @@ app.post(
         ageMin: req.body.ageMin ? parseInt(req.body.ageMin, 10) : undefined,
         ageMax: req.body.ageMax ? parseInt(req.body.ageMax, 10) : undefined,
       };
+      // nieuw foto
       if (req.file) {
         updateData.image = "/uploads/" + req.file.filename;
       }
       await db
         .collection("meets")
-        .updateOne({ _id: new ObjectId(req.params.id) }, { $set: updateData });
-      res.redirect("/meet/" + req.params.id);
+        .updateOne({ _id: new ObjectId(meetId) }, { $set: updateData });
+      res.redirect("/meet/" + meetId);
     } catch (error) {
       console.error("Error updating meet:", error);
       res.status(500).render("edit-meet", {
-        meet: Object.assign({}, req.body, { _id: req.params.id }),
+        meet: Object.assign({}, req.body, { _id: meetId }),
         userId: req.session.userId || null,
         user: req.session.user || null,
         error: "Server error. Please try again later.",
@@ -819,7 +743,6 @@ app.post("/delete-meet/:id", requireLogin, async (req, res) => {
         .json({ error: "You are not authorized to delete this meet." });
     }
     await db.collection("meets").deleteOne({ _id: new ObjectId(meetId) });
-    return res.json({ success: true });
   } catch (error) {
     console.error("Error deleting meet:", error);
     res.status(500).json({ error: "Server error. Please try again later." });
